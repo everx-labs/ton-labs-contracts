@@ -4,7 +4,7 @@
 
 You can use the TONOS-CLI utility and [Tails OS](https://tails.boum.org/) to deploy multisignature wallets and manage them.
 
-Available actions with Multisignature wallet include the following:
+Available actions with a Multisignature wallet include the following:
 
 1. Contract initialization: generation of seed phrases and custodian keys – **OFFLINE**
 2. Wallet deploy – **ONLINE**
