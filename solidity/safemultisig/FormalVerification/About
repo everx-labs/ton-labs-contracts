@@ -1,0 +1,59 @@
+The current release is powered by Multisig smart contract that, 
+as all the smart contracts to be issued by TON Labs passed the formal verification 
+using the proprietary Pruvendo technology invented and developed in cooperation with their partners.
+
+Pruvendo lays upon Coq theorem prover and formally checks that:
+
+Multisig works exactly as specified
+No logical lockdowns are possible
+No extraordinary gas spendings are possible
+No asset thieves are possible
+No vanishing of assets are possible
+Each party spends or acquires the same amount of assets as specified assuming the blockchain works correctly.
+No unauthorised or “underauthorised” actions are possible
+
+
+The claims mentioned above are related both to Solidity smart contract source code as well as to compiled 
+TON Virtual Machine bytecode, thus claiming the compiler layer as formally verified in addition to the source layer.
+
+As mentioned above Pruvendo technology allows to verify the smart contract both in form of Solidity 
+source code as well as in the form of the code compiled into TVM Assembler. 
+
+The key ideas of the Solidity verification are listed below:
+Solidity code is translated into the “same” pseudo code (fully fledged DSL was developed) written in Coq. 
+Ability to translate the imperative language into the functional one is achieved by usage of specially designed 
+stack of state monadic operations and special bindings
+
+DSL fully supports all the Solidity types including:
+Integers (signed and unsigned)
+Lists and arrays
+Structures
+Hashmaps (with certain limitations)
+DSL supports the following types of workflow:
+Linear (imperative) workflow
+Conditions
+Functions
+Cycles (with certain limitations)
+Intristics (with certain limitations)
+“require” modifier
+
+When the pseudo code is obtained all the low-level specification statements 
+(i.e. statements claiming that the certain blocks of code work as intended by the specification) 
+are proved using the standard Coq-techniques supported by specially designed abstraction library and API
+
+Having the proven low-level statements in place the high-level statements 
+(as mentioned in the beginning of the present article) are proven (also by using the standard Coq-techniques).
+
+While the technology briefly described above is mostly based on manual efforts, it's planned to semiautomate 
+(or even, fully automate) them in a foreseeable future.
+
+The TVM layer is rather different and was built upon the specially developed Coq-base TON Virtual Machine 
+reference implementation. This machine supports all the primitives used by the Multisig smart contract.
+
+Then the following steps are performed:
+The correct initial state of the Virtual Machine is prepared for each type of entry points
+The compiled code of each function (or just a block of code) is being run by a specially designed runner (to be automated soon)
+The outcome (terminal state of the Virtual Machine or its elements) is compared to the one suggested by the specification
+Thus, the correctness of the TVM code compiled by the TON Labs toolchain is being proven
+
+The same Pruvendo technology may be applicable for the smart contracts issued by third parties as well.
