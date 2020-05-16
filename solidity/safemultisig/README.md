@@ -52,16 +52,13 @@ Download compiled multisignature contract files (SafeMultisigWallet.abi.json and
 
 #### Tails OS secure environment
 
-For maximum security while managing your wallet, you can use the Tails OS.
+For maximum security while managing your wallet, you can use the Tails OS for all actions that can be performed offline. 
 
-> Note: When using Tails OS it is recommended to perform all actions that require no internet connection completely offline:
+The following actions can be performed entirely offline:
 
-* Contract initialization: generation of seed phrases and custodian keys – OFFLINE
-* Wallet deploy – ONLINE
-* New transaction preparation – OFFLINE
-* Broadcasting the prepared transaction to the multisignature wallet – ONLINE
-* Preparing transaction confirmation – OFFLINE
-* Broadcasting confirmation to multisignature wallet – ONLINE
+* Generation of seed phrases and custodian keys
+* New transaction preparation offline
+* Preparing transaction confirmation offline
 
 ### 2.2. Set blockchain network
 
@@ -101,7 +98,7 @@ Copy the generated code from Terminal or scan the QR code containing the code wi
 Any custodian who has received the public keys of all other custodians can deploy the multisignature wallet to the blockchain.
 
 #### 3.2.1. Generating multisignature wallet address and deployment key pair
-1. If you already have generated the seed phrase (for example, you want to use one of the custodian seed phrases generated on step 3.1.1 for deployment) and only need to restore the key pair file and generate the address, use the following command:
+To create the key pair file from the seed phrase generated at step 3.1.1  use the following command:
 ```
 ./tonos-cli getkeypair <deploy.keys.json> "<seed_phrase>"
 ```
@@ -112,16 +109,11 @@ The utility generates the file that contains the key pair produced from seed phr
 ```
 * `deploy.keys.json` - the file the key pair is read from.
 * `--wc <workchain_id>` - (optional) ID of the workchain the wallet will be deployed to (-1 for masterchain, 0 for basechain). By default this value is set to 0.
+
+> Note: Masterchain gas and storage fees are significantly higher, but masterchain is required for validator wallets. Make sure to set workchain ID to -1 for any validator wallets you are deploying: `--wc -1`. Basechain, on the other hand, is best suited for user wallets.
+
 The utility displays the new multisignature wallet address (Raw_address).
 
-2. If you mean to use a separate key pair to deploy the wallet, use the following command:
-```
-./tonos-cli genaddr SafeMultisigWallet.tvc SafeMultisigWallet.abi.json --genkey deploy.keys.json --wc <workchain_id>
-```
-* `deploy.keys.json` - the file the key pair will be written to.
-* `--wc <workchain_id>` - (optional) ID of the workchain the wallet will be deployed to (-1 for masterchain, 0 for basechain). By default this value is set to 0.
-The utility displays the new multisignature wallet address (Raw_address) and the deployment seed phrase for the private key with which the wallet deploy message must be signed. It also creates the deploy.keys.json file with the corresponding key pair.
-> Note: This seed phrase should be securely backed up and kept secret as well.
 > Note: The wallet address is required for any interactions with the wallet. It should be shared with all wallet custodians.
 
 #### 3.2.2. (Optional) Check that a wallet with the address generated on the previous step does not already exist in the blockchain
@@ -130,7 +122,7 @@ Request status for the generated wallet address from the blockchain:
 ./tonos-cli account <multisig_address>
 ```
 #### 3.2.3. Send a few tokens to the new address from another contract. 
-Create, and if necessary, confirm a transaction from another wallet. 
+Create, and if necessary, confirm a transaction from another wallet (see sections 4.6 and 4.7 of this document).
 Ensure that multisignature wallet has been created in the blockchain and has Uninit status.
 ```
 ./tonos-cli account <multisig_address>
@@ -145,6 +137,8 @@ Configuration parameters:
 * `owners` - array of custodian public keys as uint256 numbers. Make sure all public keys are enclosed in quotes and start with `0x...`. Example: `"owners":["0x8868adbf012ebc349ced852fdcf5b9d55d1873a68250fae1be609286ddb962582", "0xa0e16ccff0c7bf4f29422b33ec1c9187200e9bd949bb2dd4c7841f5009d50778a"]`
 * `reqConfirms` - number of signatures needed to confirm a transaction ( 0 < N ≤ custodian count).
 * `--wc <workchain_id>` - (optional) ID of the workchain the wallet will be deployed to (-1 for masterchain, 0 for basechain). By default this value is set to 0.
+
+> Note: Masterchain gas and storage fees are significantly higher, but masterchain is required for validator wallets. Make sure to set workchain ID to -1 for any validator wallets you are deploying: `--wc -1`. Basechain, on the other hand, is best suited for user wallets.
 
 #### 3.2.5. Check the multisignature wallet status again
 Now it should be Active.
@@ -205,7 +199,7 @@ Use the following command to list the transactions currently awaiting custodian 
 If there are some transactions requiring confirmation, they will be displayed.
 
 ### 4.6 Creating transaction online
-An internet connection is not required to create a signed transaction message. Use to following command to do it:
+Use the following command to create a new transaction:
 ```
 ./tonos-cli call <multisig_address> submitTransaction '{"dest":"raw_address","value":<nanotokens>,"bounce":true,"allBalance":false,"payload":""}' --abi SafeMultisigWallet.abi.json --sign "<seed_phrase>"
 ```
@@ -216,7 +210,7 @@ An internet connection is not required to create a signed transaction message. U
 * `"payload"` - use "" for simple transfer. Otherwise payload is used as a body of outbound internal message.
 Enter your seed phrase to sign the message with your key.
 
-> Note: For maximum security you may also create a transaction message on a machine without internet connection in offline mode.
+> Note: For maximum security you may also create a transaction message on a machine without internet connection in offline mode. See section 5.1 of this document.
 
 ### 4.7. Creating transaction confirmation online
 Once one of the custodians creates a new transaction on the blockchain, it has to get the required number of confirmations from other custodians.
@@ -228,7 +222,7 @@ To create a confirmation message use the following command:
 `transactionId` – the ID of the transaction can be acquired from the custodian who created it, or by requesting the list of transactions awaiting confirmation from the multisignature wallet.
 
 > Note: If the wallet has only one custodian, or if the number or confirmations required to perform a transaction was set to 1, this action won't be necessary. The transaction will be confirmed automatically.
-> Note: For maximum security you may also create a transaction confirmation message on a machine without internet connection in offline mode.
+> Note: For maximum security you may also create a transaction confirmation message on a machine without internet connection in offline mode. See section 5.2 of this document.
 
 ### 4.8. Broadcasting previously generated message
 Use the following command to broadcast any previously generated message (transaction message or confirmation message):
