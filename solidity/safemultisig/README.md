@@ -50,6 +50,14 @@ Download compiled multisignature contract files (SafeMultisigWallet.abi.json and
 
 > Note: On Mac OS all calls of the TONOS-CLI utility should be performed from the tonos-cli/target/release/ folder.
 
+#### Windows
+
+The workflow is the same as for Mac OS (see the section above). However, when using Windows command line, the following syntax should be used for all TONOS-CLI commands:
+```
+tonos-cli <command_name> <options>
+```
+Simply omit the `./` symbols before `tonos-cli`.
+
 #### Tails OS secure environment
 
 For maximum security while managing your wallet, you can use the Tails OS.
@@ -215,6 +223,8 @@ An internet connection is not required to create a signed transaction message. U
 * `"allBalance"` - use true (and value = 0) if you need to transfer all contract funds. Don't use value equal to contract balance to send all remaining tokens, such transaction will fail because before the value is subtracted from balance, gas and storage fees are consumed and the remaining balance will be less than value.
 * `"payload"` - use "" for simple transfer. Otherwise payload is used as a body of outbound internal message.
 Enter your seed phrase to sign the message with your key.
+
+If the wallet has multiple custodians and more than one custodian signature is required to execute a transaction, the new transaction is queued in multisig and waits for the necessary amount of confirmations (see section 4.7). Otherwise it is executed immediately.
 
 > Note: For maximum security you may also create a transaction message on a machine without internet connection in offline mode.
 
