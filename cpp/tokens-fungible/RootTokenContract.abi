@@ -1,0 +1,128 @@
+{
+  "ABI version": 1,
+  "functions": [
+  {
+    "name": "constructor",
+    "inputs": [
+      { "name":"name", "type":"bytes" },
+      { "name":"symbol", "type":"bytes" },
+      { "name":"decimals", "type":"uint8" },
+      { "name":"root_public_key", "type":"uint256" },
+      { "name":"wallet_code", "type":"cell" },
+      { "name":"total_supply", "type":"uint128" }
+    ],
+    "outputs": [
+    ],
+    "id": "0x1"
+  },
+  {
+    "name": "deployWallet",
+    "inputs": [
+      { "name":"workchain_id", "type":"int8" },
+      { "name":"pubkey", "type":"uint256" },
+      { "name":"tokens", "type":"uint128" },
+      { "name":"tons", "type":"uint128" }
+    ],
+    "outputs": [
+      { "name":"value0", "type":"address" }
+    ],
+    "id": "0x2"
+  },
+  {
+    "name": "grant",
+    "inputs": [
+      { "name":"dest", "type":"address" },
+      { "name":"tokens", "type":"uint128" },
+      { "name":"tons", "type":"uint128" }
+    ],
+    "outputs": [
+    ],
+    "id": "0x3"
+  },
+  {
+    "name": "mint",
+    "inputs": [
+      { "name":"tokens", "type":"uint128" }
+    ],
+    "outputs": [
+    ],
+    "id": "0x4"
+  },
+  {
+    "name": "getName",
+    "inputs": [
+    ],
+    "outputs": [
+      { "name":"value0", "type":"bytes" }
+    ],
+    "id": "0x5"
+  },
+  {
+    "name": "getSymbol",
+    "inputs": [
+    ],
+    "outputs": [
+      { "name":"value0", "type":"bytes" }
+    ],
+    "id": "0x6"
+  },
+  {
+    "name": "getDecimals",
+    "inputs": [
+    ],
+    "outputs": [
+      { "name":"value0", "type":"uint8" }
+    ],
+    "id": "0x7"
+  },
+  {
+    "name": "getRootKey",
+    "inputs": [
+    ],
+    "outputs": [
+      { "name":"value0", "type":"uint256" }
+    ],
+    "id": "0x8"
+  },
+  {
+    "name": "getTotalSupply",
+    "inputs": [
+    ],
+    "outputs": [
+      { "name":"value0", "type":"uint128" }
+    ],
+    "id": "0x9"
+  },
+  {
+    "name": "getTotalGranted",
+    "inputs": [
+    ],
+    "outputs": [
+      { "name":"value0", "type":"uint128" }
+    ],
+    "id": "0xa"
+  },
+  {
+    "name": "getWalletCode",
+    "inputs": [
+    ],
+    "outputs": [
+      { "name":"value0", "type":"cell" }
+    ],
+    "id": "0xb"
+  },
+  {
+    "name": "getWalletAddress",
+    "inputs": [
+      { "name":"workchain_id", "type":"int8" },
+      { "name":"pubkey", "type":"uint256" }
+    ],
+    "outputs": [
+      { "name":"value0", "type":"address" }
+    ],
+    "id": "0xc"
+  }
+  ],
+  "events": [
+  ]
+}
