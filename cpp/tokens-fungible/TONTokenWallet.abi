@@ -1,0 +1,157 @@
+{
+  "ABI version": 1,
+  "functions": [
+  {
+    "name": "constructor",
+    "inputs": [
+      { "name":"name", "type":"bytes" },
+      { "name":"symbol", "type":"bytes" },
+      { "name":"decimals", "type":"uint8" },
+      { "name":"root_public_key", "type":"uint256" },
+      { "name":"wallet_public_key", "type":"uint256" },
+      { "name":"root_address", "type":"address" },
+      { "name":"code", "type":"cell" }
+    ],
+    "outputs": [
+    ],
+    "id": "0x1"
+  },
+  {
+    "name": "transfer",
+    "inputs": [
+      { "name":"dest", "type":"address" },
+      { "name":"tokens", "type":"uint128" },
+      { "name":"tons", "type":"uint128" }
+    ],
+    "outputs": [
+    ],
+    "id": "0x2"
+  },
+  {
+    "name": "accept",
+    "inputs": [
+      { "name":"tokens", "type":"uint128" }
+    ],
+    "outputs": [
+    ],
+    "id": "0x3"
+  },
+  {
+    "name": "internalTransfer",
+    "inputs": [
+      { "name":"tokens", "type":"uint128" },
+      { "name":"pubkey", "type":"uint256" }
+    ],
+    "outputs": [
+    ],
+    "id": "0x4"
+  },
+  {
+    "name": "getName",
+    "inputs": [
+    ],
+    "outputs": [
+      { "name":"value0", "type":"bytes" }
+    ],
+    "id": "0x5"
+  },
+  {
+    "name": "getSymbol",
+    "inputs": [
+    ],
+    "outputs": [
+      { "name":"value0", "type":"bytes" }
+    ],
+    "id": "0x6"
+  },
+  {
+    "name": "getDecimals",
+    "inputs": [
+    ],
+    "outputs": [
+      { "name":"value0", "type":"uint8" }
+    ],
+    "id": "0x7"
+  },
+  {
+    "name": "getBalance",
+    "inputs": [
+    ],
+    "outputs": [
+      { "name":"value0", "type":"uint128" }
+    ],
+    "id": "0x8"
+  },
+  {
+    "name": "getWalletKey",
+    "inputs": [
+    ],
+    "outputs": [
+      { "name":"value0", "type":"uint256" }
+    ],
+    "id": "0x9"
+  },
+  {
+    "name": "getRootAddress",
+    "inputs": [
+    ],
+    "outputs": [
+      { "name":"value0", "type":"address" }
+    ],
+    "id": "0xa"
+  },
+  {
+    "name": "allowance",
+    "inputs": [
+    ],
+    "outputs": [
+      { "name":"spender", "type":"address" },
+      { "name":"remainingTokens", "type":"uint128" }
+    ],
+    "id": "0xb"
+  },
+  {
+    "name": "approve",
+    "inputs": [
+      { "name":"spender", "type":"address" },
+      { "name":"remainingTokens", "type":"uint128" },
+      { "name":"tokens", "type":"uint128" }
+    ],
+    "outputs": [
+    ],
+    "id": "0xc"
+  },
+  {
+    "name": "transferFrom",
+    "inputs": [
+      { "name":"dest", "type":"address" },
+      { "name":"to", "type":"address" },
+      { "name":"tokens", "type":"uint128" },
+      { "name":"tons", "type":"uint128" }
+    ],
+    "outputs": [
+    ],
+    "id": "0xd"
+  },
+  {
+    "name": "internalTransferFrom",
+    "inputs": [
+      { "name":"to", "type":"address" },
+      { "name":"tokens", "type":"uint128" }
+    ],
+    "outputs": [
+    ],
+    "id": "0xe"
+  },
+  {
+    "name": "disapprove",
+    "inputs": [
+    ],
+    "outputs": [
+    ],
+    "id": "0xf"
+  }
+  ],
+  "events": [
+  ]
+}
