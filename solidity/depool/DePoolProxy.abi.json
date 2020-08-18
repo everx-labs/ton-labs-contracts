@@ -1,0 +1,78 @@
+{
+	"ABI version": 2,
+	"header": ["time"],
+	"functions": [
+		{
+			"name": "constructor",
+			"inputs": [
+				{"name":"depool","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "process_new_stake",
+			"inputs": [
+				{"name":"queryId","type":"uint64"},
+				{"name":"validatorKey","type":"uint256"},
+				{"name":"stakeAt","type":"uint32"},
+				{"name":"maxFactor","type":"uint32"},
+				{"name":"adnlAddr","type":"uint256"},
+				{"name":"signature","type":"bytes"},
+				{"name":"elector","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onStakeAccept",
+			"id": "0xF374484C",
+			"inputs": [
+				{"name":"queryId","type":"uint64"},
+				{"name":"comment","type":"uint32"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onStakeReject",
+			"id": "0xEE6F454C",
+			"inputs": [
+				{"name":"queryId","type":"uint64"},
+				{"name":"comment","type":"uint32"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "recover_stake",
+			"inputs": [
+				{"name":"queryId","type":"uint64"},
+				{"name":"elector","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onSuccessToRecoverStake",
+			"id": "0xF96F7324",
+			"inputs": [
+				{"name":"queryId","type":"uint64"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "getDePool",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"value0","type":"address"}
+			]
+		}
+	],
+	"data": [
+	],
+	"events": [
+	]
+}
