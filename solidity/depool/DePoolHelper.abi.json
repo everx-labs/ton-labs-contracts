@@ -1,0 +1,66 @@
+{
+	"ABI version": 2,
+	"header": ["time", "expire"],
+	"functions": [
+		{
+			"name": "constructor",
+			"inputs": [
+				{"name":"pool","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "updateDePoolPoolAddress",
+			"inputs": [
+				{"name":"addr","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "initTimer",
+			"inputs": [
+				{"name":"timer","type":"address"},
+				{"name":"period","type":"uint256"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onTimer",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "getDePoolPoolAddress",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"addr","type":"address"}
+			]
+		},
+		{
+			"name": "getHistory",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"list","type":"address[]"}
+			]
+		},
+		{
+			"name": "upgrade",
+			"inputs": [
+				{"name":"newcode","type":"cell"}
+			],
+			"outputs": [
+			]
+		}
+	],
+	"data": [
+	],
+	"events": [
+	]
+}
