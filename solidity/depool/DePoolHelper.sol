@@ -50,7 +50,9 @@ contract DePoolHelper {
     function initTimer(address timer, uint period) public acceptOnlyOwner {
         m_timer = timer;
         m_timeout = period;
-        _settimer(timer, period);
+        if (period > 0) {
+            _settimer(timer, period);
+        }
     }
 
     /// @notice Allows to init timer sending request to Timer contract.
@@ -67,6 +69,10 @@ contract DePoolHelper {
             IDePool(m_dePoolPool).ticktock.value(TICKTOCK_FEE)();
             _settimer(timer, period);
         }
+    }
+
+    function manualAwake() public acceptOnlyOwner {
+        IDePool(m_dePoolPool).ticktock.value(TICKTOCK_FEE)();
     }
 
     /*
