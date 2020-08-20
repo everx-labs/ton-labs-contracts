@@ -65,9 +65,11 @@ contract DePoolHelper {
     function onTimer() public {
         address timer = m_timer;
         uint period = m_timeout;
-        if (msg.sender == timer && period > 0) {
+        if (msg.sender == timer) {
             IDePool(m_dePoolPool).ticktock.value(TICKTOCK_FEE)();
-            _settimer(timer, period);
+            if (period > 0) {
+                _settimer(timer, period);
+            }
         }
     }
 
