@@ -8,52 +8,52 @@ contract RoundsBase {
 
     enum RoundStep {
         // Receiving stakes from participants
-        Pooling,
+        Pooling, // 0
 
         // Waiting for election request from validator
-        WaitingValidatorRequest,
+        WaitingValidatorRequest, // 1
         // Stake has been send to elector. Waiting answer from elector.
-        WaitingIfStakeAccepted,
+        WaitingIfStakeAccepted, // 2
 
         // Elector has accepted round stake. Validator is candidate. Waiting validation period to know if we win elections
-        WaitingValidationStart,
+        WaitingValidationStart, // 3
         // DePool has tried to recover stake in validation period to know if we win elections. Waiting elector answer
-        WaitingIfValidatorWinElections,
+        WaitingIfValidatorWinElections, // 4
         // Waiting for ending of unfreeze period
         // If CompletionReason!=Undefined than round is completed and waiting to return/reinvest funds after the next round.
         // Else round win election. Waiting
-        WaitingUnfreeze,
+        WaitingUnfreeze, // 5
         // Unfreeze period has been ended. Request to recover stake has been sent to elector. Waiting answer from elector.
-        WaitingReward,
+        WaitingReward, // 6
 
         // Returning or reinvesting participant stakes because round is completed
-        Completing,
+        Completing, // 7
         // All round's states are returned or reinvested
-        Completed
+        Completed // 8
     }
 
     // Round completion statuses. Filled when round is switched to 'WaitingUnfreeze' or 'Completing' step.
     enum CompletionReason {
         // Round is not completed yet
-        Undefined,
+        Undefined, // 0
         // DePool is closed
-        PoolClosed,
+        PoolClosed, // 1
         // Fake round. Used in constructor to create prev and 'last but 2' rounds
-        FakeRound,
+        FakeRound, // 2
         // Total stake less that 'm_minRoundStake'
-        TotalStakeIsTooSmall,
+        TotalStakeIsTooSmall, // 3
         // Validator stake percent of m_minRoundStake is too small
-        ValidatorStakeIsTooSmall,
+        ValidatorStakeIsTooSmall, // 4
         // Stake is rejected by elector by some reason
-        StakeIsRejectedByElector,
+        StakeIsRejectedByElector, // 5
         // Reward is received from elector. Round is completed successfully
-        RewardIsReceived,
+        RewardIsReceived, // 6
         // DePool has been participated in elections but lost the elections
-        ElectionsAreLost,
+        ElectionsAreLost, // 7
         // Validator are blamed during investigation phase
-        ValidatorIsPunished,
+        ValidatorIsPunished, // 8
         // Validator send no request during election phase
-        NoValidatorRequest
+        NoValidatorRequest // 9
     }
 
     // Describes vesting or lock stake
@@ -209,11 +209,13 @@ contract RoundsBase {
             return (round, 0, prevSourceStake, sourceParticipant, destinationParticipant);
         }
 
-        round.stakes[source].ordinary = newSourceStake;
-        if (sumOfStakes(round.stakes[source]) == 0) {
+        sourceStake.ordinary = newSourceStake;
+        if (activeAndNotStakeSum(sourceStake) == 0) {
             --round.participantQty;
             delete round.stakes[source];
             --sourceParticipant.roundQty;
+        } else {
+            round.stakes[source] = sourceStake;
         }
 
         if (!round.stakes.exists(destination)) {
@@ -237,7 +239,7 @@ contract RoundsBase {
     )
         internal inline returns (uint64, DePoolLib.Participant)
     {
-        Round round = m_rounds[m_roundQty - 1];
+        Round round = m_rounds.fetch(m_roundQty - 1).get();
         optional(StakeValue) optSv = round.stakes.fetch(participantAddress);
         if (!optSv.hasValue()) {
             return (0, participant);
@@ -252,7 +254,7 @@ contract RoundsBase {
             sv.ordinary = 0;
         }
 
-        if (sumOfStakes(sv) == 0) {
+        if (activeAndNotStakeSum(sv) == 0) {
             --round.participantQty;
             delete round.stakes[participantAddress];
             --participant.roundQty;
@@ -264,12 +266,22 @@ contract RoundsBase {
     }
 
 
-    function sumOfStakes(StakeValue stakes) internal inline returns (uint64) {
+    function activeAndNotStakeSum(StakeValue stakes) internal inline returns (uint64) {
+        optional(InvestParams) v = stakes.vesting;
+        optional(InvestParams) l = stakes.lock;
         return
             stakes.ordinary +
-            (stakes.vesting.hasValue()? stakes.vesting.get().amount : 0) +
-            (stakes.lock.hasValue()? stakes.lock.get().amount : 0)
-            ;
+            (v.hasValue() ? v.get().amount : 0) +
+            (l.hasValue() ? l.get().amount : 0);
+    }
+
+    function activeStakeSum(StakeValue stakes) internal inline returns (uint64) {
+        optional(InvestParams) v = stakes.vesting;
+        optional(InvestParams) l = stakes.lock;
+        return
+            stakes.ordinary +
+            (v.hasValue() && v.get().isActive ? v.get().amount : 0) +
+            (l.hasValue() && l.get().isActive ? l.get().amount : 0);
     }
 
     /*

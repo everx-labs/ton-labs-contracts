@@ -9,7 +9,7 @@ import "IParticipant.sol";
 import "DePoolBase.sol";
 import "DePoolRounds.sol";
 
-contract DePoolContract is AcceptBase, ValidatorBase, ProxyBase, ConfigParamsBase, ParticipantBase, RoundsBase, IDePool {
+contract DePoolContract is CheckAndAcceptBase, ValidatorBase, ProxyBase, ConfigParamsBase, ParticipantBase, RoundsBase, IDePool {
 
     /*
      * Constants
@@ -50,26 +50,6 @@ contract DePoolContract is AcceptBase, ValidatorBase, ProxyBase, ConfigParamsBas
     uint64 constant VALUE_FOR_SELF_CALL = 1 ton;
 
 
-    // Status codes for messages sending back to participants as result of
-    // operations (add/remove/continue/withdraw stake):
-    uint8 constant STATUS_SUCCESS                                        =  0;
-    uint8 constant STATUS_STAKE_TOO_SMALL                                =  1;
-    uint8 constant STATUS_DEPOOL_CLOSED                                  =  3;
-    uint8 constant STATUS_ROUND_STAKE_LIMIT                              =  4;
-    uint8 constant STATUS_MSG_VAL_TOO_SMALL                              =  5;
-    uint8 constant STATUS_NO_PARTICIPANT                                 =  6;
-    uint8 constant STATUS_NO_TRANSFER_WHILE_PENDING_ROUND                =  8;
-    uint8 constant STATUS_PARTICIPANT_HAVE_ALREADY_VESTING               =  9;
-    uint8 constant STATUS_WITHDRAWAL_PERIOD_GREATER_TOTAL_PERIOD         = 10;
-    uint8 constant STATUS_TOTAL_PERIOD_MORE_18YEARS                      = 11;
-    uint8 constant STATUS_WITHDRAWAL_PERIOD_IS_ZERO                      = 12;
-    uint8 constant STATUS_TOTAL_PERIOD_IS_NOT_DIVED_BY_WITHDRAWAL_PERIOD = 13;
-    uint8 constant STATUS_PERIOD_PAYMENT_IS_ZERO                         = 14;
-    uint8 constant STATUS_REMAINING_STAKE_LESS_THAN_MINIMAL              = 16;
-    uint8 constant STATUS_PARTICIPANT_HAVE_ALREADY_LOCK                  = 17;
-    uint8 constant STATUS_TRANSFER_AMOUNT_IS_TOO_BIG                     = 18;
-    uint8 constant STATUS_TRANSFER_SELF                                  = 19;
-
     /*
      * Global variables
      */
@@ -97,6 +77,11 @@ contract DePoolContract is AcceptBase, ValidatorBase, ProxyBase, ConfigParamsBas
     event roundStakeIsAccepted(uint64 queryId, uint32 comment);
     event roundStakeIsRejected(uint64 queryId, uint32 comment);
 
+    // This is emitted if stake is returned by proxy (IProxy.process_new_stake)
+    event proxyHasRejectedTheStake(uint64 queryId);
+    // This event are emitted if stake is returned by proxy (IProxy.process_new_stake)
+    event proxyHasRejectedRecoverRequest(uint64 roundId);
+
     // Event emitted in startRoundCompleting() function
     event RoundCompleted(TruncatedRound round);
 
@@ -111,6 +96,7 @@ contract DePoolContract is AcceptBase, ValidatorBase, ProxyBase, ConfigParamsBas
         address validatorWallet,
         uint64 minStake
     )
+        CheckAndAcceptBase(minStake, minRoundStake)
         ValidatorBase(validatorWallet)
         ProxyBase(proxy0, proxy1)
         public
@@ -180,19 +166,19 @@ contract DePoolContract is AcceptBase, ValidatorBase, ProxyBase, ConfigParamsBas
      *  Round functions
      */
 
-    function startRoundCompleting(Round round, CompletionReason reason) private inline returns (Round) {
+    function startRoundCompleting(Round round, CompletionReason reason) private returns (Round) {
         round.completionReason = reason;
         round.step = RoundStep.Completing;
 
         round.end = uint32(now);
-        this.completeRound{flag: 3, bounce: false, value: VALUE_FOR_SELF_CALL}(round.id, round.participantQty);
+        this.completeRound{flag: 1, bounce: false, value: VALUE_FOR_SELF_CALL}(round.id, round.participantQty);
 
         emit RoundCompleted(toTruncatedRound(round));
 
         return round;
     }
 
-    function cutWithdrawalValue(InvestParams p) private view returns (optional(InvestParams), uint64) {
+    function cutWithdrawalValueAndActivateStake(InvestParams p) private view returns (optional(InvestParams), uint64) {
         uint64 periodQty = (uint64(now) - p.lastWithdrawalTime) / p.withdrawalPeriod;
         uint64 withdrawal = math.min(periodQty * p.withdrawalValue, p.amount);
         p.amount -= withdrawal;
@@ -231,26 +217,26 @@ contract DePoolContract is AcceptBase, ValidatorBase, ProxyBase, ConfigParamsBas
             newStake = math.muldiv(completedRound.unused, stakes.ordinary, completedRound.stake);
         } else {
             if (!isZeroRoundStake) {
-                int stakeSum = sumOfStakes(stakes);
+                int stakeSum = activeStakeSum(stakes);
                 reward = uint64(math.max(
                     math.muldiv(stakeSum, completedRound.rewards, completedRound.stake) - int(RET_OR_REINV_FEE),
                     0
                 ));
-                participant.reward += reward;
-                newStake = stakes.ordinary + reward;
             }
+            participant.reward += reward;
+            newStake = stakes.ordinary + reward;
         }
 
         // upd vesting
         optional(InvestParams) newVesting = stakes.vesting;
         if (newVesting.hasValue()) {
-            if (validatorIsPunished) {
+            if (validatorIsPunished && newVesting.get().isActive) {
                 InvestParams params = newVesting.get();
                 params.amount = math.muldiv(completedRound.unused, params.amount, completedRound.stake);
                 newVesting.set(params);
             }
             uint64 withdrawalVesting;
-            (newVesting, withdrawalVesting) = cutWithdrawalValue(newVesting.get());
+            (newVesting, withdrawalVesting) = cutWithdrawalValueAndActivateStake(newVesting.get());
             newStake += withdrawalVesting;
         }
 
@@ -268,13 +254,13 @@ contract DePoolContract is AcceptBase, ValidatorBase, ProxyBase, ConfigParamsBas
         // upd lock
         optional(InvestParams) newLock = stakes.lock;
         if (newLock.hasValue()) {
-            if (validatorIsPunished) {
+            if (validatorIsPunished && newLock.get().isActive) {
                 InvestParams params = newLock.get();
                 params.amount = math.muldiv(completedRound.unused, params.amount, completedRound.stake);
                 newLock.set(params);
             }
             uint64 withdrawalLock;
-            (newLock, withdrawalLock) = cutWithdrawalValue(newLock.get());
+            (newLock, withdrawalLock) = cutWithdrawalValueAndActivateStake(newLock.get());
             if (withdrawalLock != 0) {
                 newLock.get().owner.transfer(withdrawalLock, false, 1);
             }
@@ -321,7 +307,7 @@ contract DePoolContract is AcceptBase, ValidatorBase, ProxyBase, ConfigParamsBas
     /// @param round Round structure that should be completed.
     function _returnOrReinvest(Round round, uint8 chunkSize) private returns (Round) {
         tvm.accept();
-        Round round0 = m_rounds[m_roundQty - 1];
+        Round round0 = m_rounds.fetch(m_roundQty - 1).get();
         mapping(address => StakeValue) stakes = round.stakes;
         uint sentMsgs = 0;
         while (!stakes.empty() && sentMsgs < chunkSize) {
@@ -370,7 +356,7 @@ contract DePoolContract is AcceptBase, ValidatorBase, ProxyBase, ConfigParamsBas
             return ;
         }
 
-        Round round = m_rounds[m_roundQty - 1];
+        Round round = m_rounds.fetch(m_roundQty - 1).get();
 
         optional(InvestParams) empty;
         (round, participant) = _addStakes(round, participant, msg.sender, stake, empty, empty);
@@ -468,36 +454,21 @@ contract DePoolContract is AcceptBase, ValidatorBase, ProxyBase, ConfigParamsBas
             withdrawalValue: withdrawalValue,
             owner: msg.sender
         });
-        optional(InvestParams) optVestingOrLock;
-        optional(InvestParams) empty;
 
-        // Add first part of vesting/lock
-        uint64 round_id = m_roundQty - 2; // election or
-        Round round = m_rounds.fetch(round_id).get();
-        if (round.step == RoundStep.WaitingValidatorRequest) {
-            vestingOrLock.isActive = true;
+        for (uint64 i = 1; i <= 2; ++i) {
+            uint64 round_id = m_roundQty - i;
+            Round round = m_rounds.fetch(round_id).get();
+            vestingOrLock.isActive = round.step == RoundStep.WaitingValidatorRequest || i == 1;
+            optional(InvestParams) v;
+            optional(InvestParams) l;
+            if (isVesting) {
+                v.set(vestingOrLock);
+            } else {
+                l.set(vestingOrLock);
+            }
+            (round, participant) = _addStakes(round, participant, beneficiary, 0, v, l);
+            m_rounds[round_id] = round;
         }
-        optVestingOrLock.set(vestingOrLock);
-        if (isVesting) {
-            (round, participant) = _addStakes(round, participant, beneficiary, 0, optVestingOrLock, empty);
-        } else {
-            (round, participant) = _addStakes(round, participant, beneficiary, 0, empty, optVestingOrLock);
-        }
-        m_rounds[round_id] = round;
-
-
-        // Add second part of vesting/lock
-        round_id = m_roundQty - 1;
-        round = m_rounds.fetch(round_id).get();
-        vestingOrLock.isActive = true;
-        optVestingOrLock.set(vestingOrLock);
-        if (isVesting) {
-            (round, participant) = _addStakes(round, participant, beneficiary, 0, optVestingOrLock, empty);
-        } else {
-            (round, participant) = _addStakes(round, participant, beneficiary, 0, empty, optVestingOrLock);
-        }
-        m_rounds[round_id] = round;
-
 
         _setOrDeleteParticipant(beneficiary, participant);
         _sendAccept(ADD_STAKE_FEE);
@@ -580,7 +551,7 @@ contract DePoolContract is AcceptBase, ValidatorBase, ProxyBase, ConfigParamsBas
             amount = DePoolLib.MAX_UINT64;
         }
 
-        DePoolLib.Participant destParticipant = getOrCreateParticipant(dest);
+        DePoolLib.Participant destParticipant = m_participants[dest];
 
         uint64 totalSrcStake;
         uint64 transferred;
@@ -636,7 +607,7 @@ contract DePoolContract is AcceptBase, ValidatorBase, ProxyBase, ConfigParamsBas
     ) public functionID(0x4E73744B) onlyValidatorContract {
         require(!m_poolClosed, Errors.DEPOOL_IS_CLOSED);
         tvm.accept();
-        Round round = m_rounds[m_roundQty - 2];
+        Round round = m_rounds.fetch(m_roundQty - 2).get();
         require(round.step == RoundStep.WaitingValidatorRequest, Errors.NO_ELECTION_ROUND);
         require(stakeAt == round.supposedElectedAt, Errors.INVALID_ELECTION_ID);
 
@@ -709,6 +680,8 @@ contract DePoolContract is AcceptBase, ValidatorBase, ProxyBase, ConfigParamsBas
                 round2.completionReason != CompletionReason.Undefined) {
                 if (round2.participantQty == 0) {
                     round2.step = RoundStep.Completed;
+                    round2.end = uint32(now); // just for logging
+                    emit RoundCompleted(toTruncatedRound(round2));
                 } else {
                     // just complete round
                     round2 = startRoundCompleting(round2, round2.completionReason);
@@ -718,9 +691,6 @@ contract DePoolContract is AcceptBase, ValidatorBase, ProxyBase, ConfigParamsBas
                 round2.step = RoundStep.WaitingReward;
                 _recoverStake(round2.proxy, round2.id, round2.elector);
             }
-            // TODO if proxy is stopped (no money => contract is frozen) than DePool can be stopped
-            // if round2.step == RoundStep.WaitingReward than retry to recover stake and handle this situation in
-            // onSuccess/OnFailToRecoverStake
         }
         return round2;
     }
@@ -756,7 +726,7 @@ contract DePoolContract is AcceptBase, ValidatorBase, ProxyBase, ConfigParamsBas
             // check that round total stake is greater or equal to minimum stake
             bool isTotalStakeOk = round1.stake >= m_minRoundStake;
             // and validator wallet made a necessary minimal stake in round
-            bool isValidatorStake  = sumOfStakes(round1.stakes[m_validatorWallet]) >=
+            bool isValidatorStake  = activeStakeSum(round1.stakes[m_validatorWallet]) >=
                                 math.muldiv(m_minRoundStake, VALIDATOR_WALLET_MIN_STAKE, 100);
             if (!isTotalStakeOk || !isValidatorStake) {
                 round1.step = RoundStep.WaitingUnfreeze;
@@ -804,11 +774,11 @@ contract DePoolContract is AcceptBase, ValidatorBase, ProxyBase, ConfigParamsBas
 
         if (chunkSize < MAX_MSGS_PER_TR && !round.stakes.empty()) {
             uint8 doubleChunkSize = 2 * chunkSize;
-            this.completeRoundWithChunk{flag: 3, bounce: false}(
+            this.completeRoundWithChunk{flag: 1, bounce: false}(
                 roundId,
                 doubleChunkSize < MAX_MSGS_PER_TR? doubleChunkSize : chunkSize
             );
-            this.completeRoundWithChunk{flag: 3, bounce: false}(roundId, chunkSize);
+            this.completeRoundWithChunk{flag: 1, bounce: false}(roundId, chunkSize);
         }
 
         m_rounds[roundId] = round;
@@ -822,7 +792,7 @@ contract DePoolContract is AcceptBase, ValidatorBase, ProxyBase, ConfigParamsBas
         Round round = optRound.get();
         require(round.step == RoundStep.Completing, InternalErrors.ERROR518);
 
-        this.completeRoundWithChunk{flag: 3, bounce: false}(roundId, 1);
+        this.completeRoundWithChunk{flag: 1, bounce: false}(roundId, 1);
         tvm.commit();
         tvm.accept();
         if (participantQty < MAX_MSGS_PER_TR) {
@@ -837,12 +807,12 @@ contract DePoolContract is AcceptBase, ValidatorBase, ProxyBase, ConfigParamsBas
                         (restParticipant < MAX_PARTICIPANTS || msgQty + 1 == MAX_QTY_OF_OUT_ACTIONS)?
                         restParticipant :
                         MAX_PARTICIPANTS;
-                    this.completeRound{flag: 3, bounce: false}(roundId, curGroup);
+                    this.completeRound{flag: 1, bounce: false}(roundId, curGroup);
                     restParticipant -= curGroup;
                 }
             } else {
                 for (uint i = 0; i < participantQty; i += MAX_MSGS_PER_TR) {
-                    this.completeRoundWithChunk{flag: 3, bounce: false}(roundId, MAX_MSGS_PER_TR);
+                    this.completeRoundWithChunk{flag: 1, bounce: false}(roundId, MAX_MSGS_PER_TR);
                 }
             }
         }
@@ -890,7 +860,7 @@ contract DePoolContract is AcceptBase, ValidatorBase, ProxyBase, ConfigParamsBas
         emit roundStakeIsRejected(round.validatorRequest.queryId, comment);
     }
 
-    function acceptRewardAndStartRoundCompleting(Round round, uint64  value) private returns (Round){
+    function acceptRewardAndStartRoundCompleting(Round round, uint64 value) private returns (Round){
         uint64 effectiveStake = round.stake - round.unused;
         uint64 totalReward = value - effectiveStake;
         round.rewards = math.muldiv(totalReward, PART_FRACTION, 100);
@@ -968,13 +938,15 @@ contract DePoolContract is AcceptBase, ValidatorBase, ProxyBase, ConfigParamsBas
         m_poolClosed = true;
         tvm.commit();
         tvm.accept();
-        (Round round0, Round round1) = (m_rounds[m_roundQty - 1], m_rounds[m_roundQty - 2]);
+        Round round0 = m_rounds.fetch(m_roundQty - 1).get();
+        Round round1 = m_rounds.fetch(m_roundQty - 2).get();
         round0 = startRoundCompleting(round0, CompletionReason.PoolClosed);
         if (round1.step == RoundStep.WaitingValidatorRequest) {
             round1 = startRoundCompleting(round1, CompletionReason.PoolClosed);
         }
         emit dePoolPoolClosed();
-        (m_rounds[m_roundQty - 1], m_rounds[m_roundQty - 2]) = (round0, round1);
+        m_rounds[m_roundQty - 1] = round0;
+        m_rounds[m_roundQty - 2] = round1;
     }
 
     /*
@@ -985,8 +957,45 @@ contract DePoolContract is AcceptBase, ValidatorBase, ProxyBase, ConfigParamsBas
     function receiveFunds() public pure {
     }
 
-    receive() external { revert(Errors.TRANSFER_IS_FORBIDDEN); }
+    receive() external {
+        _returnChange();
+    }
+
     fallback() external {}
+
+    onBounce(TvmSlice body) external {
+        uint32 functionId = body.decode(uint32);
+        bool isProcessNewStake = functionId == tvm.functionId(IProxy.process_new_stake);
+        bool isRecoverStake = functionId == tvm.functionId(IProxy.recover_stake);
+        if (isProcessNewStake || isRecoverStake) {
+            uint64 roundId = body.decode(uint64);
+            optional(Round) optRound = m_rounds.fetch(roundId);
+            if (isProcessNewStake) {
+                require(roundId == m_roundQty - 2, InternalErrors.ERROR524);
+                Round r1 = optRound.get();
+                require(r1.step == RoundStep.WaitingIfStakeAccepted, InternalErrors.ERROR525);
+                r1.step = RoundStep.WaitingValidatorRequest; // roll back step
+                emit proxyHasRejectedTheStake(r1.validatorRequest.queryId);
+                optRound.set(r1);
+            } else {
+                if (roundId == m_roundQty - 3) {
+                    Round r2 = optRound.get();
+                    require(r2.step == RoundStep.WaitingReward, InternalErrors.ERROR526);
+                    r2.step = RoundStep.WaitingUnfreeze; // roll back step
+                    optRound.set(r2);
+                } else if (roundId == m_roundQty - 2) {
+                    Round r1 = optRound.get();
+                    require(r1.step == RoundStep.WaitingIfValidatorWinElections, InternalErrors.ERROR527);
+                    r1.step = RoundStep.WaitingValidationStart; // roll back step
+                    optRound.set(r1);
+                } else {
+                    revert(InternalErrors.ERROR528);
+                }
+                emit proxyHasRejectedRecoverRequest(roundId);
+            }
+            m_rounds[roundId] = optRound.get();
+        }
+    }
 }
 
 contract DePool is DePoolContract {
@@ -1012,7 +1021,7 @@ contract DePool is DePoolContract {
     function getParticipantInfo(address addr) public view
         returns (
             uint64 total,
-            uint64 pauseStake,
+            uint64 withdrawValue,
             bool reinvest,
             uint64 reward,
             mapping (uint64 => uint64) stakes,
@@ -1026,7 +1035,7 @@ contract DePool is DePoolContract {
 
         reinvest = participant.reinvest;
         reward = participant.reward;
-        pauseStake = participant.withdrawValue;
+        withdrawValue = participant.withdrawValue;
 
         optional(uint64, Round) pair = m_rounds.min();
         while (pair.hasValue()) {
@@ -1069,7 +1078,11 @@ contract DePool is DePoolContract {
         uint64 transferStakeFee,
         uint64 retOrReinvFee,
         uint64 answerMsgFee,
-        uint64 proxyFee
+        uint64 proxyFee,
+
+        uint64 participantFraction,
+        uint64 validatorFraction,
+        uint64 validatorWalletMinStake
     )
     {
         minStake = m_minStake;
@@ -1090,5 +1103,22 @@ contract DePool is DePoolContract {
         retOrReinvFee = RET_OR_REINV_FEE;
         answerMsgFee = ANSWER_MSG_FEE;
         proxyFee = DePoolLib.PROXY_FEE;
+
+        participantFraction = PART_FRACTION;
+        validatorFraction = VALIDATOR_FRACTION;
+        validatorWalletMinStake = VALIDATOR_WALLET_MIN_STAKE;
+    }
+
+    function getParticipans() external view returns (address[] participans) {
+        mapping(address => bool) used;
+        optional(address, DePoolLib.Participant) pair = m_participants.min();
+        while (pair.hasValue()) {
+            (address p, ) = pair.get();
+            if (!used.exists(p)) {
+                used[p] = true;
+                participans.push(p);
+            }
+            pair = m_participants.next(p);
+        }
     }
 }
