@@ -57,6 +57,18 @@
 			],
 			"outputs": [
 			]
+		},
+		{
+			"name": "sendTransaction",
+			"inputs": [
+				{"name":"dest","type":"address"},
+				{"name":"value","type":"uint64"},
+				{"name":"bounce","type":"bool"},
+				{"name":"flags","type":"uint16"},
+				{"name":"payload","type":"cell"}
+			],
+			"outputs": [
+			]
 		}
 	],
 	"data": [

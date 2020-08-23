@@ -4,14 +4,20 @@ pragma solidity >0.5.0;
 pragma AbiHeader expire;
 
 import "IDePool.sol";
+import "Participant.sol";
 
 interface ITimer {
     function setTimer(uint timer) external;
 }
 
-contract DePoolHelper {
+contract DePoolHelper is Participant {
     uint constant TICKTOCK_FEE = 1e9;
-    uint constant TIMER_FEE = 1e9;
+
+    // Timer fees
+    uint constant _timerRate = 400000; // 400 000 nt = 400 mct = 0,4 mt = 0,0004 t per second
+    uint constant _fwdFee = 1000000; // 1 000 000 nt = 1 000 mct = 1 mt = 0,001 t
+    uint constant _epsilon = 1e9;
+
     // Actual DePool pool contract address.
     address m_dePoolPool;
     // Array of old (closed) DePool contract addresses.
@@ -56,7 +62,8 @@ contract DePoolHelper {
     /// @notice Allows to init timer sending request to Timer contract.
     /// @param timer Address of a timer contract.
     function _settimer(address timer, uint period) private inline {
-        ITimer(timer).setTimer.value(TIMER_FEE)(period);
+	    uint opex = period * _timerRate + _fwdFee * 8 + _epsilon;
+        ITimer(timer).setTimer.value(opex)(period);
     }
 
     /// @notice Timer callback function.
@@ -94,6 +101,6 @@ contract DePoolHelper {
 
     function onCodeUpgrade() private {}
 
-    receive() external {}
-    fallback() external{}
+    receive() external override {}
+    fallback() external override {}
 }

@@ -7,16 +7,26 @@ import "IProxy.sol";
 import "DePoolLib.sol";
 
 contract DePoolProxyContract is IProxy {
+    uint64 constant MIN_BALANCE = 5 ton;
+
+    uint constant ERROR_IS_NOT_OWNER = 101;
+    uint constant ERROR_IS_NOT_DEPOOL = 102;
+    uint constant ERROR_BAD_BALANCE = 103;
+
     address m_dePool;
 
     constructor(address depool) public {
-        require(msg.pubkey() == tvm.pubkey(), Errors.IS_NOT_OWNER);
+        require(msg.pubkey() == tvm.pubkey(), ERROR_IS_NOT_OWNER);
         tvm.accept();
         m_dePool = depool;
     }
 
-    modifier onlyDePool {
-        require(msg.sender == m_dePool, 102);
+    modifier onlyDePoolAndCheckBalance {
+        require(msg.sender == m_dePool, ERROR_IS_NOT_DEPOOL);
+
+        // this check is needed for correct work of proxy
+        uint carry = msg.value - DePoolLib.PROXY_FEE;
+        require(address(this).balance - carry >= MIN_BALANCE, ERROR_BAD_BALANCE);
         _;
     }
 
@@ -33,7 +43,7 @@ contract DePoolProxyContract is IProxy {
         uint256 adnlAddr,
         bytes signature,
         address elector
-    ) external override onlyDePool {
+    ) external override onlyDePoolAndCheckBalance {
         IElector(elector).process_new_stake{value: msg.value - DePoolLib.PROXY_FEE}(
             queryId, validatorKey, stakeAt, maxFactor, adnlAddr, signature
         );
@@ -55,7 +65,7 @@ contract DePoolProxyContract is IProxy {
      */
 
     /// @dev Allows to recover validator stake
-    function recover_stake(uint64 queryId, address elector) public override onlyDePool {
+    function recover_stake(uint64 queryId, address elector) public override onlyDePoolAndCheckBalance {
         IElector(elector).recover_stake{value: msg.value - DePoolLib.PROXY_FEE}(queryId);
     }
 
@@ -78,7 +88,8 @@ contract DePoolProxyContract is IProxy {
      * Public Getters
      */
 
-    function getDePool() public view returns (address) {
-        return m_dePool;
+    function getProxyInfo() public view returns (address depool, uint64 minBalance) {
+        depool = m_dePool;
+        minBalance = MIN_BALANCE;
     }
 }
