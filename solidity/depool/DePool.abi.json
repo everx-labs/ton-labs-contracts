@@ -56,11 +56,11 @@
 			]
 		},
 		{
-			"name": "getParticipans",
+			"name": "getParticipants",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"participans","type":"address[]"}
+				{"name":"participants","type":"address[]"}
 			]
 		},
 		{

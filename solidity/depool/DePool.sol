@@ -1109,14 +1109,14 @@ contract DePool is DePoolContract {
         validatorWalletMinStake = VALIDATOR_WALLET_MIN_STAKE;
     }
 
-    function getParticipans() external view returns (address[] participans) {
+    function getParticipants() external view returns (address[] participants) {
         mapping(address => bool) used;
         optional(address, DePoolLib.Participant) pair = m_participants.min();
         while (pair.hasValue()) {
             (address p, ) = pair.get();
             if (!used.exists(p)) {
                 used[p] = true;
-                participans.push(p);
+                participants.push(p);
             }
             pair = m_participants.next(p);
         }
