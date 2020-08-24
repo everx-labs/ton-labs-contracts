@@ -57,6 +57,11 @@ library InternalErrors {
     uint constant ERROR521 = 521;
     uint constant ERROR522 = 522;
     uint constant ERROR523 = 523;
+    uint constant ERROR524 = 524;
+    uint constant ERROR525 = 525;
+    uint constant ERROR526 = 526;
+    uint constant ERROR527 = 527;
+    uint constant ERROR528 = 528;
 }
 
 library DePoolLib {

@@ -5,13 +5,37 @@ pragma solidity >=0.6.0;
 import "DePoolLib.sol";
 import "IProxy.sol";
 
-contract AcceptBase {
+contract CheckAndAcceptBase {
+    // Status codes for messages sending back to participants as result of
+    // operations (add/remove/continue/withdraw stake):
+    uint8 constant STATUS_SUCCESS                                        =  0;
+    uint8 constant STATUS_STAKE_TOO_SMALL                                =  1;
+    uint8 constant STATUS_DEPOOL_CLOSED                                  =  3;
+    uint8 constant STATUS_ROUND_STAKE_LIMIT                              =  4;
+    uint8 constant STATUS_MSG_VAL_TOO_SMALL                              =  5;
+    uint8 constant STATUS_NO_PARTICIPANT                                 =  6;
+    uint8 constant STATUS_NO_TRANSFER_WHILE_PENDING_ROUND                =  8;
+    uint8 constant STATUS_PARTICIPANT_HAVE_ALREADY_VESTING               =  9;
+    uint8 constant STATUS_WITHDRAWAL_PERIOD_GREATER_TOTAL_PERIOD         = 10;
+    uint8 constant STATUS_TOTAL_PERIOD_MORE_18YEARS                      = 11;
+    uint8 constant STATUS_WITHDRAWAL_PERIOD_IS_ZERO                      = 12;
+    uint8 constant STATUS_TOTAL_PERIOD_IS_NOT_DIVED_BY_WITHDRAWAL_PERIOD = 13;
+    uint8 constant STATUS_PERIOD_PAYMENT_IS_ZERO                         = 14;
+    uint8 constant STATUS_REMAINING_STAKE_LESS_THAN_MINIMAL              = 16;
+    uint8 constant STATUS_PARTICIPANT_HAVE_ALREADY_LOCK                  = 17;
+    uint8 constant STATUS_TRANSFER_AMOUNT_IS_TOO_BIG                     = 18;
+    uint8 constant STATUS_TRANSFER_SELF                                  = 19;
+    uint8 constant STATUS_CONSTRUCTOR_WRONG_PARAMS                       = 20;
+    uint8 constant STATUS_CONSTRUCTOR_NO_PUBKEY                          = 21;
+
     modifier onlyOwner {
         require(msg.pubkey() == tvm.pubkey(), Errors.IS_NOT_OWNER);
         _;
     }
 
-    constructor() public onlyOwner {
+    constructor(uint64 minStake, uint64 minRoundStake) public onlyOwner {
+        require(tvm.pubkey() != 0, STATUS_CONSTRUCTOR_NO_PUBKEY);
+        require(1 <= minStake && minStake <= minRoundStake, STATUS_CONSTRUCTOR_WRONG_PARAMS);
         tvm.accept();
     }
 }
@@ -31,7 +55,6 @@ contract ValidatorBase {
 }
 
 contract ProxyBase {
-    // Elector contract address.
 
     // Array of proxies addresses.
     address[] m_proxies;
@@ -119,12 +142,8 @@ contract ConfigParamsBase {
 
 contract ParticipantBase {
 
-    // Dictionary of participants for active rounds.
+    // Dictionary of participants for rounds
     mapping (address => DePoolLib.Participant) m_participants;
-
-    function getOrCreateParticipant(address addr) internal view inline returns (DePoolLib.Participant) {
-        return m_participants[addr];
-    }
 
     function _setOrDeleteParticipant(address addr, DePoolLib.Participant participant) internal inline {
         if (participant.roundQty == 0)
@@ -132,5 +151,4 @@ contract ParticipantBase {
         else
             m_participants[addr] = participant;
     }
-
 }
