@@ -35,6 +35,13 @@
 			]
 		},
 		{
+			"name": "sendTicktock",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "getDePoolPoolAddress",
 			"inputs": [
 			],

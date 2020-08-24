@@ -76,6 +76,12 @@ contract DePoolHelper is Participant {
         }
     }
 
+    /// @notice Allows to send ticktock manually.
+    /// Can be called only by off-chain app with owner keys.
+    function sendTicktock() public acceptOnlyOwner {
+        IDePool(m_dePoolPool).ticktock.value(TICKTOCK_FEE)();
+    }
+
     /*
         get methods
     */
