@@ -63,11 +63,12 @@
 			]
 		},
 		{
-			"name": "getDePool",
+			"name": "getProxyInfo",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"value0","type":"address"}
+				{"name":"depool","type":"address"},
+				{"name":"minBalance","type":"uint64"}
 			]
 		}
 	],
