@@ -886,7 +886,10 @@ contract DePoolContract is CheckAndAcceptBase, ValidatorBase, ProxyBase, ConfigP
                 // optimize a minimum round stake
                 round.step = RoundStep.WaitingUnfreeze;
                 round.unused = value;
-                m_minRoundStake = round.stake - round.unused;
+                uint64 efectiveRoundStake = round.stake - round.unused;
+                if (m_minRoundStake > efectiveRoundStake) {
+                    m_minRoundStake = efectiveRoundStake;
+                }
             } else {
                 // value +/- epsilon == round.stake, so elections are lost
                 round.step = RoundStep.WaitingUnfreeze;
