@@ -13,41 +13,42 @@
     { "name":"symbol", "type":"bytes" },
     { "name":"decimals", "type":"uint8" },
     { "name":"root_public_key", "type":"uint256" },
-    { "name":"wallet_code", "type":"cell" },
-    { "name":"total_supply", "type":"uint128" }
+    { "name":"wallet_public_key", "type":"uint256" },
+    { "name":"root_address", "type":"address" },
+    { "name":"code", "type":"cell" }
     ],
     "outputs": [
     ],
     "id": "0xb"
   },
   {
-    "name": "deployWallet",
+    "name": "transferUTXO",
     "inputs": [
-    { "name":"workchain_id", "type":"int8" },
-    { "name":"pubkey", "type":"uint256" },
+    { "name":"workchain_dest", "type":"int8" },
+    { "name":"pubkey_dest", "type":"uint256" },
+    { "name":"workchain_rest", "type":"int8" },
+    { "name":"pubkey_rest", "type":"uint256" },
     { "name":"tokens", "type":"uint128" },
-    { "name":"grams", "type":"uint128" }
+    { "name":"grams_dest", "type":"uint128" }
     ],
     "outputs": [
-    { "name":"value0", "type":"address" }
     ],
     "id": "0xc"
   },
   {
-    "name": "grant",
+    "name": "accept",
     "inputs": [
-    { "name":"dest", "type":"address" },
-    { "name":"tokens", "type":"uint128" },
-    { "name":"grams", "type":"uint128" }
+    { "name":"tokens", "type":"uint128" }
     ],
     "outputs": [
     ],
     "id": "0xd"
   },
   {
-    "name": "mint",
+    "name": "internalTransfer",
     "inputs": [
-    { "name":"tokens", "type":"uint128" }
+    { "name":"tokens", "type":"uint128" },
+    { "name":"pubkey", "type":"uint256" }
     ],
     "outputs": [
     ],
@@ -81,51 +82,31 @@
     "id": "0x11"
   },
   {
-    "name": "getRootKey",
+    "name": "getBalance",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"value0", "type":"uint128" }
+    ],
+    "id": "0x12"
+  },
+  {
+    "name": "getWalletKey",
     "inputs": [
     ],
     "outputs": [
     { "name":"value0", "type":"uint256" }
     ],
-    "id": "0x12"
-  },
-  {
-    "name": "getTotalSupply",
-    "inputs": [
-    ],
-    "outputs": [
-    { "name":"value0", "type":"uint128" }
-    ],
     "id": "0x13"
   },
   {
-    "name": "getTotalGranted",
+    "name": "getRootAddress",
     "inputs": [
-    ],
-    "outputs": [
-    { "name":"value0", "type":"uint128" }
-    ],
-    "id": "0x14"
-  },
-  {
-    "name": "getWalletCode",
-    "inputs": [
-    ],
-    "outputs": [
-    { "name":"value0", "type":"cell" }
-    ],
-    "id": "0x15"
-  },
-  {
-    "name": "getWalletAddress",
-    "inputs": [
-    { "name":"workchain_id", "type":"int8" },
-    { "name":"pubkey", "type":"uint256" }
     ],
     "outputs": [
     { "name":"value0", "type":"address" }
     ],
-    "id": "0x16"
+    "id": "0x14"
   }
   ],
   "events": [

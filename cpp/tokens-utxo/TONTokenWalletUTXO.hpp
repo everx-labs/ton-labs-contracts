@@ -14,11 +14,6 @@ using TokensType = uint128;
 static constexpr unsigned TOKEN_WALLET_TIMESTAMP_DELAY = 100;
 using wallet_replay_protection_t = replay_attack_protection::timestamp<TOKEN_WALLET_TIMESTAMP_DELAY>;
 
-struct allowance_info {
-  lazy<MsgAddressInt> spender;
-  TokensType remainingTokens;
-};
-
 // ===== TON Token wallet ===== //
 __interface ITONTokenWallet {
 
@@ -28,8 +23,14 @@ __interface ITONTokenWallet {
                    uint256 root_public_key, uint256 wallet_public_key,
                    lazy<MsgAddressInt> root_address, cell code) = 11;
 
+  // tokens and grams_dest will be sent to a new deployed {workchain_dest, pubkey_dest} wallet
+  //   and the rest of tokens and the rest of gas will be sent to new {workchain_rest, pubkey_rest} wallet
   __attribute__((external, noaccept, dyn_chain_parse))
-  void transfer(lazy<MsgAddressInt> dest, TokensType tokens, WalletGramsType grams) = 12;
+  void transferUTXO(int8 workchain_dest, uint256 pubkey_dest, int8 workchain_rest, uint256 pubkey_rest,
+                    TokensType tokens, WalletGramsType grams_dest) = 12;
+
+  // TODO: eliminate workaround when bounced message problem will be solved
+  // https://www.notion.so/tonlabs/Bounced-message-problem-333cf800e789421d87acd9cb401dca4f
 
   // Receive tokens from root
   __attribute__((internal, noaccept))
@@ -57,26 +58,10 @@ __interface ITONTokenWallet {
 
   __attribute__((getter))
   lazy<MsgAddressInt> getRootAddress() = 20;
-
-  __attribute__((getter))
-  allowance_info allowance() = 21;
-
-  // allowance interface
-  __attribute__((external, noaccept, dyn_chain_parse))
-  void approve(lazy<MsgAddressInt> spender, TokensType remainingTokens, TokensType tokens) = 22;
-
-  __attribute__((external, noaccept, dyn_chain_parse))
-  void transferFrom(lazy<MsgAddressInt> dest, lazy<MsgAddressInt> to, TokensType tokens,
-                    WalletGramsType grams) = 23;
-
-  __attribute__((internal))
-  void internalTransferFrom(lazy<MsgAddressInt> to, TokensType tokens) = 24;
-
-  __attribute__((external, noaccept))
-  void disapprove() = 25;
 };
 
 struct DTONTokenWallet {
+  bool_t utxo_received_;
   bytes name_;
   bytes symbol_;
   uint8 decimals_;
@@ -85,7 +70,6 @@ struct DTONTokenWallet {
   uint256 wallet_public_key_;
   lazy<MsgAddressInt> root_address_;
   cell code_;
-  std::optional<allowance_info> allowance_;
 };
 
 struct ETONTokenWallet {

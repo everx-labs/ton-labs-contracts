@@ -1,6 +1,6 @@
 #pragma once
 
-#include "TONTokenWallet.hpp"
+#include "TONTokenWalletUTXO.hpp"
 
 namespace tvm { namespace schema {
 
@@ -16,34 +16,31 @@ __interface IRootTokenContract {
   lazy<MsgAddressInt> deployWallet(int8 workchain_id, uint256 pubkey, TokensType tokens, WalletGramsType grams) = 12;
 
   __attribute__((external, noaccept, dyn_chain_parse))
-  void grant(lazy<MsgAddressInt> dest, TokensType tokens, WalletGramsType grams) = 13;
-
-  __attribute__((external, noaccept, dyn_chain_parse))
-  void mint(TokensType tokens) = 14;
+  void mint(TokensType tokens) = 13;
 
   __attribute__((getter))
-  bytes getName() = 15;
+  bytes getName() = 14;
 
   __attribute__((getter))
-  bytes getSymbol() = 16;
+  bytes getSymbol() = 15;
 
   __attribute__((getter))
-  uint8 getDecimals() = 17;
+  uint8 getDecimals() = 16;
 
   __attribute__((getter))
-  uint256 getRootKey() = 18;
+  uint256 getRootKey() = 17;
 
   __attribute__((getter))
-  TokensType getTotalSupply() = 19;
+  TokensType getTotalSupply() = 18;
 
   __attribute__((getter))
-  TokensType getTotalGranted() = 20;
+  TokensType getTotalGranted() = 19;
 
   __attribute__((getter))
-  cell getWalletCode() = 21;
+  cell getWalletCode() = 20;
 
   __attribute__((getter))
-  lazy<MsgAddressInt> getWalletAddress(int8 workchain_id, uint256 pubkey) = 22;
+  lazy<MsgAddressInt> getWalletAddress(int8 workchain_id, uint256 pubkey) = 21;
 };
 
 struct DRootTokenContract {
