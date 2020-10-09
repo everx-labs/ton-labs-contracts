@@ -1,5 +1,5 @@
-#include "RootTokenContract.hpp"
-#include "TONTokenWallet.hpp"
+#include "RootTokenContractUTXO.hpp"
+#include "TONTokenWalletUTXO.hpp"
 
 #include <tvm/contract.hpp>
 #include <tvm/smart_switcher.hpp>
@@ -20,6 +20,8 @@ public:
     static constexpr unsigned not_enough_balance             = 101;
     static constexpr unsigned wrong_bounced_header           = 102;
     static constexpr unsigned wrong_bounced_args             = 103;
+    static constexpr unsigned zero_tokens_not_allowed        = 104;
+    static constexpr unsigned unexpected_bounced_msg         = 105;
   };
 
   __always_inline
@@ -38,6 +40,7 @@ public:
   lazy<MsgAddressInt> deployWallet(int8 workchain_id, uint256 pubkey, TokensType tokens, WalletGramsType grams) {
     require(root_public_key_ == tvm_pubkey(), error_code::message_sender_is_not_my_owner);
     require(total_granted_ + tokens <= total_supply_, error_code::not_enough_balance);
+    require(tokens != 0, error_code::zero_tokens_not_allowed);
 
     tvm_accept();
 
@@ -48,19 +51,6 @@ public:
 
     total_granted_ += tokens;
     return dest;
-  }
-
-  __always_inline
-  void grant(lazy<MsgAddressInt> dest, TokensType tokens, WalletGramsType grams) {
-    require(root_public_key_ == tvm_pubkey(), error_code::message_sender_is_not_my_owner);
-    require(total_granted_ + tokens <= total_supply_, error_code::not_enough_balance);
-
-    tvm_accept();
-
-    contract_handle<ITONTokenWallet> dest_handle(dest);
-    dest_handle(Grams(grams.get())).call<&ITONTokenWallet::accept>(tokens);
-
-    total_granted_ += tokens;
   }
 
   __always_inline
@@ -108,21 +98,7 @@ public:
 
   // received bounced message back
   __always_inline static int _on_bounced(cell msg, slice msg_body) {
-    tvm_accept();
-
-    using Args = args_struct_t<&ITONTokenWallet::accept>;
-    parser p(msg_body);
-    require(p.ldi(32) == -1, error_code::wrong_bounced_header);
-    auto [opt_hdr, =p] = parse_continue<abiv1::internal_msg_header>(p);
-    require(opt_hdr && opt_hdr->function_id == id_v<&ITONTokenWallet::accept>,
-            error_code::wrong_bounced_header);
-    auto args = parse<Args>(p, error_code::wrong_bounced_args);
-    auto bounced_val = args.tokens;
-
-    auto [hdr, persist] = load_persistent_data<IRootTokenContract, root_replay_protection_t, DRootTokenContract>();
-    require(bounced_val <= persist.total_granted_, error_code::wrong_bounced_args);
-    persist.total_granted_ -= bounced_val;
-    save_persistent_data<IRootTokenContract, root_replay_protection_t>(hdr, persist);
+    tvm_throw(error_code::unexpected_bounced_msg);
     return 0;
   }
   // default processing of unknown messages
@@ -136,6 +112,7 @@ private:
   __always_inline
   std::pair<StateInit, lazy<MsgAddressInt>> calc_wallet_init(int8 workchain_id, uint256 pubkey) {
     DTONTokenWallet wallet_data {
+      bool_t(false),
       name_, symbol_, decimals_,
       TokensType(0), root_public_key_, pubkey,
       lazy<MsgAddressInt>{tvm_myaddr()}, wallet_code_

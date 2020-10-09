@@ -5,18 +5,20 @@
 
 #include <tvm/replay_attack_protection/timestamp.hpp>
 #include <tvm/smart_switcher.hpp>
+#include <tvm/dict_set.hpp>
 
 namespace tvm { namespace schema {
 
 using WalletGramsType = uint128;
 using TokensType = uint128;
+using TokenId = uint128;
 
 static constexpr unsigned TOKEN_WALLET_TIMESTAMP_DELAY = 100;
 using wallet_replay_protection_t = replay_attack_protection::timestamp<TOKEN_WALLET_TIMESTAMP_DELAY>;
 
 struct allowance_info {
   lazy<MsgAddressInt> spender;
-  TokensType remainingTokens;
+  TokenId allowedToken;
 };
 
 // ===== TON Token wallet ===== //
@@ -29,15 +31,15 @@ __interface ITONTokenWallet {
                    lazy<MsgAddressInt> root_address, cell code) = 11;
 
   __attribute__((external, noaccept, dyn_chain_parse))
-  void transfer(lazy<MsgAddressInt> dest, TokensType tokens, WalletGramsType grams) = 12;
+  void transfer(lazy<MsgAddressInt> dest, TokenId tokenId, WalletGramsType grams) = 12;
 
   // Receive tokens from root
   __attribute__((internal, noaccept))
-  void accept(TokensType tokens) = 13;
+  void accept(TokenId tokenId) = 13;
 
   // Receive tokens from other wallet
   __attribute__((internal, noaccept))
-  void internalTransfer(TokensType tokens, uint256 pubkey) = 14;
+  void internalTransfer(TokenId tokenId, uint256 pubkey) = 14;
 
   // getters
   __attribute__((getter))
@@ -61,31 +63,37 @@ __interface ITONTokenWallet {
   __attribute__((getter))
   allowance_info allowance() = 21;
 
+  __attribute__((getter))
+  TokenId getTokenByIndex(TokensType index) = 22;
+
+  __attribute__((getter))
+  lazy<MsgAddressInt> getApproved(TokenId tokenId) = 23;
+
   // allowance interface
   __attribute__((external, noaccept, dyn_chain_parse))
-  void approve(lazy<MsgAddressInt> spender, TokensType remainingTokens, TokensType tokens) = 22;
+  void approve(lazy<MsgAddressInt> spender, TokenId tokenId) = 24;
 
   __attribute__((external, noaccept, dyn_chain_parse))
-  void transferFrom(lazy<MsgAddressInt> dest, lazy<MsgAddressInt> to, TokensType tokens,
-                    WalletGramsType grams) = 23;
+  void transferFrom(lazy<MsgAddressInt> dest, lazy<MsgAddressInt> to, TokenId tokenId,
+                    WalletGramsType grams) = 25;
 
   __attribute__((internal))
-  void internalTransferFrom(lazy<MsgAddressInt> to, TokensType tokens) = 24;
+  void internalTransferFrom(lazy<MsgAddressInt> to, TokenId tokenId) = 26;
 
   __attribute__((external, noaccept))
-  void disapprove() = 25;
+  void disapprove() = 27;
 };
 
 struct DTONTokenWallet {
   bytes name_;
   bytes symbol_;
   uint8 decimals_;
-  TokensType balance_;
   uint256 root_public_key_;
   uint256 wallet_public_key_;
   lazy<MsgAddressInt> root_address_;
   cell code_;
   std::optional<allowance_info> allowance_;
+  dict_set<TokenId> tokens_;
 };
 
 struct ETONTokenWallet {

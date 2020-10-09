@@ -75,8 +75,8 @@ Install clang from https://github.com/tonlabs/TON-Compiler.
 
 ## 4. Build contracts
 ```
-clang++ RootTokenContract.cpp -o RootTokenContract.tvc
-clang++ TONTokenWallet.cpp -o TONTokenWallet.tvc
+clang++ RootTokenContractNF.cpp -o RootTokenContractNF.tvc
+clang++ TONTokenWalletNF.cpp -o TONTokenWalletNF.tvc
 ```
 It will generate both tvc and abi files.
 

@@ -1,25 +1,25 @@
 #pragma once
 
-#include "TONTokenWallet.hpp"
+#include "TONTokenWalletNF.hpp"
 
 namespace tvm { namespace schema {
 
-// ===== Root Token Contract ===== //
+// ===== Root Token Contract (Non-fungible) ===== //
 __interface IRootTokenContract {
 
   // expected offchain constructor execution
   __attribute__((internal, external, dyn_chain_parse))
   void constructor(bytes name, bytes symbol, uint8 decimals,
-    uint256 root_public_key, cell wallet_code, TokensType total_supply) = 11;
+    uint256 root_public_key, cell wallet_code) = 11;
 
   __attribute__((external, noaccept, dyn_chain_parse))
-  lazy<MsgAddressInt> deployWallet(int8 workchain_id, uint256 pubkey, TokensType tokens, WalletGramsType grams) = 12;
+  lazy<MsgAddressInt> deployWallet(int8 workchain_id, uint256 pubkey, TokenId tokenId, WalletGramsType grams) = 12;
 
   __attribute__((external, noaccept, dyn_chain_parse))
-  void grant(lazy<MsgAddressInt> dest, TokensType tokens, WalletGramsType grams) = 13;
+  void grant(lazy<MsgAddressInt> dest, TokenId tokenId, WalletGramsType grams) = 13;
 
   __attribute__((external, noaccept, dyn_chain_parse))
-  void mint(TokensType tokens) = 14;
+  TokenId mint(TokenId tokenId) = 14;
 
   __attribute__((getter))
   bytes getName() = 15;
@@ -43,7 +43,10 @@ __interface IRootTokenContract {
   cell getWalletCode() = 21;
 
   __attribute__((getter))
-  lazy<MsgAddressInt> getWalletAddress(int8 workchain_id, uint256 pubkey) = 22;
+  TokenId getLastMintedToken() = 22;
+
+  __attribute__((getter))
+  lazy<MsgAddressInt> getWalletAddress(int8 workchain_id, uint256 pubkey) = 23;
 };
 
 struct DRootTokenContract {
@@ -54,6 +57,7 @@ struct DRootTokenContract {
   TokensType total_supply_;
   TokensType total_granted_;
   cell wallet_code_;
+  dict_set<TokenId> tokens_;
 };
 
 struct ERootTokenContract {

@@ -13,8 +13,7 @@
     { "name":"symbol", "type":"bytes" },
     { "name":"decimals", "type":"uint8" },
     { "name":"root_public_key", "type":"uint256" },
-    { "name":"wallet_code", "type":"cell" },
-    { "name":"total_supply", "type":"uint128" }
+    { "name":"wallet_code", "type":"cell" }
     ],
     "outputs": [
     ],
@@ -25,7 +24,7 @@
     "inputs": [
     { "name":"workchain_id", "type":"int8" },
     { "name":"pubkey", "type":"uint256" },
-    { "name":"tokens", "type":"uint128" },
+    { "name":"tokenId", "type":"uint128" },
     { "name":"grams", "type":"uint128" }
     ],
     "outputs": [
@@ -37,7 +36,7 @@
     "name": "grant",
     "inputs": [
     { "name":"dest", "type":"address" },
-    { "name":"tokens", "type":"uint128" },
+    { "name":"tokenId", "type":"uint128" },
     { "name":"grams", "type":"uint128" }
     ],
     "outputs": [
@@ -47,9 +46,10 @@
   {
     "name": "mint",
     "inputs": [
-    { "name":"tokens", "type":"uint128" }
+    { "name":"tokenId", "type":"uint128" }
     ],
     "outputs": [
+    { "name":"value0", "type":"uint128" }
     ],
     "id": "0xe"
   },
@@ -117,6 +117,15 @@
     "id": "0x15"
   },
   {
+    "name": "getLastMintedToken",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"value0", "type":"uint128" }
+    ],
+    "id": "0x16"
+  },
+  {
     "name": "getWalletAddress",
     "inputs": [
     { "name":"workchain_id", "type":"int8" },
@@ -125,7 +134,7 @@
     "outputs": [
     { "name":"value0", "type":"address" }
     ],
-    "id": "0x16"
+    "id": "0x17"
   }
   ],
   "events": [

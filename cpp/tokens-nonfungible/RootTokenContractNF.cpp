@@ -1,5 +1,5 @@
-#include "RootTokenContract.hpp"
-#include "TONTokenWallet.hpp"
+#include "RootTokenContractNF.hpp"
+#include "TONTokenWalletNF.hpp"
 
 #include <tvm/contract.hpp>
 #include <tvm/smart_switcher.hpp>
@@ -17,59 +17,63 @@ public:
 
   struct error_code : tvm::error_code {
     static constexpr unsigned message_sender_is_not_my_owner = 100;
-    static constexpr unsigned not_enough_balance             = 101;
+    static constexpr unsigned token_not_minted               = 101;
     static constexpr unsigned wrong_bounced_header           = 102;
     static constexpr unsigned wrong_bounced_args             = 103;
+    static constexpr unsigned wrong_mint_token_id            = 104;
   };
 
   __always_inline
-  void constructor(bytes name, bytes symbol, uint8 decimals,
-                   uint256 root_public_key, cell wallet_code, TokensType total_supply) {
+  void constructor(bytes name, bytes symbol, uint8 decimals, uint256 root_public_key, cell wallet_code) {
     name_ = name;
     symbol_ = symbol;
     decimals_ = decimals;
     root_public_key_ = root_public_key;
     wallet_code_ = wallet_code;
-    total_supply_ = total_supply;
+    total_supply_ = TokensType(0);
     total_granted_ = TokensType(0);
   }
 
   __always_inline
-  lazy<MsgAddressInt> deployWallet(int8 workchain_id, uint256 pubkey, TokensType tokens, WalletGramsType grams) {
+  lazy<MsgAddressInt> deployWallet(int8 workchain_id, uint256 pubkey, TokenId tokenId, WalletGramsType grams) {
     require(root_public_key_ == tvm_pubkey(), error_code::message_sender_is_not_my_owner);
-    require(total_granted_ + tokens <= total_supply_, error_code::not_enough_balance);
+    require(!tokenId || tokens_.contains(tokenId), error_code::token_not_minted);
 
     tvm_accept();
 
     auto [wallet_init, dest] = calc_wallet_init(workchain_id, pubkey);
     contract_handle<ITONTokenWallet> dest_handle(dest);
     dest_handle.deploy(wallet_init, Grams(grams.get())).
-      call<&ITONTokenWallet::accept>(tokens);
+      call<&ITONTokenWallet::accept>(tokenId);
 
-    total_granted_ += tokens;
+    if (tokenId)
+      ++total_granted_;
     return dest;
   }
 
   __always_inline
-  void grant(lazy<MsgAddressInt> dest, TokensType tokens, WalletGramsType grams) {
+  void grant(lazy<MsgAddressInt> dest, TokenId tokenId, WalletGramsType grams) {
     require(root_public_key_ == tvm_pubkey(), error_code::message_sender_is_not_my_owner);
-    require(total_granted_ + tokens <= total_supply_, error_code::not_enough_balance);
+    require(tokens_.contains(tokenId), error_code::token_not_minted);
 
     tvm_accept();
 
     contract_handle<ITONTokenWallet> dest_handle(dest);
-    dest_handle(Grams(grams.get())).call<&ITONTokenWallet::accept>(tokens);
+    dest_handle(Grams(grams.get())).call<&ITONTokenWallet::accept>(tokenId);
 
-    total_granted_ += tokens;
+    ++total_granted_;
   }
 
   __always_inline
-  void mint(TokensType tokens) {
+  TokenId mint(TokenId tokenId) {
     require(root_public_key_ == tvm_pubkey(), error_code::message_sender_is_not_my_owner);
+    require(tokenId == total_supply_ + 1, error_code::wrong_mint_token_id);
 
     tvm_accept();
 
-    total_supply_ += tokens;
+    tokens_.insert(tokenId);
+    ++total_supply_;
+    return tokenId;
   }
 
   // getters
@@ -101,6 +105,10 @@ public:
     return wallet_code_;
   }
 
+  __always_inline TokenId getLastMintedToken() {
+    return total_supply_;
+  }
+
   __always_inline
   lazy<MsgAddressInt> getWalletAddress(int8 workchain_id, uint256 pubkey) {
     return calc_wallet_init(workchain_id, pubkey).second;
@@ -117,11 +125,14 @@ public:
     require(opt_hdr && opt_hdr->function_id == id_v<&ITONTokenWallet::accept>,
             error_code::wrong_bounced_header);
     auto args = parse<Args>(p, error_code::wrong_bounced_args);
-    auto bounced_val = args.tokens;
+    auto bounced_id = args.tokenId;
 
     auto [hdr, persist] = load_persistent_data<IRootTokenContract, root_replay_protection_t, DRootTokenContract>();
-    require(bounced_val <= persist.total_granted_, error_code::wrong_bounced_args);
-    persist.total_granted_ -= bounced_val;
+    require(bounced_id > 0, error_code::wrong_bounced_args);
+    require(bounced_id <= persist.total_supply_, error_code::wrong_bounced_args);
+    require(persist.total_granted_ > 0, error_code::wrong_bounced_args);
+    --persist.total_granted_;
+    persist.tokens_.insert(bounced_id);
     save_persistent_data<IRootTokenContract, root_replay_protection_t>(hdr, persist);
     return 0;
   }
@@ -137,8 +148,8 @@ private:
   std::pair<StateInit, lazy<MsgAddressInt>> calc_wallet_init(int8 workchain_id, uint256 pubkey) {
     DTONTokenWallet wallet_data {
       name_, symbol_, decimals_,
-      TokensType(0), root_public_key_, pubkey,
-      lazy<MsgAddressInt>{tvm_myaddr()}, wallet_code_
+      root_public_key_, pubkey,
+      lazy<MsgAddressInt>{tvm_myaddr()}, wallet_code_, {}, {}
     };
     auto [wallet_init, dest_addr] = prepare_wallet_state_init_and_addr(wallet_data);
     lazy<MsgAddressInt> dest{ MsgAddressInt{ addr_std { {}, {}, workchain_id, dest_addr } } };

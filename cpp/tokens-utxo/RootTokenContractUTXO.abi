@@ -34,24 +34,13 @@
     "id": "0xc"
   },
   {
-    "name": "grant",
-    "inputs": [
-    { "name":"dest", "type":"address" },
-    { "name":"tokens", "type":"uint128" },
-    { "name":"grams", "type":"uint128" }
-    ],
-    "outputs": [
-    ],
-    "id": "0xd"
-  },
-  {
     "name": "mint",
     "inputs": [
     { "name":"tokens", "type":"uint128" }
     ],
     "outputs": [
     ],
-    "id": "0xe"
+    "id": "0xd"
   },
   {
     "name": "getName",
@@ -60,7 +49,7 @@
     "outputs": [
     { "name":"value0", "type":"bytes" }
     ],
-    "id": "0xf"
+    "id": "0xe"
   },
   {
     "name": "getSymbol",
@@ -69,7 +58,7 @@
     "outputs": [
     { "name":"value0", "type":"bytes" }
     ],
-    "id": "0x10"
+    "id": "0xf"
   },
   {
     "name": "getDecimals",
@@ -78,7 +67,7 @@
     "outputs": [
     { "name":"value0", "type":"uint8" }
     ],
-    "id": "0x11"
+    "id": "0x10"
   },
   {
     "name": "getRootKey",
@@ -87,7 +76,7 @@
     "outputs": [
     { "name":"value0", "type":"uint256" }
     ],
-    "id": "0x12"
+    "id": "0x11"
   },
   {
     "name": "getTotalSupply",
@@ -96,7 +85,7 @@
     "outputs": [
     { "name":"value0", "type":"uint128" }
     ],
-    "id": "0x13"
+    "id": "0x12"
   },
   {
     "name": "getTotalGranted",
@@ -105,7 +94,7 @@
     "outputs": [
     { "name":"value0", "type":"uint128" }
     ],
-    "id": "0x14"
+    "id": "0x13"
   },
   {
     "name": "getWalletCode",
@@ -114,7 +103,7 @@
     "outputs": [
     { "name":"value0", "type":"cell" }
     ],
-    "id": "0x15"
+    "id": "0x14"
   },
   {
     "name": "getWalletAddress",
@@ -125,7 +114,7 @@
     "outputs": [
     { "name":"value0", "type":"address" }
     ],
-    "id": "0x16"
+    "id": "0x15"
   }
   ],
   "events": [

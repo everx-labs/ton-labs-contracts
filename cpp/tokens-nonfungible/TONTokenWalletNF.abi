@@ -25,7 +25,7 @@
     "name": "transfer",
     "inputs": [
     { "name":"dest", "type":"address" },
-    { "name":"tokens", "type":"uint128" },
+    { "name":"tokenId", "type":"uint128" },
     { "name":"grams", "type":"uint128" }
     ],
     "outputs": [
@@ -35,7 +35,7 @@
   {
     "name": "accept",
     "inputs": [
-    { "name":"tokens", "type":"uint128" }
+    { "name":"tokenId", "type":"uint128" }
     ],
     "outputs": [
     ],
@@ -44,7 +44,7 @@
   {
     "name": "internalTransfer",
     "inputs": [
-    { "name":"tokens", "type":"uint128" },
+    { "name":"tokenId", "type":"uint128" },
     { "name":"pubkey", "type":"uint256" }
     ],
     "outputs": [
@@ -111,42 +111,61 @@
     ],
     "outputs": [
     { "name":"spender", "type":"address" },
-    { "name":"remainingTokens", "type":"uint128" }
+    { "name":"allowedToken", "type":"uint128" }
     ],
     "id": "0x15"
+  },
+  {
+    "name": "getTokenByIndex",
+    "inputs": [
+    { "name":"index", "type":"uint128" }
+    ],
+    "outputs": [
+    { "name":"value0", "type":"uint128" }
+    ],
+    "id": "0x16"
+  },
+  {
+    "name": "getApproved",
+    "inputs": [
+    { "name":"tokenId", "type":"uint128" }
+    ],
+    "outputs": [
+    { "name":"value0", "type":"address" }
+    ],
+    "id": "0x17"
   },
   {
     "name": "approve",
     "inputs": [
     { "name":"spender", "type":"address" },
-    { "name":"remainingTokens", "type":"uint128" },
-    { "name":"tokens", "type":"uint128" }
+    { "name":"tokenId", "type":"uint128" }
     ],
     "outputs": [
     ],
-    "id": "0x16"
+    "id": "0x18"
   },
   {
     "name": "transferFrom",
     "inputs": [
     { "name":"dest", "type":"address" },
     { "name":"to", "type":"address" },
-    { "name":"tokens", "type":"uint128" },
+    { "name":"tokenId", "type":"uint128" },
     { "name":"grams", "type":"uint128" }
     ],
     "outputs": [
     ],
-    "id": "0x17"
+    "id": "0x19"
   },
   {
     "name": "internalTransferFrom",
     "inputs": [
     { "name":"to", "type":"address" },
-    { "name":"tokens", "type":"uint128" }
+    { "name":"tokenId", "type":"uint128" }
     ],
     "outputs": [
     ],
-    "id": "0x18"
+    "id": "0x1a"
   },
   {
     "name": "disapprove",
@@ -154,7 +173,7 @@
     ],
     "outputs": [
     ],
-    "id": "0x19"
+    "id": "0x1b"
   }
   ],
   "events": [
