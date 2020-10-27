@@ -84,6 +84,6 @@ Call deployed DeBot in any DeBot browser.
 
 **Example**: in [tonos-cli](https://github.com/tonlabs/tonos-cli) the DeBot can be called with the following command:
 
-    ```jsx
-    tonos-cli debot fetch <debot_address>
-    ```
+```
+tonos-cli debot fetch <debot_address>
+```
