@@ -5,41 +5,6 @@ pragma solidity >=0.6.0;
 import "DePoolLib.sol";
 import "IProxy.sol";
 
-contract CheckAndAcceptBase {
-    // Status codes for messages sending back to participants as result of
-    // operations (add/remove/continue/withdraw stake):
-    uint8 constant STATUS_SUCCESS                                        =  0;
-    uint8 constant STATUS_STAKE_TOO_SMALL                                =  1;
-    uint8 constant STATUS_DEPOOL_CLOSED                                  =  3;
-    uint8 constant STATUS_ROUND_STAKE_LIMIT                              =  4;
-    uint8 constant STATUS_MSG_VAL_TOO_SMALL                              =  5;
-    uint8 constant STATUS_NO_PARTICIPANT                                 =  6;
-    uint8 constant STATUS_NO_TRANSFER_WHILE_PENDING_ROUND                =  8;
-    uint8 constant STATUS_PARTICIPANT_HAVE_ALREADY_VESTING               =  9;
-    uint8 constant STATUS_WITHDRAWAL_PERIOD_GREATER_TOTAL_PERIOD         = 10;
-    uint8 constant STATUS_TOTAL_PERIOD_MORE_18YEARS                      = 11;
-    uint8 constant STATUS_WITHDRAWAL_PERIOD_IS_ZERO                      = 12;
-    uint8 constant STATUS_TOTAL_PERIOD_IS_NOT_DIVED_BY_WITHDRAWAL_PERIOD = 13;
-    uint8 constant STATUS_PERIOD_PAYMENT_IS_ZERO                         = 14;
-    uint8 constant STATUS_REMAINING_STAKE_LESS_THAN_MINIMAL              = 16;
-    uint8 constant STATUS_PARTICIPANT_HAVE_ALREADY_LOCK                  = 17;
-    uint8 constant STATUS_TRANSFER_AMOUNT_IS_TOO_BIG                     = 18;
-    uint8 constant STATUS_TRANSFER_SELF                                  = 19;
-    uint8 constant STATUS_CONSTRUCTOR_WRONG_PARAMS                       = 20;
-    uint8 constant STATUS_CONSTRUCTOR_NO_PUBKEY                          = 21;
-
-    modifier onlyOwner {
-        require(msg.pubkey() == tvm.pubkey(), Errors.IS_NOT_OWNER);
-        _;
-    }
-
-    constructor(uint64 minStake, uint64 minRoundStake) public onlyOwner {
-        require(tvm.pubkey() != 0, STATUS_CONSTRUCTOR_NO_PUBKEY);
-        require(1 <= minStake && minStake <= minRoundStake, STATUS_CONSTRUCTOR_WRONG_PARAMS);
-        tvm.accept();
-    }
-}
-
 contract ValidatorBase {
     // Address of the validator wallet
     address m_validatorWallet;
@@ -56,12 +21,7 @@ contract ValidatorBase {
 
 contract ProxyBase {
 
-    // Array of proxies addresses.
     address[] m_proxies;
-
-    constructor(address proxy0, address proxy1) internal {
-        m_proxies = [proxy0, proxy1];
-    }
 
     function getProxy(uint64 roundId) internal view inline returns (address) {
         return m_proxies[roundId % 2];
@@ -75,7 +35,7 @@ contract ProxyBase {
         address proxy,
         uint64 requestId,
         uint64 validatorStake,
-        DePoolLib.Request req,
+        Request req,
         address elector
     )
         internal
@@ -143,9 +103,29 @@ contract ConfigParamsBase {
 contract ParticipantBase {
 
     // Dictionary of participants for rounds
-    mapping (address => DePoolLib.Participant) m_participants;
+    mapping (address => Participant) m_participants;
 
-    function _setOrDeleteParticipant(address addr, DePoolLib.Participant participant) internal inline {
+    function getOrCreateParticipant(address addr) internal view returns (Participant) {
+        optional(Participant) optParticipant = m_participants.fetch(addr);
+        if (optParticipant.hasValue()) {
+            return optParticipant.get();
+        }
+        Participant newParticipant = Participant({
+            roundQty: 0,
+            reward: 0,
+            haveVesting: false,
+            haveLock: false,
+            reinvest: true,
+            withdrawValue: 0
+        });
+        return newParticipant;
+    }
+
+    function fetchParticipant(address addr) internal view returns (optional(Participant)) {
+        return m_participants.fetch(addr);
+    }
+
+    function _setOrDeleteParticipant(address addr, Participant participant) internal {
         if (participant.roundQty == 0)
             delete m_participants[addr];
         else

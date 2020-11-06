@@ -6,7 +6,7 @@ pragma AbiHeader time;
 
 import "DePoolLib.sol";
 
-contract Participant {
+contract ParticipantContract {
     function sendTransaction(
         address dest,
         uint64 value,

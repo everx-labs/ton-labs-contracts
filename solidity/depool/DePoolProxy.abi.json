@@ -5,7 +5,6 @@
 		{
 			"name": "constructor",
 			"inputs": [
-				{"name":"depool","type":"address"}
 			],
 			"outputs": [
 			]

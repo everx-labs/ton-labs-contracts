@@ -5,14 +5,14 @@ pragma AbiHeader expire;
 pragma AbiHeader time;
 
 interface IParticipant {
-    /// @dev Send a notification message to participant with info about its stake and reward in round.
+    /// @dev send a notification from DePool to Participant when round is completed
     /// @param roundId Id of completed round.
-    /// @param reward Participant reward for round in nanotons
-    /// @param ordinaryStake Ordinary Stake in completed round
-    /// @param vestingStake Vesting stake in completed round
-    /// @param lockStake Lock stake in completed round
-    /// @param reinvest Are (ordinaryStake + reward) automatically reinvested (prolonged)?
-    /// @param reason Reason why round is completed (See enum CompletionReason)
+    /// @param reward Participant's reward in completed round in nanotons.
+    /// @param ordinaryStake Ordinary stake in completed round.
+    /// @param vestingStake Vesting stake in completed round.
+    /// @param lockStake Lock stake in completed round.
+    /// @param reinvest Is ordinary stake automatically reinvested (prolonged)?
+    /// @param reason Reason why round is completed (See enum CompletionReason).
     function onRoundComplete(
         uint64 roundId,
         uint64 reward,
@@ -31,7 +31,7 @@ interface IParticipant {
 }
 
 
-contract Participant is IParticipant {
+contract ParticipantContract is IParticipant {
     function onRoundComplete(
         uint64 roundId,
         uint64 reward,

@@ -10,7 +10,7 @@ interface ITimer {
     function setTimer(uint timer) external;
 }
 
-contract DePoolHelper is Participant {
+contract DePoolHelper is ParticipantContract {
     uint constant TICKTOCK_FEE = 1e9;
 
     // Timer fees
