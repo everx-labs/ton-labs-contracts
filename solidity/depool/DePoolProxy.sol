@@ -7,18 +7,22 @@ import "IProxy.sol";
 import "DePoolLib.sol";
 
 contract DePoolProxyContract is IProxy {
-    uint64 constant MIN_BALANCE = 5 ton;
 
-    uint constant ERROR_IS_NOT_OWNER = 101;
     uint constant ERROR_IS_NOT_DEPOOL = 102;
     uint constant ERROR_BAD_BALANCE = 103;
 
     address m_dePool;
 
-    constructor(address depool) public {
-        require(msg.pubkey() == tvm.pubkey(), ERROR_IS_NOT_OWNER);
-        tvm.accept();
-        m_dePool = depool;
+    constructor() public {
+        bool ok = false;
+        for (uint8 i = 0; i < 2; ++i) {
+            TvmBuilder b;
+            b.store(address(msg.sender), i);
+            uint256 publicKey = tvm.hash(b.toCell());
+            ok = ok || tvm.pubkey() == publicKey;
+        }
+        require(ok, ERROR_IS_NOT_DEPOOL);
+        m_dePool = msg.sender;
     }
 
     modifier onlyDePoolAndCheckBalance {
@@ -26,7 +30,7 @@ contract DePoolProxyContract is IProxy {
 
         // this check is needed for correct work of proxy
         uint carry = msg.value - DePoolLib.PROXY_FEE;
-        require(address(this).balance - carry >= MIN_BALANCE, ERROR_BAD_BALANCE);
+        require(address(this).balance >= carry + DePoolLib.MIN_PROXY_BALANCE, ERROR_BAD_BALANCE);
         _;
     }
 
@@ -34,7 +38,7 @@ contract DePoolProxyContract is IProxy {
      * process_new_stake
      */
 
-    /// @dev Allows to send validator request to run for validator elections
+    /// @dev Allows to send validator request to run in validator elections
     function process_new_stake(
         uint64 queryId,
         uint256 validatorKey,
@@ -51,7 +55,7 @@ contract DePoolProxyContract is IProxy {
 
     /// @dev Elector answer from process_new_stake in case of success.
     function onStakeAccept(uint64 queryId, uint32 comment) public functionID(0xF374484C) {
-        // Elector contract always send 1GR
+        // Elector contract always sends 1 ton
         IDePool(m_dePool).onStakeAccept{value: msg.value - DePoolLib.PROXY_FEE}(queryId, comment, msg.sender);
     }
 
@@ -90,6 +94,6 @@ contract DePoolProxyContract is IProxy {
 
     function getProxyInfo() public view returns (address depool, uint64 minBalance) {
         depool = m_dePool;
-        minBalance = MIN_BALANCE;
+        minBalance = DePoolLib.MIN_PROXY_BALANCE;
     }
 }
