@@ -1,3 +1,5 @@
+# DePool
+
 This document contains instructions on how to deploy and configure a DePool smart contract, and run a validator node through it. For detailed information on DePool specifications, please refer to the [relevant document](https://docs.ton.dev/86757ecb2/v/0/p/45d6eb-depool-specifications).
 
 > Note: One node can be assigned to only one DePool contract.
@@ -168,12 +170,16 @@ tvm_linker decode --tvc DePoolProxy.tvc
 
 `<validatorWalletAddress>` – validator wallet address from step 1.
 
-`"participantRewardFraction":*number*` - fraction of the total DePool reward (in percentages) that goes to Participants.
+`"participantRewardFraction":*number*` - fraction of the total DePool reward (in percentages, up to 100) that goes to Participants.
+
+`"balanceThreshold":*number*` - DePool's own balance, which it will aim to maintain. It is never staked and is spent on DePool operations only.
+
+> **Important: You will not be able to change these parameters after the DePool is deployed. They will influence the appeal of your DePool to potential participants:** `participantRewardFraction` determines what percentage of their total reward all participants will receive (too small, and other DePools might draw them away, too big, and your validator wallet might not receive enough rewards, to support validation and staking); `validatorAssurance` determines how much you take it upon yourself to invest in the DePool and lose in case of any validator node malfunction or misbehavior. If set too small, potential participants might decide you aren't risking enough and avoid your DePool in favor of others.
 
 Example:
 
 ```bash
-tonos-cli deploy DePool.tvc '{"minStake":10000000000,"validatorAssurance":1000000000000,"proxyCode":"te6ccgECHgEABVUAAib/APSkICLAAZL0oOGK7VNYMPShBwEBCvSkIPShAgIDzkAEAwAp32omhp/+mf6YB8NT/8MPwzfDH8MUAgFYBgUALV+ELIy//4Q88LP/hGzwsA+EoBzsntVIAMNfhBbpLwCN5opvxgINMf0z8zIYIQ/////rqOQXBopvtglWim/mAx34IQBV1KgKG1f/hKyM+FiM4B+gKNBEAAAAAAAAAAAAAAAAABD2mXdM8WIc8LP/hJzxbJcfsA3l8D8AeAIBIBEIAgFuEAkCASAPCgIBIA4LAYj6f40IYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABPhpIe1E0CDXScIBjhHT/9M/0wD4an/4Yfhm+GP4YgwB/o4+9AWNCGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT4anABgED0DvK91wv/+GJw+GNw+GZ/+GHi0wABn4ECANcYIPkBWPhC+RDyqN7TPwGOHvhDIbkgnzAg+COBA+iogggbd0Cgud6S+GPggDTyNNjTHyHBAyINADKCEP////28sZVx8AHwBeAB8AH4R26S8AXeAKu0t7mSfCC3SXgEb2mf6Lg0U32wSrRTfzAY78EIAq6lQFDav/wlZGfCxGcA/QFGgiAAAAAAAAAAAAAAAAAB8+0HGmeLEOeFn/wk54tkuP2AGHgDv/wzwAC3tt0SEz4QW6S8Aje0z/TH9FwaKb7YJVopv5gMd+CEAVdSoChtX/4SsjPhYjOAfoCjQRAAAAAAAAAAAAAAAAAATPrwXTPFiLPCz8hzwsf+EnPFslx+wBb8Ad/+GeAAt7nN6KmfCC3SXgEb2mf6Y/ouDRTfbBKtFN/MBjvwQgCrqVAUNq//CVkZ8LEZwD9AUaCIAAAAAAAAAAAAAAAAAE7ZAsmZ4sRZ4WfkOeFj/wk54tkuP2ALfgDv/wzwAgEgFxICASAVEwHpuotV8/+EFujlztRNAg10nCAY4R0//TP9MA+Gp/+GH4Zvhj+GKOPvQFjQhgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE+GpwAYBA9A7yvdcL//hicPhjcPhmf/hh4t74RvJzcfhm0XBwkyDBAoFABajh3IIPhJzxYizwsHMSDJ+QBTM5Uw+EIhut80W6S1B+gw8uBm+En4avAHf/hnAQm7Wws2WBYA+vhBbpLwCN7TP/pA0fhJ+ErHBfLgZnBopvtglWim/mAx34IQBV1KgKG1f/gnbxAhghA7msoAoL7y4GdwaKb7YJVopv5gMd+CEAVdSoChtX8iyM+FiM4B+gKNBEAAAAAAAAAAAAAAAAACOyuhJM8WI88LP8lx+wBfA/AHf/hnAgEgGRgAn7rbxCnvhBbpLwCN7R+EqCEDuaygAiwP+OLSTQ0wH6QDAxyM+HIM6NBAAAAAAAAAAAAAAAAArbxCnozxYizxYhzws/yXH7AN5bkvAH3n/4Z4AgEgHRoBCbhxdZGQGwH8+EFukvAI3tM/0//TH9Mf1w3/ldTR0NP/3yDXS8ABAcAAsJPU0dDe1PpBldTR0PpA39H4SfhKxwXy4GZwaKb7YJVopv5gMd+CEAVdSoChtX/4J28QIYIQO5rKAKC+8uBncGim+2CVaKb+YDHfghAFXUqAobV/IsjPhYjOAfoCHABggGrPQM+DyM+ROc3RLinPCz8ozwv/J88LHybPCx8lzwv/JM8Uzclx+wBfCPAHf/hnAHTccCLQ0wP6QDD4aak4ANwhxwAglzAh0x8hwADf3CHBAyKCEP////28sZVx8AHwBeAB8AH4R26S8AXe","validatorWallet":"0:0123012301230123012301230123012301230123012301230123012301230123","participantRewardFraction":90,"balanceThreshold":10000000000}' --abi DePool.abi.json --sign depool.json
+tonos-cli deploy DePool.tvc '{"minStake":10000000000,"validatorAssurance":100000000000000,"proxyCode":"te6ccgECHgEABVUAAib/APSkICLAAZL0oOGK7VNYMPShBwEBCvSkIPShAgIDzkAEAwAp32omhp/+mf6YB8NT/8MPwzfDH8MUAgFYBgUALV+ELIy//4Q88LP/hGzwsA+EoBzsntVIAMNfhBbpLwCN5opvxgINMf0z8zIYIQ/////rqOQXBopvtglWim/mAx34IQBV1KgKG1f/hKyM+FiM4B+gKNBEAAAAAAAAAAAAAAAAABD2mXdM8WIc8LP/hJzxbJcfsA3l8D8AeAIBIBEIAgFuEAkCASAPCgIBIA4LAYj6f40IYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABPhpIe1E0CDXScIBjhHT/9M/0wD4an/4Yfhm+GP4YgwB/o4+9AWNCGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT4anABgED0DvK91wv/+GJw+GNw+GZ/+GHi0wABn4ECANcYIPkBWPhC+RDyqN7TPwGOHvhDIbkgnzAg+COBA+iogggbd0Cgud6S+GPggDTyNNjTHyHBAyINADKCEP////28sZVx8AHwBeAB8AH4R26S8AXeAKu0t7mSfCC3SXgEb2mf6Lg0U32wSrRTfzAY78EIAq6lQFDav/wlZGfCxGcA/QFGgiAAAAAAAAAAAAAAAAAB8+0HGmeLEOeFn/wk54tkuP2AGHgDv/wzwAC3tt0SEz4QW6S8Aje0z/TH9FwaKb7YJVopv5gMd+CEAVdSoChtX/4SsjPhYjOAfoCjQRAAAAAAAAAAAAAAAAAATPrwXTPFiLPCz8hzwsf+EnPFslx+wBb8Ad/+GeAAt7nN6KmfCC3SXgEb2mf6Y/ouDRTfbBKtFN/MBjvwQgCrqVAUNq//CVkZ8LEZwD9AUaCIAAAAAAAAAAAAAAAAAE7ZAsmZ4sRZ4WfkOeFj/wk54tkuP2ALfgDv/wzwAgEgFxICASAVEwHpuotV8/+EFujlztRNAg10nCAY4R0//TP9MA+Gp/+GH4Zvhj+GKOPvQFjQhgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE+GpwAYBA9A7yvdcL//hicPhjcPhmf/hh4t74RvJzcfhm0XBwkyDBAoFABajh3IIPhJzxYizwsHMSDJ+QBTM5Uw+EIhut80W6S1B+gw8uBm+En4avAHf/hnAQm7Wws2WBYA+vhBbpLwCN7TP/pA0fhJ+ErHBfLgZnBopvtglWim/mAx34IQBV1KgKG1f/gnbxAhghA7msoAoL7y4GdwaKb7YJVopv5gMd+CEAVdSoChtX8iyM+FiM4B+gKNBEAAAAAAAAAAAAAAAAACOyuhJM8WI88LP8lx+wBfA/AHf/hnAgEgGRgAn7rbxCnvhBbpLwCN7R+EqCEDuaygAiwP+OLSTQ0wH6QDAxyM+HIM6NBAAAAAAAAAAAAAAAAArbxCnozxYizxYhzws/yXH7AN5bkvAH3n/4Z4AgEgHRoBCbhxdZGQGwH8+EFukvAI3tM/0//TH9Mf1w3/ldTR0NP/3yDXS8ABAcAAsJPU0dDe1PpBldTR0PpA39H4SfhKxwXy4GZwaKb7YJVopv5gMd+CEAVdSoChtX/4J28QIYIQO5rKAKC+8uBncGim+2CVaKb+YDHfghAFXUqAobV/IsjPhYjOAfoCHABggGrPQM+DyM+ROc3RLinPCz8ozwv/J88LHybPCx8lzwv/JM8Uzclx+wBfCPAHf/hnAHTccCLQ0wP6QDD4aak4ANwhxwAglzAh0x8hwADf3CHBAyKCEP////28sZVx8AHwBeAB8AH4R26S8AXe","validatorWallet":"0:0123012301230123012301230123012301230123012301230123012301230123","participantRewardFraction":90,"balanceThreshold":10000000000}' --abi DePool.abi.json --sign depool.json
 ```
 
 ### 6.2. (Optional) Deploy DePool Helper contract to the basechain
@@ -517,7 +523,7 @@ tonos-cli depool --addr 0:37fbcb6e3279cbf5f783d61c213ed20fee16e0b1b94a48372d20a2
 The following command allows to withdraw part of an ordinary stake to the wallet that owns it, as soon as the stake becomes available. If, as result of this withdrawal, participant's ordinary stake becomes less than `minStake`, then participant's whole stake is sent to participant.
 
 ```bash
-tonos-cli depool [--addr <depool_address>] withdrawPart [--wallet <msig_address>] --value <number> [--sign <key_file or seed_phrase>]
+tonos-cli depool [--addr <depool_address>] stake withdrawPart [--wallet <msig_address>] --value <number> [--sign <key_file or seed_phrase>]
 ```
 
 Where
@@ -533,7 +539,7 @@ all `--value` parameters must be defined in tons, like this: `--value 10.5`, whi
 Example:
 
 ```bash
-tonos-cli depool --addr 0:37fbcb6e3279cbf5f783d61c213ed20fee16e0b1b94a48372d20a2596b700ace withdrawPart --wallet 0:1b91c010f35b1f5b42a05ad98eb2df80c302c37df69651e1f5ac9c69b7e90d4e --value 1000 --sign "dizzy modify exotic daring gloom rival pipe disagree again film neck fuel"
+tonos-cli depool --addr 0:37fbcb6e3279cbf5f783d61c213ed20fee16e0b1b94a48372d20a2596b700ace stake withdrawPart --wallet 0:1b91c010f35b1f5b42a05ad98eb2df80c302c37df69651e1f5ac9c69b7e90d4e --value 1000 --sign "dizzy modify exotic daring gloom rival pipe disagree again film neck fuel"
 ```
 
 ## Reinvest Stakes
