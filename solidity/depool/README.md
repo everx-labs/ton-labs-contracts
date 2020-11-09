@@ -170,7 +170,7 @@ tvm_linker decode --tvc DePoolProxy.tvc
 
 `<validatorWalletAddress>` – validator wallet address from step 1.
 
-`"participantRewardFraction":*number*` - fraction of the total DePool reward (in percentages, up to 100) that goes to Participants.
+`"participantRewardFraction":*number*` - percentage of the total DePool reward (in integers, up to 99 inclusive) that goes to Participants.
 
 `"balanceThreshold":*number*` - DePool's own balance, which it will aim to maintain. It is never staked and is spent on DePool operations only.
 
