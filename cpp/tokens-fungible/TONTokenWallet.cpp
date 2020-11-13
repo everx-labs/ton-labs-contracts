@@ -7,6 +7,7 @@
 using namespace tvm;
 using namespace schema;
 
+template<bool Internal>
 class TONTokenWallet final : public smart_interface<ITONTokenWallet>, public DTONTokenWallet {
 public:
   struct error_code : tvm::error_code {
@@ -20,12 +21,14 @@ public:
     static constexpr unsigned no_allowance_set                  = 107;
     static constexpr unsigned wrong_spender                     = 108;
     static constexpr unsigned not_enough_allowance              = 109;
+    static constexpr unsigned internal_owner_enabled            = 110;
+    static constexpr unsigned internal_owner_disabled           = 111;
   };
 
   __always_inline
   void constructor(bytes name, bytes symbol, uint8 decimals,
                    uint256 root_public_key, uint256 wallet_public_key,
-                   lazy<MsgAddressInt> root_address, cell code) {
+                   address root_address, cell code) {
     name_ = name;
     symbol_ = symbol;
     decimals_ = decimals;
@@ -37,8 +40,8 @@ public:
   }
 
   __always_inline
-  void transfer(lazy<MsgAddressInt> dest, TokensType tokens, WalletGramsType grams) {
-    require(tvm_pubkey() == wallet_public_key_, error_code::message_sender_is_not_my_owner);
+  void transfer(address dest, TokensType tokens, WalletGramsType grams) {
+    check_owner();
 
     // the function must complete successfully if token balance is less that transfer value.
     require(tokens <= balance_, error_code::not_enough_balance);
@@ -48,17 +51,25 @@ public:
 
     tvm_accept();
 
-    contract_handle<ITONTokenWallet> dest_wallet(dest);
-    dest_wallet(Grams(grams.get())).
-      call<&ITONTokenWallet::internalTransfer>(tokens, wallet_public_key_);
+    auto owner_addr = owner_address_ ? std::get<addr_std>((*owner_address_)()).address : uint256(0);
+
+    handle<ITONTokenWallet> dest_wallet(dest);
+    dest_wallet(Grams(grams.get())).internalTransfer(tokens, wallet_public_key_, owner_addr);
 
     balance_ -= tokens;
   }
 
   __always_inline
+  TokensType getBalance_InternalOwner() {
+    check_internal_owner();
+    set_int_return_flag(SEND_REST_GAS_FROM_INCOMING);
+    return balance_;
+  }
+
+  __always_inline
   void accept(TokensType tokens) {
     // the function must check that message sender is the RTW.
-    require(root_address_.sl() == int_sender().sl(),
+    require(root_address_ == int_sender(),
             error_code::message_sender_is_not_my_root);
 
     tvm_accept();
@@ -67,8 +78,13 @@ public:
   }
 
   __always_inline
-  void internalTransfer(TokensType tokens, uint256 pubkey) {
-    uint256 expected_address = expected_sender_address(pubkey);
+  void onEmptyDeploy() {
+    balance_ = TokensType(0);
+  }
+
+  __always_inline
+  void internalTransfer(TokensType tokens, uint256 pubkey, uint256 my_owner_addr) {
+    uint256 expected_address = expected_sender_address(pubkey, my_owner_addr);
     auto sender = int_sender();
 
     require(std::get<addr_std>(sender()).address == expected_address,
@@ -95,18 +111,21 @@ public:
   __always_inline uint256 getWalletKey() {
     return wallet_public_key_;
   }
-  __always_inline lazy<MsgAddressInt> getRootAddress() {
+  __always_inline address getRootAddress() {
     return root_address_;
+  }
+  __always_inline address getOwnerAddress() {
+    return owner_address_ ? *owner_address_ : address::make_std(int8(0), uint256(0));
   }
   __always_inline allowance_info allowance() {
     return allowance_ ? *allowance_ :
-      allowance_info{lazy<MsgAddressInt>{addr_std{ {}, {}, int8(0), uint256(0) }}, TokensType(0)};
+      allowance_info{address::make_std(int8(0), uint256(0)), TokensType(0)};
   }
 
   // allowance interface
   __always_inline
-  void approve(lazy<MsgAddressInt> spender, TokensType remainingTokens, TokensType tokens) {
-    require(tvm_pubkey() == wallet_public_key_, error_code::message_sender_is_not_my_owner);
+  void approve(address spender, TokensType remainingTokens, TokensType tokens) {
+    check_owner();
     require(tokens <= balance_, error_code::not_enough_balance);
     tvm_accept();
     if (allowance_) {
@@ -121,26 +140,27 @@ public:
   }
 
   __always_inline
-  void transferFrom(lazy<MsgAddressInt> dest, lazy<MsgAddressInt> to, TokensType tokens,
+  void transferFrom(address dest, address to, TokensType tokens,
                     WalletGramsType grams) {
-    require(tvm_pubkey() == wallet_public_key_, error_code::message_sender_is_not_my_owner);
+    check_owner();
     tvm_accept();
 
-    contract_handle<ITONTokenWallet> dest_wallet(dest);
+    handle<ITONTokenWallet> dest_wallet(dest);
     dest_wallet(Grams(grams.get())).
-      call<&ITONTokenWallet::internalTransferFrom>(to, tokens);
+      internalTransferFrom(to, tokens);
   }
 
   __always_inline
-  void internalTransferFrom(lazy<MsgAddressInt> to, TokensType tokens) {
+  void internalTransferFrom(address to, TokensType tokens) {
     require(!!allowance_, error_code::no_allowance_set);
-    require(int_sender().sl() == allowance_->spender.sl(), error_code::wrong_spender);
+    require(int_sender() == allowance_->spender, error_code::wrong_spender);
     require(tokens <= allowance_->remainingTokens, error_code::not_enough_allowance);
     require(tokens <= balance_, error_code::not_enough_balance);
 
-    contract_handle<ITONTokenWallet> dest_wallet(to);
+    auto owner_addr = owner_address_ ? std::get<addr_std>((*owner_address_)()).address : uint256(0);
+    handle<ITONTokenWallet> dest_wallet(to);
     dest_wallet(Grams(0), SEND_REST_GAS_FROM_INCOMING).
-      call<&ITONTokenWallet::internalTransfer>(tokens, wallet_public_key_);
+      internalTransfer(tokens, wallet_public_key_, owner_addr);
 
     allowance_->remainingTokens -= tokens;
     balance_ -= tokens;
@@ -148,7 +168,7 @@ public:
 
   __always_inline
   void disapprove() {
-    require(tvm_pubkey() == wallet_public_key_, error_code::message_sender_is_not_my_owner);
+    check_owner();
     tvm_accept();
     allowance_.reset();
   }
@@ -187,18 +207,41 @@ public:
   // =============== Support functions ==================
   DEFAULT_SUPPORT_FUNCTIONS(ITONTokenWallet, wallet_replay_protection_t)
 private:
-  __always_inline uint256 expected_sender_address(uint256 sender_public_key) {
+  __always_inline uint256 expected_sender_address(uint256 sender_public_key, uint256 sender_owner_addr) {
+    std::optional<address> owner_addr;
+    if (sender_owner_addr)
+      owner_addr = address::make_std(workchain_id_, sender_owner_addr);
     DTONTokenWallet wallet_data {
       name_, symbol_, decimals_,
       TokensType(0), root_public_key_, sender_public_key,
-      root_address_, code_
+      root_address_, owner_addr, code_, {}, workchain_id_
     };
     return prepare_wallet_state_init_and_addr(wallet_data).second;
+  }
+
+  __always_inline bool is_internal_owner() const { return owner_address_.has_value(); }
+
+  __always_inline void check_internal_owner() {
+    require(is_internal_owner(), error_code::internal_owner_disabled);
+    require(*owner_address_ == int_sender(),
+            error_code::message_sender_is_not_my_owner);
+  }
+
+  __always_inline void check_external_owner() {
+    require(!is_internal_owner(), error_code::internal_owner_enabled);
+    require(tvm_pubkey() == wallet_public_key_, error_code::message_sender_is_not_my_owner);
+  }
+
+  __always_inline void check_owner() {
+    if constexpr (Internal)
+      check_internal_owner();
+    else
+      check_external_owner();
   }
 };
 
 DEFINE_JSON_ABI(ITONTokenWallet, DTONTokenWallet, ETONTokenWallet);
 
 // ----------------------------- Main entry functions ---------------------- //
-DEFAULT_MAIN_ENTRY_FUNCTIONS(TONTokenWallet, ITONTokenWallet, DTONTokenWallet, TOKEN_WALLET_TIMESTAMP_DELAY)
+DEFAULT_MAIN_ENTRY_FUNCTIONS_TMPL(TONTokenWallet, ITONTokenWallet, DTONTokenWallet, TOKEN_WALLET_TIMESTAMP_DELAY)
 
