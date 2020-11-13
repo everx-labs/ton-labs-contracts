@@ -11,11 +11,11 @@ namespace tvm { namespace schema {
 using WalletGramsType = uint128;
 using TokensType = uint128;
 
-static constexpr unsigned TOKEN_WALLET_TIMESTAMP_DELAY = 100;
+static constexpr unsigned TOKEN_WALLET_TIMESTAMP_DELAY = 1800;
 using wallet_replay_protection_t = replay_attack_protection::timestamp<TOKEN_WALLET_TIMESTAMP_DELAY>;
 
 struct allowance_info {
-  lazy<MsgAddressInt> spender;
+  address spender;
   TokensType remainingTokens;
 };
 
@@ -23,57 +23,66 @@ struct allowance_info {
 __interface ITONTokenWallet {
 
   // expected offchain constructor execution
-  __attribute__((internal, external, dyn_chain_parse))
+  [[internal, external, dyn_chain_parse]]
   void constructor(bytes name, bytes symbol, uint8 decimals,
                    uint256 root_public_key, uint256 wallet_public_key,
-                   lazy<MsgAddressInt> root_address, cell code) = 11;
+                   address root_address, cell code) = 11;
 
-  __attribute__((external, noaccept, dyn_chain_parse))
-  void transfer(lazy<MsgAddressInt> dest, TokensType tokens, WalletGramsType grams) = 12;
+  [[internal, external, noaccept, dyn_chain_parse]]
+  void transfer(address dest, TokensType tokens, WalletGramsType grams) = 12;
+
+  [[internal, noaccept, answer_id]]
+  TokensType getBalance_InternalOwner() = 13;
 
   // Receive tokens from root
-  __attribute__((internal, noaccept))
-  void accept(TokensType tokens) = 13;
+  [[internal, noaccept]]
+  void accept(TokensType tokens) = 14;
+
+  [[internal, noaccept]]
+  void onEmptyDeploy() = 15;
 
   // Receive tokens from other wallet
-  __attribute__((internal, noaccept))
-  void internalTransfer(TokensType tokens, uint256 pubkey) = 14;
+  [[internal, noaccept]]
+  void internalTransfer(TokensType tokens, uint256 pubkey, uint256 my_owner_addr) = 16;
 
   // getters
-  __attribute__((getter))
-  bytes getName() = 15;
+  [[getter]]
+  bytes getName() = 17;
 
-  __attribute__((getter))
-  bytes getSymbol() = 16;
+  [[getter]]
+  bytes getSymbol() = 18;
 
-  __attribute__((getter))
-  uint8 getDecimals() = 17;
+  [[getter]]
+  uint8 getDecimals() = 19;
 
-  __attribute__((getter))
-  TokensType getBalance() = 18;
+  [[getter]]
+  TokensType getBalance() = 20;
 
-  __attribute__((getter))
-  uint256 getWalletKey() = 19;
+  [[getter]]
+  uint256 getWalletKey() = 21;
 
-  __attribute__((getter))
-  lazy<MsgAddressInt> getRootAddress() = 20;
+  [[getter]]
+  address getRootAddress() = 22;
 
-  __attribute__((getter))
-  allowance_info allowance() = 21;
+  [[getter]]
+  address getOwnerAddress() = 23;
+
+  [[getter]]
+  allowance_info allowance() = 24;
 
   // allowance interface
-  __attribute__((external, noaccept, dyn_chain_parse))
-  void approve(lazy<MsgAddressInt> spender, TokensType remainingTokens, TokensType tokens) = 22;
+  [[internal, external, noaccept, dyn_chain_parse]]
+  void approve(address spender, TokensType remainingTokens, TokensType tokens) = 25;
 
-  __attribute__((external, noaccept, dyn_chain_parse))
-  void transferFrom(lazy<MsgAddressInt> dest, lazy<MsgAddressInt> to, TokensType tokens,
-                    WalletGramsType grams) = 23;
+  [[internal, external, noaccept, dyn_chain_parse]]
+  void transferFrom(address dest, address to, TokensType tokens,
+                    WalletGramsType grams) = 26;
 
-  __attribute__((internal))
-  void internalTransferFrom(lazy<MsgAddressInt> to, TokensType tokens) = 24;
+  [[internal]]
+  void internalTransferFrom(address to, TokensType tokens) = 27;
 
-  __attribute__((external, noaccept))
-  void disapprove() = 25;
+  [[internal, external, noaccept]]
+  void disapprove() = 28;
 };
 
 struct DTONTokenWallet {
@@ -83,9 +92,11 @@ struct DTONTokenWallet {
   TokensType balance_;
   uint256 root_public_key_;
   uint256 wallet_public_key_;
-  lazy<MsgAddressInt> root_address_;
+  address root_address_;
+  std::optional<address> owner_address_;
   cell code_;
   std::optional<allowance_info> allowance_;
+  int8 workchain_id_;
 };
 
 struct ETONTokenWallet {

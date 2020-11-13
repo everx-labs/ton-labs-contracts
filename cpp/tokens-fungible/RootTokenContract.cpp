@@ -9,22 +9,26 @@
 using namespace tvm;
 using namespace schema;
 
-static constexpr unsigned ROOT_TIMESTAMP_DELAY = 100;
-
+template<bool Internal>
 class RootTokenContract final : public smart_interface<IRootTokenContract>, public DRootTokenContract {
 public:
-  using root_replay_protection_t = replay_attack_protection::timestamp<ROOT_TIMESTAMP_DELAY>;
-
   struct error_code : tvm::error_code {
-    static constexpr unsigned message_sender_is_not_my_owner = 100;
-    static constexpr unsigned not_enough_balance             = 101;
-    static constexpr unsigned wrong_bounced_header           = 102;
-    static constexpr unsigned wrong_bounced_args             = 103;
+    static constexpr unsigned message_sender_is_not_my_owner  = 100;
+    static constexpr unsigned not_enough_balance              = 101;
+    static constexpr unsigned wrong_bounced_header            = 102;
+    static constexpr unsigned wrong_bounced_args              = 103;
+    static constexpr unsigned internal_owner_enabled          = 104;
+    static constexpr unsigned internal_owner_disabled         = 105;
+    static constexpr unsigned define_pubkey_or_internal_owner = 106;
   };
 
   __always_inline
   void constructor(bytes name, bytes symbol, uint8 decimals,
-                   uint256 root_public_key, cell wallet_code, TokensType total_supply) {
+                   uint256 root_public_key, uint256 root_owner,
+                   cell wallet_code, TokensType total_supply) {
+    require((root_public_key != 0 and root_owner == 0) or (root_public_key == 0 and root_owner != 0),
+            error_code::define_pubkey_or_internal_owner);
+
     name_ = name;
     symbol_ = symbol;
     decimals_ = decimals;
@@ -32,40 +36,64 @@ public:
     wallet_code_ = wallet_code;
     total_supply_ = total_supply;
     total_granted_ = TokensType(0);
+    if (root_owner) {
+      auto workchain_id = std::get<addr_std>(address{tvm_myaddr()}.val()).workchain_id;
+      owner_address_ = address::make_std(workchain_id, root_owner);
+    }
   }
 
   __always_inline
-  lazy<MsgAddressInt> deployWallet(int8 workchain_id, uint256 pubkey, TokensType tokens, WalletGramsType grams) {
-    require(root_public_key_ == tvm_pubkey(), error_code::message_sender_is_not_my_owner);
+  address deployWallet(int8 workchain_id, uint256 pubkey, uint256 internal_owner,
+                       TokensType tokens, WalletGramsType grams) {
+    check_owner();
     require(total_granted_ + tokens <= total_supply_, error_code::not_enough_balance);
+    require((pubkey == 0 and internal_owner != 0) or (pubkey != 0 and internal_owner == 0),
+            error_code::define_pubkey_or_internal_owner);
 
     tvm_accept();
 
-    auto [wallet_init, dest] = calc_wallet_init(workchain_id, pubkey);
-    contract_handle<ITONTokenWallet> dest_handle(dest);
+    auto [wallet_init, dest] = calc_wallet_init(workchain_id, pubkey, {});
+    handle<ITONTokenWallet> dest_handle(dest);
     dest_handle.deploy(wallet_init, Grams(grams.get())).
-      call<&ITONTokenWallet::accept>(tokens);
+      accept(tokens);
 
     total_granted_ += tokens;
+
+    set_int_return_flag(SEND_REST_GAS_FROM_INCOMING);
     return dest;
   }
 
   __always_inline
-  void grant(lazy<MsgAddressInt> dest, TokensType tokens, WalletGramsType grams) {
-    require(root_public_key_ == tvm_pubkey(), error_code::message_sender_is_not_my_owner);
+  address deployEmptyWallet(int8 workchain_id, uint256 pubkey, uint256 internal_owner,
+                            WalletGramsType grams) {
+    require((pubkey == 0 and internal_owner != 0) or (pubkey != 0 and internal_owner == 0),
+            error_code::define_pubkey_or_internal_owner);
+
+    auto [wallet_init, dest] = calc_wallet_init(workchain_id, pubkey, {});
+    handle<ITONTokenWallet> dest_handle(dest);
+    dest_handle.deploy(wallet_init, Grams(grams.get())).
+      onEmptyDeploy();
+
+    set_int_return_flag(SEND_REST_GAS_FROM_INCOMING);
+    return dest;
+  }
+
+  __always_inline
+  void grant(address dest, TokensType tokens, WalletGramsType grams) {
+    check_owner();
     require(total_granted_ + tokens <= total_supply_, error_code::not_enough_balance);
 
     tvm_accept();
 
-    contract_handle<ITONTokenWallet> dest_handle(dest);
-    dest_handle(Grams(grams.get())).call<&ITONTokenWallet::accept>(tokens);
+    handle<ITONTokenWallet> dest_handle(dest);
+    dest_handle(Grams(grams.get())).accept(tokens);
 
     total_granted_ += tokens;
   }
 
   __always_inline
   void mint(TokensType tokens) {
-    require(root_public_key_ == tvm_pubkey(), error_code::message_sender_is_not_my_owner);
+    check_owner();
 
     tvm_accept();
 
@@ -102,8 +130,11 @@ public:
   }
 
   __always_inline
-  lazy<MsgAddressInt> getWalletAddress(int8 workchain_id, uint256 pubkey) {
-    return calc_wallet_init(workchain_id, pubkey).second;
+  address getWalletAddress(int8 workchain_id, uint256 pubkey, uint256 owner_std_addr) {
+    std::optional<address> owner_addr;
+    if (owner_std_addr)
+      owner_addr = address::make_std(workchain_id, owner_std_addr);
+    return calc_wallet_init(workchain_id, pubkey, owner_addr).second;
   }
 
   // received bounced message back
@@ -134,20 +165,44 @@ public:
   DEFAULT_SUPPORT_FUNCTIONS(IRootTokenContract, root_replay_protection_t)
 private:
   __always_inline
-  std::pair<StateInit, lazy<MsgAddressInt>> calc_wallet_init(int8 workchain_id, uint256 pubkey) {
+  std::pair<StateInit, address> calc_wallet_init(int8 workchain_id, uint256 pubkey,
+                                                 std::optional<address> owner_addr) {
     DTONTokenWallet wallet_data {
       name_, symbol_, decimals_,
       TokensType(0), root_public_key_, pubkey,
-      lazy<MsgAddressInt>{tvm_myaddr()}, wallet_code_
+      address{tvm_myaddr()}, owner_addr, wallet_code_, {}, workchain_id
     };
     auto [wallet_init, dest_addr] = prepare_wallet_state_init_and_addr(wallet_data);
-    lazy<MsgAddressInt> dest{ MsgAddressInt{ addr_std { {}, {}, workchain_id, dest_addr } } };
+    address dest = address::make_std(workchain_id, dest_addr);
     return { wallet_init, dest };
+  }
+
+  __always_inline bool is_internal_owner() const { return owner_address_.has_value(); }
+
+  __always_inline
+  void check_internal_owner() {
+    require(is_internal_owner(), error_code::internal_owner_disabled);
+    require(*owner_address_ == int_sender(),
+            error_code::message_sender_is_not_my_owner);
+  }
+
+  __always_inline
+  void check_external_owner() {
+    require(!is_internal_owner(), error_code::internal_owner_enabled);
+    require(tvm_pubkey() == root_public_key_, error_code::message_sender_is_not_my_owner);
+  }
+
+  __always_inline
+  void check_owner() {
+    if constexpr (Internal)
+      check_internal_owner();
+    else
+      check_external_owner();
   }
 };
 
 DEFINE_JSON_ABI(IRootTokenContract, DRootTokenContract, ERootTokenContract);
 
 // ----------------------------- Main entry functions ---------------------- //
-DEFAULT_MAIN_ENTRY_FUNCTIONS(RootTokenContract, IRootTokenContract, DRootTokenContract, ROOT_TIMESTAMP_DELAY)
+DEFAULT_MAIN_ENTRY_FUNCTIONS_TMPL(RootTokenContract, IRootTokenContract, DRootTokenContract, ROOT_TIMESTAMP_DELAY)
 

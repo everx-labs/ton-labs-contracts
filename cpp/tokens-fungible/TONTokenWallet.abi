@@ -33,23 +33,42 @@
     "id": "0xc"
   },
   {
+    "name": "getBalance_InternalOwner",
+    "inputs": [
+    { "name":"_answer_id", "type":"uint32" }
+    ],
+    "outputs": [
+    { "name":"value0", "type":"uint128" }
+    ],
+    "id": "0xd"
+  },
+  {
     "name": "accept",
     "inputs": [
     { "name":"tokens", "type":"uint128" }
     ],
     "outputs": [
     ],
-    "id": "0xd"
+    "id": "0xe"
+  },
+  {
+    "name": "onEmptyDeploy",
+    "inputs": [
+    ],
+    "outputs": [
+    ],
+    "id": "0xf"
   },
   {
     "name": "internalTransfer",
     "inputs": [
     { "name":"tokens", "type":"uint128" },
-    { "name":"pubkey", "type":"uint256" }
+    { "name":"pubkey", "type":"uint256" },
+    { "name":"my_owner_addr", "type":"uint256" }
     ],
     "outputs": [
     ],
-    "id": "0xe"
+    "id": "0x10"
   },
   {
     "name": "getName",
@@ -58,7 +77,7 @@
     "outputs": [
     { "name":"value0", "type":"bytes" }
     ],
-    "id": "0xf"
+    "id": "0x11"
   },
   {
     "name": "getSymbol",
@@ -67,7 +86,7 @@
     "outputs": [
     { "name":"value0", "type":"bytes" }
     ],
-    "id": "0x10"
+    "id": "0x12"
   },
   {
     "name": "getDecimals",
@@ -76,7 +95,7 @@
     "outputs": [
     { "name":"value0", "type":"uint8" }
     ],
-    "id": "0x11"
+    "id": "0x13"
   },
   {
     "name": "getBalance",
@@ -85,7 +104,7 @@
     "outputs": [
     { "name":"value0", "type":"uint128" }
     ],
-    "id": "0x12"
+    "id": "0x14"
   },
   {
     "name": "getWalletKey",
@@ -94,7 +113,7 @@
     "outputs": [
     { "name":"value0", "type":"uint256" }
     ],
-    "id": "0x13"
+    "id": "0x15"
   },
   {
     "name": "getRootAddress",
@@ -103,7 +122,16 @@
     "outputs": [
     { "name":"value0", "type":"address" }
     ],
-    "id": "0x14"
+    "id": "0x16"
+  },
+  {
+    "name": "getOwnerAddress",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"value0", "type":"address" }
+    ],
+    "id": "0x17"
   },
   {
     "name": "allowance",
@@ -113,7 +141,7 @@
     { "name":"spender", "type":"address" },
     { "name":"remainingTokens", "type":"uint128" }
     ],
-    "id": "0x15"
+    "id": "0x18"
   },
   {
     "name": "approve",
@@ -124,7 +152,7 @@
     ],
     "outputs": [
     ],
-    "id": "0x16"
+    "id": "0x19"
   },
   {
     "name": "transferFrom",
@@ -136,7 +164,7 @@
     ],
     "outputs": [
     ],
-    "id": "0x17"
+    "id": "0x1a"
   },
   {
     "name": "internalTransferFrom",
@@ -146,7 +174,7 @@
     ],
     "outputs": [
     ],
-    "id": "0x18"
+    "id": "0x1b"
   },
   {
     "name": "disapprove",
@@ -154,7 +182,7 @@
     ],
     "outputs": [
     ],
-    "id": "0x19"
+    "id": "0x1c"
   }
   ],
   "events": [
