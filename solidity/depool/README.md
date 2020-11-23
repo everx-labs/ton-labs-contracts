@@ -170,7 +170,7 @@ tvm_linker decode --tvc DePoolProxy.tvc
 
 `<validatorWalletAddress>` – validator wallet address from step 1.
 
-`"participantRewardFraction":*number*` - percentage of the total DePool reward (in integers, up to 99 inclusive) that goes to Participants.
+`"participantRewardFraction":*number*` - percentage of the total DePool reward (in integers, up to 99 inclusive) that goes to Participants. It's recommended to set it at 95% or more.
 
 `"balanceThreshold":*number*` - DePool's own balance, which it will aim to maintain. Minimum value is 12.5 tokens, recommended value is 100 tokens. It is never staked and is spent on DePool operations only.
 
@@ -320,7 +320,7 @@ Below are listed the commands used to manage stakes.
 
 > Note: All these commands are subject to an additional fee (by default 0.5 tons), that is partially spent to pay for DePool executing the command. The change is then returned to the sender. This value can be adjusted in TONOS-CLI config.
 
-> Note: Additionally, when DePool receives the stake and rewards back from elector and processes the funds of participants, 0.05 tons are deducted from every participant's share of the pool, to cover the costs of executing this action.
+> Note: Additionally, when DePool receives the stake and rewards back from elector and processes the funds of participants, 0.05 tons are deducted from every participant's share of the pool, to cover the costs of executing this action. This value is set in the `retOrReinvFee` DePool parameter, which can be viewed through `getDePoolInfo` get-method. 
 
 ### Configure TONOS-CLI for DePool operations
 
@@ -398,11 +398,11 @@ Where
 
 all `--value` parameters must be defined in tons, like this: `--value 10.5`, which means the value is 10,5 tons.
 
-`total <days>` - total period, for which the stake is made. 0 <`total`< 18 years.
+`total <days>` - total period, for which the stake is made.
 
 `withdrawal <days>` - withdrawal period (each time a withdrawal period ends, a portion of the stake is released to the beneficiary).
 
-> There are limitations for period settings: `withdrawalPeriodshould` be < `totalPeriod`, `totalPeriod` cannot exceed 18 years or be <=0, `totalPeriod` should be exactly divisible by withdrawalPeriod.
+> There are limitations for period settings: `withdrawalPeriod` should be <= `totalPeriod`, `totalPeriod` cannot exceed 18 years or be <=0, `totalPeriod` should be exactly divisible by withdrawalPeriod.
 
 `beneficiary <address>` - address of the wallet that will receive rewards from the stake and, in parts over time, the vesting stake itself. Cannot be the same as the wallet making the stake.
 
@@ -436,11 +436,11 @@ Where
 
 all `--value` parameters must be defined in tons, like this: `--value 10.5`, which means the value is 10,5 tons.
 
-`total <days>` - total period, for which the stake is made. 0 <`total`< 18 years.
+`total <days>` - total period, for which the stake is made. 
 
 `withdrawal <days>` - withdrawal period (each time a withdrawal period ends, a portion of the stake is returned to the wallet that made the stake). 
 
-> There are limitations for period settings: `withdrawalPeriodshould` be < `totalPeriod`, `totalPeriod` cannot exceed 18 years or be <=0, `totalPeriod` should be exactly divisible by withdrawalPeriod.
+> There are limitations for period settings: `withdrawalPeriod` should be <= `totalPeriod`, `totalPeriod` cannot exceed 18 years or be <=0, `totalPeriod` should be exactly divisible by withdrawalPeriod.
 
 `beneficiary <address>` - address of the wallet that will receive rewards from the stake. Cannot be the same as the wallet making the stake.
 
@@ -624,7 +624,7 @@ It is possible to configure the script to monitor the DePool status through the 
 
 ### DePool Balance
 
-Normally the DePool receives sufficient funds for its operations from validation rewards. These funds are located on the DePool's own balance, completely separate from the staking pool, and are never staked.
+Normally the DePool receives sufficient funds for its operations from validation rewards. Specifically, it tops up its balance to `balanceThreshold` every time it receives rewards. This balance is completely separate from the staking pool and the funds on it are never staked.
 
 However, a situation where the DePool spends its funds on regular operations, but does not receive enough rewards (for example, fails to participate in the elections or loses them), is possible.
 
@@ -634,7 +634,7 @@ DePool balance can be viewed on the [ton.live](https://ton.live/main) blockchain
 tonos-cli account <depool_address>
 ```
 
-Additionally, DePool emits the `TooLowDePoolBalance` [event] when its balance drops too low to perform state update operations.
+Additionally, DePool emits the `TooLowDePoolBalance` event when its balance drops too low to perform state update operations (below CRITICAL_THRESHOLD which equals 10 tons).
 
 Replenish the balance (it's recommended to top it up to 1.5*`balanceThreshold`) from any multisignature wallet with the following command:
 
@@ -646,7 +646,7 @@ Where
 
 `<depool_address>` - address of the DePool contract.
 
-all `--value` parameters must be defined in tons, like this: `--value 100.5`, which means the value is 100,5 tons.
+all `--value` parameters must be defined in tons, like this: `--value 150.5`, which means the value is 150,5 tons.
 
 `<msig_address>` - address of the wallet that made the stake.
 
@@ -655,7 +655,7 @@ all `--value` parameters must be defined in tons, like this: `--value 100.5`, wh
 Example:
 
 ```bash
-tonos-cli depool --addr 0:37fbcb6e3279cbf5f783d61c213ed20fee16e0b1b94a48372d20a2596b700ace replenish --value 100 --wallet 0:1b91c010f35b1f5b42a05ad98eb2df80c302c37df69651e1f5ac9c69b7e90d4e --sign "dizzy modify exotic daring gloom rival pipe disagree again film neck fuel"
+tonos-cli depool --addr 0:37fbcb6e3279cbf5f783d61c213ed20fee16e0b1b94a48372d20a2596b700ace replenish --value 150 --wallet 0:1b91c010f35b1f5b42a05ad98eb2df80c302c37df69651e1f5ac9c69b7e90d4e --sign "dizzy modify exotic daring gloom rival pipe disagree again film neck fuel"
 ```
 
 > Note: These funds do not go towards any stake. They are transferred to the DePool contract itself and are spent on its operational expenses.
@@ -794,7 +794,7 @@ tonos-cli depool --addr 0:37fbcb6e3279cbf5f783d61c213ed20fee16e0b1b94a48372d20a2
 5. `ProxyHasRejectedRecoverRequest(uint64 roundId)` - event is emitted if stake cannot be returned from elector because too low balance of proxy contract.
 6. `RoundCompleted(TruncatedRound round)` - event emitted when the round was completed.
 7. `StakeSigningRequested(uint32 electionId, address proxy)` - event emitted when round switches from pooling to election indicating that DePool is waiting for signed election request from validator wallet.
-8. `TooLowDePoolBalance(uint replenishment)` - event emitted when DePool's own balance becomes too low to perform state update operations. `replenishment` indicates the minimal value required to resume operations. It's recommended to replenish the balance to 1.5* `balanceThreshold` if this event occurs.
+8. `TooLowDePoolBalance(uint replenishment)` - event emitted when DePool's own balance becomes too low to perform state update operations (below `CRITICAL_THRESHOLD` which equals 10 tons). `replenishment` indicates the minimal value required to resume operations. It's recommended to replenish the balance to 1.5* `balanceThreshold` if this event occurs.
 
 
 Events command output example:
@@ -865,7 +865,7 @@ Result: {
 
 The participant parameters displayed by the get-method are the following:
 
-`locks` and `vestings`: participant's lock and vesting stake, each split into two neighboring rounds. There can be only one of each, split equally into two entries. The parameters of the lock and vesting stake are:
+`locks` and `vestings`: participant's lock and vesting stake, each split into two neighboring rounds. There can be only one of each, split equally into two entries. The parameters of the lock and vesting stakes are:
 - `amount`: the total initial amount staked in this round(in nanotons).
 - `lastWithdrawalTime`: last time a withdrawal period ended and a part of the stake was unlocked (in unixtime).
 - `owner`: the address that made the lock or vesting stake on behalf of the participant.
@@ -1035,6 +1035,7 @@ The round parameters displayed by the get-method are the following:
 
 `completionReason`: the code for the reason the round was completed. Remains "0x0", until round actually is completed. The possible reasons are:
 
+- 0x0 - Round is not completed yet.
 - 0x1 - Pool was closed by owner.
 - 0x2 - The round was one of the first two rounds after deployment: 0x0 or 0x1. These first rounds are empty and are used only to launch the round rotation mechanism. They complete with this code without performing any additional actions.
 - 0x3 - Validator stake is less than validatorAssurance.
@@ -1140,7 +1141,6 @@ Every time DePool receives rewards for validation, DePool replenishes it's pure 
 
 2) `participantRewardFraction`% of the reward is distributed among all participants (including the validator) proportionally to their share of the staking pool. By default these rewards are added to the ordinary stakes of all participants and reinvested with it. To withdraw this stake or any part of it to the participant wallet, use one of the withdrawal functions.
 
-2) The remaining `associationRewardFraction`% of the reward is transferred to the DePool Association. This is not currently implemented.
 
 # Troubleshooting
 
@@ -1294,7 +1294,7 @@ Possible error codes and their meanings:
 
 `108` - function cannot be called by external message.
 
-`113` - message sender is not in validator pool.
+`113` - message sender is not validator wallet.
 
 `114` - DePool is closed.
 
@@ -1306,7 +1306,7 @@ Possible error codes and their meanings:
 
 `130` - DePool deployment isn't signed with public key. Please check your key file or seed phrase.
 
-`133` - validator address isn't defined in standard form during DePool deployment. Please check your parameters in deploy message.
+`133` - validator address passed to constructor is not of add_std type. Please check your parameters in deploy message.
 
 `138` - Incorrect participant reward fraction during DePool deployment (`participantRewardFraction` ≤ 0 or  ≥ 100). Please check your parameters in deploy message.
 
