@@ -865,7 +865,7 @@ Result: {
 
 The participant parameters displayed by the get-method are the following:
 
-`locks` and `vestings`: participant's lock and vesting stake, each split into two neighboring rounds. There can be only one of each, split equally into two entries. The parameters of the lock and vesting stakes are:
+`locks` and `vestings`: participant's lock and vesting stakes, each split into two neighboring rounds. There can be only one of each, split equally into two entries. The parameters of the lock and vesting stakes are:
 - `amount`: the total initial amount staked in this round(in nanotons).
 - `lastWithdrawalTime`: last time a withdrawal period ended and a part of the stake was unlocked (in unixtime).
 - `owner`: the address that made the lock or vesting stake on behalf of the participant.
