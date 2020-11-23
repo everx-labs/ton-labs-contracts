@@ -172,7 +172,7 @@ tvm_linker decode --tvc DePoolProxy.tvc
 
 `"participantRewardFraction":*number*` - percentage of the total DePool reward (in integers, up to 99 inclusive) that goes to Participants.
 
-`"balanceThreshold":*number*` - DePool's own balance, which it will aim to maintain. Minimum value is 12.5 tokens, recommended value is 100 tokens. It is never staked and is spent on DePool operations only. It is never staked and is spent on DePool operations only.
+`"balanceThreshold":*number*` - DePool's own balance, which it will aim to maintain. Minimum value is 12.5 tokens, recommended value is 100 tokens. It is never staked and is spent on DePool operations only.
 
 > **Important: You will not be able to change these parameters after the DePool is deployed. They will influence the appeal of your DePool to potential participants:** `participantRewardFraction` determines what percentage of their total reward all participants will receive (too small, and other DePools might draw them away, too big, and your validator wallet might not receive enough rewards, to support validation and staking); `validatorAssurance` determines how much you take it upon yourself to invest in the DePool and lose in case of any validator node malfunction or misbehavior. If set too small, potential participants might decide you aren't risking enough and avoid your DePool in favor of others.
 
