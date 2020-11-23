@@ -634,7 +634,7 @@ DePool balance can be viewed on the [ton.live](https://ton.live/main) blockchain
 tonos-cli account <depool_address>
 ```
 
-Additionally, DePool emits the `TooLowDePoolBalance` [event] when its balance drops too low, indicating how far below the `balanceThreshold` did its balance drop.
+Additionally, DePool emits the `TooLowDePoolBalance` [event] when its balance drops too low to perform state update operations.
 
 Replenish the balance (it's recommended to top it up to 1.5*`balanceThreshold`) from any multisignature wallet with the following command:
 
@@ -794,7 +794,8 @@ tonos-cli depool --addr 0:37fbcb6e3279cbf5f783d61c213ed20fee16e0b1b94a48372d20a2
 5. `ProxyHasRejectedRecoverRequest(uint64 roundId)` - event is emitted if stake cannot be returned from elector because too low balance of proxy contract.
 6. `RoundCompleted(TruncatedRound round)` - event emitted when the round was completed.
 7. `StakeSigningRequested(uint32 electionId, address proxy)` - event emitted when round switches from pooling to election indicating that DePool is waiting for signed election request from validator wallet.
-8. `TooLowDePoolBalance(uint replenishment)` - event emitted when pure DePool's own balance becomes too low. `replenishment` minimal value that must be sent to DePool via `receiveFunds` function.
+8. `TooLowDePoolBalance(uint replenishment)` - event emitted when DePool's own balance becomes too low to perform state update operations. `replenishment` indicates the minimal value required to resume operations. It's recommended to replenish the balance to 1.5* `balanceThreshold` if this event occurs.
+
 
 Events command output example:
 
