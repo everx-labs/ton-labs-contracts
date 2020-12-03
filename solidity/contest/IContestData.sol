@@ -12,8 +12,8 @@ interface IContestData {
     }
 
     struct Juror {
-        uint keys;          // Public keys of the jurors
-        address addr;       // Jurors' addresses
+        uint key;           // Juror's public key
+        address addr;       // Juror's address
     }
 
     /* Timeline of the contest */

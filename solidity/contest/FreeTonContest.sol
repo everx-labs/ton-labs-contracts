@@ -1,7 +1,7 @@
 /* Free TON Contest */
 pragma solidity >= 0.6.0;
 pragma AbiHeader pubkey;
-pragma msgValue 3e7;
+pragma msgValue 30000000;
 
 import "IContestData.sol";
 
@@ -17,85 +17,72 @@ contract FreeTonContest is IContestData {
     uint16 constant ERROR_DIFFERENT_CALLER =  111; // Caller is not the contract itself
     uint16 constant ERROR_NON_NATIVE_CALLER = 112; // Caller is not the one which deployed it
     uint16 constant ERROR_RESTRICTED_CALLER = 113; // Caller is not the contract and not the deployer    
-    uint16 constant ERROR_NOT_FINALIZED     = 114;      // Final results are not available at this time
-    uint16 constant ERROR_INVALID_TIMELINE  = 120;   // Contest end date can't precede contest start date
-    uint16 constant ERROR_INVALID_SETUP     = 121;      // Contest has not been started yet
-    uint16 constant ERROR_WRONG_SCORE       = 124;         // Mark should be in 1 to 10 range
-
-    /***** Contract data ******************************************** */
-
+    uint16 constant ERROR_NOT_FINALIZED     = 114; // Final results are not available at this time
+    uint16 constant ERROR_INVALID_TIMELINE  = 120; // Contest end date can't precede contest start date
+    uint16 constant ERROR_INVALID_SETUP     = 121; // Contest has not been started yet
+    uint16 constant ERROR_WRONG_SCORE       = 124; // Mark should be in 1 to 10 range
+    uint16 constant ERROR_ADVANCE_AHEAD     = 130; // Already at this stage or further
+    uint16 constant ERROR_ADVANCE_START     = 131; // Too early to start the contest
+    uint16 constant ERROR_ADVANCE_END       = 132; // Too early to end the contest
+    uint16 constant ERROR_ADVANCE_VOTE_END  = 133; // Too early to end the voting period
     /* Contest data */
 
-    ContestInfo _info;
-    ContestTimeline _tl;
+    ContestInfo _info;      // Contest reference information
+    ContestTimeline _tl;    // Contest timeline
+    Juror[] _jury;          // Jury of the contest
 
-    Juror[] _jury;
+    address _deployer;      // Deployer contract 
+    address _peer;          // Peer contract
 
-    uint16 _id;
-    uint32 _globalId;
-
-    address _deployer;
-    address _peer;
-
-    mapping (uint256 => uint8) _jurors;
+    mapping (uint256 => uint8) _jurors; // Juror ID by public key
+    mapping (Stage => uint32) _actualTimeline;
     
-    Stage _stage;
-    uint128 constant DEF_VALUE = 3e7;
     uint128 constant DEF_VALUE_COMPUTE = 2e8;
+    uint128 constant MAX_VALUE_COMPUTE = 1e9;
 
     modifier accept() {
         tvm.accept();
         _;
     }
 
-    /* Register Contenders */
-
-    ContenderInfo[] _entries;
-
-    /* Process voting */
+    ContenderInfo[] _entries;   // Entries sumbitted to compete
+    Stage _stage;               // Current contest stage
 
     enum VoteType { Undefined, For, Abstain, Reject }
 
+    // Actively used
     struct Mark {
-        VoteType vt;
-        uint8 score;
+        VoteType vt;    // For, Abstain, Reject
+        uint8 score;    // 0 for abstain and reject, or a mark from 1 to 10
     }
-    mapping(uint24 => Mark) _marks;    
+    mapping(uint16 => Mark) _marks;
 
-    struct Comment {
+    // Just stored
+    struct Comment {   
         string comment;
         uint32 ts;
     }
-    mapping(uint24 => Comment) _comments;
+    mapping(uint16 => Comment) _comments;
 
     /* Final voting results */
 
     struct FinalData {
-        uint16 totalRating;
-        uint32 avgRating;
-        uint8 votes;
-        uint8 vfor;
-        uint8 abstains;
-        uint8 rejects;
-        uint32 ts;        
+        uint16 totalRating; // Sum of all marks given
+        uint16 avgRating;   // Sum of all marks multiplied by 100 and divided by the number of votes for
+        uint8 votes;        // Total votes
+        uint8 vfor;         // Votes "for"
+        uint8 abstains;     // Votes "abstain"
+        uint8 rejects;      // Votes "reject"
     }
     FinalData[] _finalData;
 
     struct Score {
-        uint16 id;
-        uint16 rank;
-        uint32 avgRating;
-        uint32 ts;
+        uint8 id;           // Entry id
+        uint16 avgRating;   // Average rating (multiplied by 100)
+        address addr;       // address of the contestant
+        uint32 reward;      // raward (in tons)
     }
     Score[] _ranking;
-
-    struct Payout {
-        uint16 id;
-        address addr;
-        uint32 reward;
-        uint32 ts;        
-    }
-    Payout[] _payouts;
 
     uint32[] _prize;
 
@@ -122,45 +109,40 @@ contract FreeTonContest is IContestData {
     }
 
     /* Contest setup */
-    constructor(uint32 id, ContestInfo info, ContestTimeline ctl, Juror[] jury, uint32[] cr) public {
+    constructor(ContestInfo info, ContestTimeline ctl, Juror[] jury, uint32[] prizes) public {
         _deployer = msg.sender;
-        _globalId = id;
         _info = info;
-
-        _jury = jury;
-        for (uint8 i = 0; i < jury.length; i++) {
-            _jurors[jury[i].keys] = i;
-        }
         _tl = ctl;
-        _prize = cr;
+        _jury = jury;
+
+        for (uint8 i = 0; i < jury.length; i++) {
+            _jurors[jury[i].key] = i;
+        }
+        _prize = prizes;
         _stage = Stage.Setup;
     }
 
     function advanceTo(Stage s) public restricted {
-        if (_stage >= s) {
-            return;
-        } 
-        Stage next = s;
-        _stage = s;
+        require(_stage < s, ERROR_ADVANCE_AHEAD);
 
-        if (next == Stage.Contest && now >= _tl.contestStarts) {
-            // start the contest
-        } else if (next == Stage.Vote && now >= _tl.contestEnds) {
-            // finish the contest, proceed to voting
-        } else if (next == Stage.Finalize && now >= _tl.votingEnds) {
-            this.finalizeResults{value:DEF_VALUE_COMPUTE}();            
-        } else if (next == Stage.Trial) {
-            this.trial{value:DEF_VALUE_COMPUTE}();
-        } else if (next == Stage.Rank) {
-            this.rank{value:DEF_VALUE_COMPUTE}();
-        } else if (next == Stage.Reward) {
+        if (s == Stage.Contest) {
+            require(now >= _tl.contestStarts, ERROR_ADVANCE_START);
+        } else if (s == Stage.Vote) {
+            require(now >= _tl.contestEnds, ERROR_ADVANCE_END);            
+        } else if (s == Stage.Finalize) {
+            require(now >= _tl.votingEnds, ERROR_ADVANCE_VOTE_END);
+            this.finalizeResults{value:DEF_VALUE_COMPUTE}();
+        } else if (s == Stage.Rank) {
+            this.rank{value:MAX_VALUE_COMPUTE}();
+        } else if (s == Stage.Reward) {
             this.distributeRewards{value:DEF_VALUE_COMPUTE}();
-        } else if (next == Stage.Finish) {
+        } else if (s == Stage.Finish) {
 
-        } else if (next == Stage.Reserved) {
+        } else if (s == Stage.Reserved) {
             s = Stage.Undefined;
         }
-
+        _stage = s;
+        _actualTimeline[s] = _t();
     }
 
     function _resultsFinalized() private inline view returns (bool) {
@@ -181,51 +163,56 @@ contract FreeTonContest is IContestData {
     }
 
     /* Combined juror/entry id to single out a mark */
-    function _mid(uint8 jid, uint16 eid) private inline pure returns (uint24) {
-        return uint24(jid * (1 << 16) + eid);
+    function _mid(uint8 jid, uint8 eid) private inline pure returns (uint16) {
+        return uint16(jid * (1 << 8) + eid);
     }
 
-    function _jeid(uint24 mid) private inline pure returns (uint8, uint16) {
-        uint8 jid = uint8(mid >> 16);
-        uint16 eid = uint16(mid - jid * (1 << 16));
-        return (jid, eid);
+    function _jeid(uint16 mid) private inline pure returns (uint8, uint8) {
+        return (uint8(mid >> 8), uint8(mid & 0xFF));
+    }
+
+    function _checkVote() private inline view returns (uint8) {
+        require(_stage == Stage.Vote, ERROR_VOTING_CLOSED);        
+        uint8 jid = _jurors.at(msg.pubkey()); // Check if there's a juror with this public key
+        tvm.accept();        
+        return jid;
     }
 
     /* store a single vote */
-    function _recordVote(uint24 mid, VoteType voteType, uint8 score, string comment) private inline {
+    function _recordVote(uint16 mid, VoteType voteType, uint8 score, string comment) private inline {
         _marks.add(mid, Mark(voteType, score));
         _comments.add(mid, Comment(comment, _t()));
     }
 
     /* Process mass votes */
-    function voteAll(uint16[] id, VoteType[] voteType, uint8[] score, string[] comment) external {
-        require(_stage == Stage.Vote, ERROR_VOTING_CLOSED);
-        uint8 jid = _jurors[msg.pubkey()]; // Check if there's a juror with this public key
-        tvm.accept();
-        for (uint i = 0; i < id.length; i++) {
+    function voteAll(uint8[] id, VoteType[] voteType, uint8[] score, string[] comment) external {
+        uint8 jid = _checkVote();
+        for (uint8 i = 0; i < id.length; i++) {
             _recordVote(_mid(jid, id[i]), voteType[i], score[i], comment[i]);
         }
     }
 
     /* Process a single vote */
-    function vote(uint16 id, VoteType voteType, uint8 score, string comment) external {
-        require(_stage == Stage.Vote, ERROR_VOTING_CLOSED);        
-        require(score >= 0 && score <= 10, ERROR_WRONG_SCORE);
-        uint8 jid = _jurors[msg.pubkey()]; // Check if there's a juror with this public key
+    function vote(uint8 id, VoteType voteType, uint8 score, string comment) external {
+        if (voteType == VoteType.For)
+            require(score > 0 && score <= 10, ERROR_WRONG_SCORE);
+        else
+            score = 0;            // Ignore score for rejects and abstains
+        uint8 jid = _checkVote(); // Check if there's a juror with this public key
         tvm.accept();
         _recordVote(_mid(jid, id), voteType, score, comment);
     }
 
     /* Process the results and form the final set of raw data */
     function finalizeResults() external mine {
-        for (uint16 i = 0; i < _entries.length; i++) {
+        for (uint8 i = 0; i < _entries.length; i++) {
             _finalData.push(_finalize(i));
         }
-        advanceTo(Stage.Trial);
+        advanceTo(Stage.Rank);
     }
 
     /* gather the necessary stats to carry on with the evaluation */
-    function _finalize(uint16 eid) private inline view returns (FinalData) {
+    function _finalize(uint8 eid) private inline view returns (FinalData) {
        
         uint16 totalRating;
         uint8 vfor;
@@ -249,77 +236,63 @@ contract FreeTonContest is IContestData {
             } 
         }
         uint8 votes = vfor + rejects + abstains;
-        uint32 avgRating = vfor > 0 ? (totalRating * 100 / vfor) : 0;
+        uint16 avgRating = vfor > 0 ? uint16(totalRating * 100 / vfor) : 0;
 
-        return FinalData(totalRating, avgRating, votes, vfor, abstains, rejects, _t());
+        return FinalData(totalRating, avgRating, votes, vfor, abstains, rejects);
     }
 
     /* 
-     * Assess the wotks according to the specified metrics and criteria.
+     * Assess the works according to the specified metrics and criteria.
      * This implementation applies soft majority voting (50% + 1 of all voted means reject)
-     * Qualified are sorted by average score
+     * Qualified are sorted by the average score
      */
-
-    function trial() external mine {
-
-        /* Separate passed entries in a dictionary with the evaluation criterion -  average scores */
-        mapping (uint8 => uint32) scores;
-        uint8 passed;
+    function rank() external mine {
+        mapping (uint24 => bool) scores;
+        
+        // sort entries from highest average rating to lowest.
         for (uint8 i = 0; i < _entries.length; i++) {
             FinalData fd = _finalData[i];
             if (_status(fd)) {
-                scores[i] = fd.avgRating;
-                passed++;
+                uint24 key = uint24(fd.avgRating) * (1 << 8) + i;
+                scores[key] = true;
             }
         }
 
-        /* Sort the qualified entries according to the criteria */
-        for (uint8 i = 0; i < passed; i++) {
-            (uint32 max, uint8 k) = (scores[i], i);
-            for (uint8 j = i + 1; j < passed; j++) {
-                if (scores[j] > max) {
-                    (max, k) = (scores[j], j);
-                }
-            }
-            _ranking.push(Score(k, i, max, _t()));
-            delete scores[k];
+        optional(uint24, bool) curScore = scores.max();
+        uint8 k = 0;
+        while (curScore.hasValue()) {
+            (uint24 key,) = curScore.get();
+            (uint16 rating, uint8 eid) = (uint16(key >> 8), uint8(key & 0xFF));
+            uint32 reward = (k <= _prize.length) ? _prize[k] : 0;
+            _ranking.push(Score(eid, rating, _entries[eid].addr, reward));
+            k++;
+            curScore = scores.prev(key);
         }
 
-        advanceTo(Stage.Rank);
+        advanceTo(Stage.Reward);
     }
 
     /* Need 50% + 1 of all the jurors voted disqualifies 
      *
      * Can be replaced with custom logic
      */
-
     function _status(FinalData fd) private inline pure returns (bool) {
         return (fd.rejects * 2 <= fd.votes);
     }
 
-    /* Compose a table of the contest winners eligible for prizes */
-    function rank() external mine {
-        uint l = math.min(_ranking.length, _prize.length);
-        for (uint i = 0; i < l; i++) {
-            Score s = _ranking[i];
-            _payouts.push(Payout(s.id, _entries[s.id].addr, _prize[i], _t()));
-        }
-        advanceTo(Stage.Reward);        
-    }
-
     /* Distribute the rewards accoring to the table */
     function distributeRewards() external mine {
-        for (uint8 i = 0; i < _payouts.length; i++) {
-            this.rewardWinner(_payouts[i]);
+        uint l = math.min(_ranking.length, _prize.length);
+        for (uint i = 0; i < l; i++) {
+            this.rewardWinner(_ranking[i]);
         }
         advanceTo(Stage.Finish);
     }
 
-    function rewardWinner(Payout p) external pure mine {
-        uint128 val = uint128(p.reward * 1e9);
-        p.addr.transfer(val, true, 0);
+    function rewardWinner(Score s) external pure mine {
+        uint128 val = uint128(s.reward * 1e9);
+        s.addr.transfer(val, true, 0);
     }
-
 
     /* getter to be used to determine if the data has been already 
      * finalized and ready to serve for eternity 
@@ -343,21 +316,10 @@ contract FreeTonContest is IContestData {
         data = _finalData;
     }
 
-    /* Contestants' ranking */
+    /* Contestants' ranking and payouts */
     function getRanking() public view finals returns (Score[] table) {
         table = _ranking;
     }
-
-    /* Payouts ready for distribution */
-    function getPayouts() public view finals returns (Payout[] table) {
-        table = _payouts;
-    }
-
-
-    /* Experimental functionality based on the final voting data
-     * assigns the places for the contestants based on the criteria defined by the spec.
-
-
 
     /* to be used to retrieve information about contest */
     function getContestInfo() public view returns (ContestInfo info) {
@@ -371,20 +333,13 @@ contract FreeTonContest is IContestData {
     }
 
     /* all contenders data */
-
     function getContendersInfo() public view returns (ContenderInfo[] info) {
         info = _entries;
-    }
-
-    function getStats() public view returns (Stage s) {
-        s = _stage;
     }
 
     function getContestTimeline() public view returns (ContestTimeline tl) {
         tl = _tl;
     }
-
-    /* Contest jury */
 
     function getJury() public view returns (Juror[] jury) {
         jury = _jury;
@@ -394,17 +349,26 @@ contract FreeTonContest is IContestData {
         rewards = _prize;
     }
 
-
+    function getActualTimeline() public view returns (Stage[] stages, uint32[] ts) {
+        optional(Stage, uint32) pair = _actualTimeline.min();
+        while (pair.hasValue()) {
+            (Stage s, uint32 t) = pair.get();
+            stages.push(s);
+            ts.push(t);
+            pair = _actualTimeline.next(s);
+        }
+    }
 
     function getMarks() public view returns (Mark[] mk) {
-
-        optional(uint24, Mark) pair = _marks.min();
+        optional(uint16, Mark) pair = _marks.min();
         while (pair.hasValue()) {
-            (uint24 mid, Mark m) = pair.get();
+            (uint16 mid, Mark m) = pair.get();
             mk.push(m);
             pair = _marks.next(mid);
         }
     }
 
-
+    function getStats() public view returns (Stage s) {
+        s = _stage;
+    }
 }

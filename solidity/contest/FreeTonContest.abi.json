@@ -5,11 +5,10 @@
 		{
 			"name": "constructor",
 			"inputs": [
-				{"name":"id","type":"uint32"},
 				{"components":[{"name":"gid","type":"uint32"},{"name":"title","type":"bytes"},{"name":"link","type":"bytes"},{"name":"hash","type":"uint256"}],"name":"info","type":"tuple"},
 				{"components":[{"name":"createdAt","type":"uint32"},{"name":"contestStarts","type":"uint32"},{"name":"contestEnds","type":"uint32"},{"name":"votingEnds","type":"uint32"}],"name":"ctl","type":"tuple"},
-				{"components":[{"name":"keys","type":"uint256"},{"name":"addr","type":"address"}],"name":"jury","type":"tuple[]"},
-				{"name":"cr","type":"uint32[]"}
+				{"components":[{"name":"key","type":"uint256"},{"name":"addr","type":"address"}],"name":"jury","type":"tuple[]"},
+				{"name":"prizes","type":"uint32[]"}
 			],
 			"outputs": [
 			]
@@ -37,7 +36,7 @@
 		{
 			"name": "voteAll",
 			"inputs": [
-				{"name":"id","type":"uint16[]"},
+				{"name":"id","type":"uint8[]"},
 				{"name":"voteType","type":"uint8[]"},
 				{"name":"score","type":"uint8[]"},
 				{"name":"comment","type":"bytes[]"}
@@ -48,7 +47,7 @@
 		{
 			"name": "vote",
 			"inputs": [
-				{"name":"id","type":"uint16"},
+				{"name":"id","type":"uint8"},
 				{"name":"voteType","type":"uint8"},
 				{"name":"score","type":"uint8"},
 				{"name":"comment","type":"bytes"}
@@ -58,13 +57,6 @@
 		},
 		{
 			"name": "finalizeResults",
-			"inputs": [
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "trial",
 			"inputs": [
 			],
 			"outputs": [
@@ -87,7 +79,7 @@
 		{
 			"name": "rewardWinner",
 			"inputs": [
-				{"components":[{"name":"id","type":"uint16"},{"name":"addr","type":"address"},{"name":"reward","type":"uint32"},{"name":"ts","type":"uint32"}],"name":"p","type":"tuple"}
+				{"components":[{"name":"id","type":"uint8"},{"name":"avgRating","type":"uint16"},{"name":"addr","type":"address"},{"name":"reward","type":"uint32"}],"name":"s","type":"tuple"}
 			],
 			"outputs": [
 			]
@@ -106,7 +98,7 @@
 				{"name":"id","type":"uint16"}
 			],
 			"outputs": [
-				{"components":[{"name":"totalRating","type":"uint16"},{"name":"avgRating","type":"uint32"},{"name":"votes","type":"uint8"},{"name":"vfor","type":"uint8"},{"name":"abstains","type":"uint8"},{"name":"rejects","type":"uint8"},{"name":"ts","type":"uint32"}],"name":"d","type":"tuple"}
+				{"components":[{"name":"totalRating","type":"uint16"},{"name":"avgRating","type":"uint16"},{"name":"votes","type":"uint8"},{"name":"vfor","type":"uint8"},{"name":"abstains","type":"uint8"},{"name":"rejects","type":"uint8"}],"name":"d","type":"tuple"}
 			]
 		},
 		{
@@ -114,7 +106,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"totalRating","type":"uint16"},{"name":"avgRating","type":"uint32"},{"name":"votes","type":"uint8"},{"name":"vfor","type":"uint8"},{"name":"abstains","type":"uint8"},{"name":"rejects","type":"uint8"},{"name":"ts","type":"uint32"}],"name":"data","type":"tuple[]"}
+				{"components":[{"name":"totalRating","type":"uint16"},{"name":"avgRating","type":"uint16"},{"name":"votes","type":"uint8"},{"name":"vfor","type":"uint8"},{"name":"abstains","type":"uint8"},{"name":"rejects","type":"uint8"}],"name":"data","type":"tuple[]"}
 			]
 		},
 		{
@@ -122,15 +114,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"id","type":"uint16"},{"name":"rank","type":"uint16"},{"name":"avgRating","type":"uint32"},{"name":"ts","type":"uint32"}],"name":"table","type":"tuple[]"}
-			]
-		},
-		{
-			"name": "getPayouts",
-			"inputs": [
-			],
-			"outputs": [
-				{"components":[{"name":"id","type":"uint16"},{"name":"addr","type":"address"},{"name":"reward","type":"uint32"},{"name":"ts","type":"uint32"}],"name":"table","type":"tuple[]"}
+				{"components":[{"name":"id","type":"uint8"},{"name":"avgRating","type":"uint16"},{"name":"addr","type":"address"},{"name":"reward","type":"uint32"}],"name":"table","type":"tuple[]"}
 			]
 		},
 		{
@@ -159,14 +143,6 @@
 			]
 		},
 		{
-			"name": "getStats",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"s","type":"uint8"}
-			]
-		},
-		{
 			"name": "getContestTimeline",
 			"inputs": [
 			],
@@ -179,7 +155,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"keys","type":"uint256"},{"name":"addr","type":"address"}],"name":"jury","type":"tuple[]"}
+				{"components":[{"name":"key","type":"uint256"},{"name":"addr","type":"address"}],"name":"jury","type":"tuple[]"}
 			]
 		},
 		{
@@ -191,11 +167,28 @@
 			]
 		},
 		{
+			"name": "getActualTimeline",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"stages","type":"uint8[]"},
+				{"name":"ts","type":"uint32[]"}
+			]
+		},
+		{
 			"name": "getMarks",
 			"inputs": [
 			],
 			"outputs": [
 				{"components":[{"name":"vt","type":"uint8"},{"name":"score","type":"uint8"}],"name":"mk","type":"tuple[]"}
+			]
+		},
+		{
+			"name": "getStats",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"s","type":"uint8"}
 			]
 		}
 	],
