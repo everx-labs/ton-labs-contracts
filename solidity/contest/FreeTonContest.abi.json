@@ -5,11 +5,10 @@
 		{
 			"name": "constructor",
 			"inputs": [
-				{"name":"id","type":"uint32"},
 				{"components":[{"name":"gid","type":"uint32"},{"name":"title","type":"bytes"},{"name":"link","type":"bytes"},{"name":"hash","type":"uint256"}],"name":"info","type":"tuple"},
 				{"components":[{"name":"createdAt","type":"uint32"},{"name":"contestStarts","type":"uint32"},{"name":"contestEnds","type":"uint32"},{"name":"votingEnds","type":"uint32"}],"name":"ctl","type":"tuple"},
-				{"components":[{"name":"nJurors","type":"uint8"},{"name":"keys","type":"uint256[]"},{"name":"addresses","type":"address[]"}],"name":"jury","type":"tuple"},
-				{"components":[{"name":"winners","type":"uint8"},{"name":"rewards","type":"uint32[]"}],"name":"cr","type":"tuple"}
+				{"components":[{"name":"key","type":"uint256"},{"name":"addr","type":"address"}],"name":"jury","type":"tuple[]"},
+				{"name":"prizes","type":"uint32[]"}
 			],
 			"outputs": [
 			]
@@ -35,28 +34,22 @@
 			]
 		},
 		{
-			"name": "voteFor",
+			"name": "voteAll",
 			"inputs": [
-				{"name":"id","type":"uint16"},
-				{"name":"mark","type":"uint8"},
-				{"name":"comment","type":"bytes"}
+				{"name":"id","type":"uint8[]"},
+				{"name":"voteType","type":"uint8[]"},
+				{"name":"score","type":"uint8[]"},
+				{"name":"comment","type":"bytes[]"}
 			],
 			"outputs": [
 			]
 		},
 		{
-			"name": "abstain",
+			"name": "vote",
 			"inputs": [
-				{"name":"id","type":"uint16"},
-				{"name":"comment","type":"bytes"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "voteAgainst",
-			"inputs": [
-				{"name":"id","type":"uint16"},
+				{"name":"id","type":"uint8"},
+				{"name":"voteType","type":"uint8"},
+				{"name":"score","type":"uint8"},
 				{"name":"comment","type":"bytes"}
 			],
 			"outputs": [
@@ -70,40 +63,8 @@
 			]
 		},
 		{
-			"name": "computeScore",
+			"name": "rank",
 			"inputs": [
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "prepareTable",
-			"inputs": [
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "getRewards",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"winners","type":"uint8"},
-				{"name":"rewards","type":"uint32[]"}
-			]
-		},
-		{
-			"name": "getTable",
-			"inputs": [
-			],
-			"outputs": [
-				{"components":[{"name":"id","type":"uint16"},{"name":"avgRating","type":"uint32"},{"name":"addr","type":"address"},{"name":"reward","type":"uint32"}],"name":"table","type":"tuple[]"}
-			]
-		},
-		{
-			"name": "rewardWinner",
-			"inputs": [
-				{"name":"i","type":"uint8"}
 			],
 			"outputs": [
 			]
@@ -113,6 +74,47 @@
 			"inputs": [
 			],
 			"outputs": [
+			]
+		},
+		{
+			"name": "rewardWinner",
+			"inputs": [
+				{"components":[{"name":"id","type":"uint8"},{"name":"avgRating","type":"uint16"},{"name":"addr","type":"address"},{"name":"reward","type":"uint32"}],"name":"s","type":"tuple"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "resultsFinalized",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"flag","type":"bool"}
+			]
+		},
+		{
+			"name": "getFinalStatsFor",
+			"inputs": [
+				{"name":"id","type":"uint16"}
+			],
+			"outputs": [
+				{"components":[{"name":"totalRating","type":"uint16"},{"name":"avgRating","type":"uint16"},{"name":"votes","type":"uint8"},{"name":"vfor","type":"uint8"},{"name":"abstains","type":"uint8"},{"name":"rejects","type":"uint8"}],"name":"d","type":"tuple"}
+			]
+		},
+		{
+			"name": "getFinalVotingData",
+			"inputs": [
+			],
+			"outputs": [
+				{"components":[{"name":"totalRating","type":"uint16"},{"name":"avgRating","type":"uint16"},{"name":"votes","type":"uint8"},{"name":"vfor","type":"uint8"},{"name":"abstains","type":"uint8"},{"name":"rejects","type":"uint8"}],"name":"data","type":"tuple[]"}
+			]
+		},
+		{
+			"name": "getRanking",
+			"inputs": [
+			],
+			"outputs": [
+				{"components":[{"name":"id","type":"uint8"},{"name":"avgRating","type":"uint16"},{"name":"addr","type":"address"},{"name":"reward","type":"uint32"}],"name":"table","type":"tuple[]"}
 			]
 		},
 		{
@@ -129,7 +131,7 @@
 				{"name":"id","type":"uint16"}
 			],
 			"outputs": [
-				{"components":[{"name":"addr","type":"address"},{"name":"forumLink","type":"bytes"},{"name":"fileLink","type":"bytes"},{"name":"hash","type":"uint256"},{"name":"appliedAt","type":"uint32"},{"name":"contact","type":"address"}],"name":"ci","type":"tuple"}
+				{"components":[{"name":"addr","type":"address"},{"name":"forumLink","type":"bytes"},{"name":"fileLink","type":"bytes"},{"name":"hash","type":"uint256"},{"name":"contact","type":"address"},{"name":"appliedAt","type":"uint32"}],"name":"ci","type":"tuple"}
 			]
 		},
 		{
@@ -137,15 +139,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"addr","type":"address"},{"name":"forumLink","type":"bytes"},{"name":"fileLink","type":"bytes"},{"name":"hash","type":"uint256"},{"name":"appliedAt","type":"uint32"},{"name":"contact","type":"address"}],"name":"info","type":"tuple[]"}
-			]
-		},
-		{
-			"name": "getStats",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"s","type":"uint8"}
+				{"components":[{"name":"addr","type":"address"},{"name":"forumLink","type":"bytes"},{"name":"fileLink","type":"bytes"},{"name":"hash","type":"uint256"},{"name":"contact","type":"address"},{"name":"appliedAt","type":"uint32"}],"name":"info","type":"tuple[]"}
 			]
 		},
 		{
@@ -161,49 +155,40 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"nJurors","type":"uint8"},{"name":"keys","type":"uint256[]"},{"name":"addresses","type":"address[]"}],"name":"jury","type":"tuple"}
+				{"components":[{"name":"key","type":"uint256"},{"name":"addr","type":"address"}],"name":"jury","type":"tuple[]"}
 			]
 		},
 		{
-			"name": "resultsFinalized",
+			"name": "getRewards",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"flag","type":"bool"}
+				{"name":"rewards","type":"uint32[]"}
 			]
 		},
 		{
-			"name": "getFinalStatusFor",
+			"name": "getActualTimeline",
 			"inputs": [
-				{"name":"id","type":"uint16"}
 			],
 			"outputs": [
-				{"name":"status","type":"bool"}
+				{"name":"stages","type":"uint8[]"},
+				{"name":"ts","type":"uint32[]"}
 			]
 		},
 		{
-			"name": "getFinalRatingsTable",
+			"name": "getMarks",
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"id","type":"uint16"},{"name":"avgRating","type":"uint32"},{"name":"addr","type":"address"},{"name":"reward","type":"uint32"}],"name":"table","type":"tuple[]"}
+				{"components":[{"name":"vt","type":"uint8"},{"name":"score","type":"uint8"}],"name":"mk","type":"tuple[]"}
 			]
 		},
 		{
-			"name": "getFinalVotingData",
+			"name": "getStats",
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"status","type":"bool"},{"name":"avgRating","type":"uint16"},{"name":"totalRating","type":"uint16"},{"name":"votes","type":"uint8"},{"name":"votesFor","type":"uint8"},{"name":"votesAbstained","type":"uint8"},{"name":"votesAgainst","type":"uint8"}],"name":"data","type":"tuple[]"}
-			]
-		},
-		{
-			"name": "getFinalStatsFor",
-			"inputs": [
-				{"name":"id","type":"uint16"}
-			],
-			"outputs": [
-				{"components":[{"name":"status","type":"bool"},{"name":"avgRating","type":"uint16"},{"name":"totalRating","type":"uint16"},{"name":"votes","type":"uint8"},{"name":"votesFor","type":"uint8"},{"name":"votesAbstained","type":"uint8"},{"name":"votesAgainst","type":"uint8"}],"name":"a","type":"tuple"}
+				{"name":"s","type":"uint8"}
 			]
 		}
 	],
