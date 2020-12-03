@@ -1074,7 +1074,7 @@ The round parameters displayed by the get-method are the following:
 - 0x8 - Completing: Returning or reinvesting participant stakes because round is completed.
 - 0x9 - Completed: All stakes of the round have been returned or reinvested. At the next round rotation the round will be deleted from the DePool.
 
-`supposedElectedAt`: the time the validator is scheduled to start validating, if elected (in unixtime). This value remains 0x0, until validators are elected. Then it is set to the planned validation start time.
+`supposedElectedAt`: the time the validator is scheduled to start validating, if elected (in unixtime). This value remains 0x0, until validator elections start and DePool enters `waitingValidatorRequest` step of the round. Then it is set to the time the election winners will start validating.
 
 `unfreeze`: the time the stake will be unfrozen by elector (in unixtime). This value remains 0xffffffff until validation ends.
 
