@@ -56,7 +56,7 @@ contract ProxyBase {
 }
 
 contract ConfigParamsBase {
-    function getCurValidatorData() virtual internal returns (uint256 hash, uint32 utime_since, uint32 utime_until) {
+    function getCurValidatorData() virtual pure internal returns (uint256 hash, uint32 utime_since, uint32 utime_until) {
         (TvmCell cell, bool ok) = tvm.rawConfigParam(34);
         require(ok, InternalErrors.ERROR508);
         hash = tvm.hash(cell);
@@ -64,13 +64,13 @@ contract ConfigParamsBase {
         (, utime_since, utime_until) = s.decode(uint8, uint32, uint32);
     }
 
-    function getPrevValidatorHash() virtual internal returns (uint) {
+    function getPrevValidatorHash() virtual pure internal returns (uint) {
         (TvmCell cell, bool ok) = tvm.rawConfigParam(32);
         require(ok, InternalErrors.ERROR507);
         return tvm.hash(cell);
     }
 
-    function roundTimeParams() virtual internal returns (
+    function roundTimeParams() virtual pure internal returns (
         uint32 validatorsElectedFor,
         uint32 electionsStartBefore,
         uint32 electionsEndBefore,

@@ -54,15 +54,15 @@ library Errors {
     uint constant INVALID_ROUND_STEP = 125;
     uint constant INVALID_QUERY_ID = 126;
     uint constant IS_NOT_ELECTOR = 127;
-    // message sender is not owner (msg.pubkey() is wrong) or self call
-    uint constant IS_NOT_OWNER_OR_SELF_CALL = 128;
     uint8 constant BAD_STAKES = 129;
     uint8 constant CONSTRUCTOR_NO_PUBKEY = 130;
     uint8 constant VALIDATOR_IS_NOT_STD = 133;
     uint8 constant BAD_PART_REWARD = 138;
-    uint8 constant BAD_MINIMUM_BALANCE = 140;
     uint8 constant BAD_PROXY_CODE = 141;
     uint8 constant NOT_WORKCHAIN0 = 142;
+    uint8 constant NEW_VALIDATOR_FRACTION_MUST_BE_GREATER_THAN_OLD = 143;
+    uint8 constant FRACTION_MUST_NOT_BE_ZERO = 144;
+    uint8 constant BAD_ACCOUNT_BALANCE = 146;
 }
 
 // Internal errors:
@@ -87,7 +87,6 @@ library InternalErrors {
 }
 
 library DePoolLib {
-
     uint64 constant PROXY_FEE = 0.09 ton; // 90_000_000 / 10_000 = 9_000 gas in masterchain
     uint64 constant MIN_PROXY_BALANCE = 1 ton;
     uint64 constant PROXY_CONSTRUCTOR_FEE = 1 ton;

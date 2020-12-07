@@ -56,8 +56,8 @@ enum CompletionReason {
 
 // Describes vesting or lock stake
 struct InvestParams {
-    // Size of vesting stake
-    uint64 amount;
+    // Remaining size of vesting/lock stake
+    uint64 remainingAmount;
     // Unix time in seconds of last payment
     uint64 lastWithdrawalTime;
     // Period in seconds after which `withdrawalValue` nanotons are unlocked
@@ -86,6 +86,8 @@ struct Round {
     uint32 unfreeze;
     // investigation period in seconds
     uint32 stakeHeldFor;
+    // validation period in seconds
+    uint32 validatorsElectedFor;
     // Hash of validation set (config param 34) when round was in election phase
     uint256 vsetHashInElectionPhase;
     // Round step
@@ -160,26 +162,26 @@ contract RoundsBase {
     mapping(bool => LastRoundInfo) lastRoundInfo;
 
 
-    function isRoundPre0(uint64 id) internal inline returns (bool) { return id == m_roundQty - 1; }
-    function isRound0(uint64 id)    internal inline returns (bool) { return id == m_roundQty - 2; }
-    function isRound1(uint64 id)    internal inline returns (bool) { return id == m_roundQty - 3; }
-    function isRound2(uint64 id)    internal inline returns (bool) { return id == m_roundQty - 4; }
+    function isRoundPre0(uint64 id) internal inline view returns (bool) { return id == m_roundQty - 1; }
+    function isRound0(uint64 id)    internal inline view returns (bool) { return id == m_roundQty - 2; }
+    function isRound1(uint64 id)    internal inline view returns (bool) { return id == m_roundQty - 3; }
+    function isRound2(uint64 id)    internal inline view returns (bool) { return id == m_roundQty - 4; }
 
-    function getRoundPre0() internal inline returns (Round) { return roundAt(m_roundQty - 1); }
-    function getRound0()    internal inline returns (Round) { return roundAt(m_roundQty - 2); }
-    function getRound1()    internal inline returns (Round) { return roundAt(m_roundQty - 3); }
-    function getRound2()    internal inline returns (Round) { return roundAt(m_roundQty - 4); }
+    function getRoundPre0() internal inline view returns (Round) { return roundAt(m_roundQty - 1); }
+    function getRound0()    internal inline view returns (Round) { return roundAt(m_roundQty - 2); }
+    function getRound1()    internal inline view returns (Round) { return roundAt(m_roundQty - 3); }
+    function getRound2()    internal inline view returns (Round) { return roundAt(m_roundQty - 4); }
 
     function setRoundPre0(Round r) internal inline { setRound(m_roundQty - 1, r); }
     function setRound0(Round r)    internal inline { setRound(m_roundQty - 2, r); }
     function setRound1(Round r)    internal inline { setRound(m_roundQty - 3, r); }
     function setRound2(Round r)    internal inline { setRound(m_roundQty - 4, r); }
 
-    function roundAt(uint64 id) internal returns (Round) {
+    function roundAt(uint64 id) internal view returns (Round) {
         return m_rounds.fetch(id).get();
     }
 
-    function fetchRound(uint64 id) internal returns (optional(Round)) {
+    function fetchRound(uint64 id) internal view returns (optional(Round)) {
         return m_rounds.fetch(id);
     }
 
@@ -220,13 +222,13 @@ contract RoundsBase {
 
         if (vesting.hasValue()) {
             participant.haveVesting = true;
-            round.stake += vesting.get().amount;
+            round.stake += vesting.get().remainingAmount;
             sv.vesting = vesting;
         }
 
         if (lock.hasValue()) {
             participant.haveLock = true;
-            round.stake += lock.get().amount;
+            round.stake += lock.get().remainingAmount;
             sv.lock = lock;
         }
 
@@ -333,13 +335,13 @@ contract RoundsBase {
     }
 
 
-    function stakeSum(StakeValue stakes) internal inline returns (uint64) {
+    function stakeSum(StakeValue stakes) internal view inline returns (uint64) {
         optional(InvestParams) v = stakes.vesting;
         optional(InvestParams) l = stakes.lock;
         return
             stakes.ordinary +
-            (v.hasValue() ? v.get().amount : 0) +
-            (l.hasValue() ? l.get().amount : 0);
+            (v.hasValue() ? v.get().remainingAmount : 0) +
+            (l.hasValue() ? l.get().remainingAmount : 0);
     }
 
     /*
