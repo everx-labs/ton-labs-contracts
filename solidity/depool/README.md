@@ -2,6 +2,10 @@
 
 This document contains instructions on how to deploy and configure a DePool smart contract, and run a validator node through it. For detailed information on DePool specifications, please refer to the [relevant document](https://docs.ton.dev/86757ecb2/v/0/p/45d6eb-depool-specifications).
 
+It is intended for the DePool v2 dated December 8, 2020. For instructions on the previous version of DePool see [this document](https://docs.ton.dev/86757ecb2/v/0/p/37a848-run-depool).
+
+Answers to frequently asked questions can be found [here](https://docs.ton.dev/86757ecb2/p/45fa44-depool-faq).
+
 > Note: One node can be assigned to only one DePool contract.
 
 > Note: Validator contest winners are strongly recommended not to deploy DePool to the main net without previously testing it out on the devnet for a few days. The time for DePool deployment will be announced additionally. Test tokens for staking on the devnet can be requested from community admins.
@@ -136,7 +140,7 @@ Such a transaction should be repeated for every address calculated on step 4: th
 
 The recommended initial amounts are:
 
-- 10 Tons + **balanceThreshold** (value of its own balance which DePool will try to maintain) to the DePool. balanceThreshold for the DePool is set on the next step (step 6).
+- 20 Tons or more to the DePool conrtact
 - 5 Tons to the DePool Helper
 - 10 Tons should be left on the validator wallet
 
@@ -153,7 +157,7 @@ For the duration of the DePool existence, balance on all DePool-related contract
 ### 6.1. Deploy DePool contract to the basechain
 
 ```bash
-tonos-cli deploy DePool.tvc '{"minStake":*number*,"validatorAssurance":*number*,"proxyCode":"ProxyContractCodeInBase64","validatorWallet":"validatorWalletAddress","participantRewardFraction":*number*,"balanceThreshold":*number*}' --abi DePool.abi.json --sign depool.json
+tonos-cli deploy DePool.tvc '{"minStake":*number*,"validatorAssurance":*number*,"proxyCode":"ProxyContractCodeInBase64","validatorWallet":"validatorWalletAddress","participantRewardFraction":*number*}' --abi DePool.abi.json --sign depool.json
 ```
 
  Where
@@ -172,14 +176,16 @@ tvm_linker decode --tvc DePoolProxy.tvc
 
 `"participantRewardFraction":*number*` - percentage of the total DePool reward (in integers, up to 99 inclusive) that goes to Participants. It's recommended to set it at 95% or more.
 
-`"balanceThreshold":*number*` - DePool's own balance, which it will aim to maintain. Minimum value is 12.5 tokens, recommended value is 100 tokens. It is never staked and is spent on DePool operations only.
+> **Important: You will not be able to change all of these parameters, except `participantRewardFraction`, after the DePool is deployed. They will influence the appeal of your DePool to potential participants:**
 
-> **Important: You will not be able to change these parameters after the DePool is deployed. They will influence the appeal of your DePool to potential participants:** `participantRewardFraction` determines what percentage of their total reward all participants will receive (too small, and other DePools might draw them away, too big, and your validator wallet might not receive enough rewards, to support validation and staking); `validatorAssurance` determines how much you take it upon yourself to invest in the DePool and lose in case of any validator node malfunction or misbehavior. If set too small, potential participants might decide you aren't risking enough and avoid your DePool in favor of others.
+> `participantRewardFraction` determines what percentage of their total reward all participants will receive (too small, and other DePools might draw them away, too big, and your validator wallet might not receive enough rewards, to support validation and staking); it can be adjusted at any time by the DePool owner, but only upwards - see how in section 13. 
+
+> `validatorAssurance` determines how much you take it upon yourself to invest in the DePool and lose in case of any validator node malfunction or misbehavior. If set too small, potential participants might decide you aren't risking enough and avoid your DePool in favor of others.
 
 Example:
 
 ```bash
-tonos-cli deploy DePool.tvc '{"minStake":10000000000,"validatorAssurance":100000000000000,"proxyCode":"te6ccgECHgEABVUAAib/APSkICLAAZL0oOGK7VNYMPShBwEBCvSkIPShAgIDzkAEAwAp32omhp/+mf6YB8NT/8MPwzfDH8MUAgFYBgUALV+ELIy//4Q88LP/hGzwsA+EoBzsntVIAMNfhBbpLwCN5opvxgINMf0z8zIYIQ/////rqOQXBopvtglWim/mAx34IQBV1KgKG1f/hKyM+FiM4B+gKNBEAAAAAAAAAAAAAAAAABD2mXdM8WIc8LP/hJzxbJcfsA3l8D8AeAIBIBEIAgFuEAkCASAPCgIBIA4LAYj6f40IYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABPhpIe1E0CDXScIBjhHT/9M/0wD4an/4Yfhm+GP4YgwB/o4+9AWNCGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT4anABgED0DvK91wv/+GJw+GNw+GZ/+GHi0wABn4ECANcYIPkBWPhC+RDyqN7TPwGOHvhDIbkgnzAg+COBA+iogggbd0Cgud6S+GPggDTyNNjTHyHBAyINADKCEP////28sZVx8AHwBeAB8AH4R26S8AXeAKu0t7mSfCC3SXgEb2mf6Lg0U32wSrRTfzAY78EIAq6lQFDav/wlZGfCxGcA/QFGgiAAAAAAAAAAAAAAAAAB8+0HGmeLEOeFn/wk54tkuP2AGHgDv/wzwAC3tt0SEz4QW6S8Aje0z/TH9FwaKb7YJVopv5gMd+CEAVdSoChtX/4SsjPhYjOAfoCjQRAAAAAAAAAAAAAAAAAATPrwXTPFiLPCz8hzwsf+EnPFslx+wBb8Ad/+GeAAt7nN6KmfCC3SXgEb2mf6Y/ouDRTfbBKtFN/MBjvwQgCrqVAUNq//CVkZ8LEZwD9AUaCIAAAAAAAAAAAAAAAAAE7ZAsmZ4sRZ4WfkOeFj/wk54tkuP2ALfgDv/wzwAgEgFxICASAVEwHpuotV8/+EFujlztRNAg10nCAY4R0//TP9MA+Gp/+GH4Zvhj+GKOPvQFjQhgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE+GpwAYBA9A7yvdcL//hicPhjcPhmf/hh4t74RvJzcfhm0XBwkyDBAoFABajh3IIPhJzxYizwsHMSDJ+QBTM5Uw+EIhut80W6S1B+gw8uBm+En4avAHf/hnAQm7Wws2WBYA+vhBbpLwCN7TP/pA0fhJ+ErHBfLgZnBopvtglWim/mAx34IQBV1KgKG1f/gnbxAhghA7msoAoL7y4GdwaKb7YJVopv5gMd+CEAVdSoChtX8iyM+FiM4B+gKNBEAAAAAAAAAAAAAAAAACOyuhJM8WI88LP8lx+wBfA/AHf/hnAgEgGRgAn7rbxCnvhBbpLwCN7R+EqCEDuaygAiwP+OLSTQ0wH6QDAxyM+HIM6NBAAAAAAAAAAAAAAAAArbxCnozxYizxYhzws/yXH7AN5bkvAH3n/4Z4AgEgHRoBCbhxdZGQGwH8+EFukvAI3tM/0//TH9Mf1w3/ldTR0NP/3yDXS8ABAcAAsJPU0dDe1PpBldTR0PpA39H4SfhKxwXy4GZwaKb7YJVopv5gMd+CEAVdSoChtX/4J28QIYIQO5rKAKC+8uBncGim+2CVaKb+YDHfghAFXUqAobV/IsjPhYjOAfoCHABggGrPQM+DyM+ROc3RLinPCz8ozwv/J88LHybPCx8lzwv/JM8Uzclx+wBfCPAHf/hnAHTccCLQ0wP6QDD4aak4ANwhxwAglzAh0x8hwADf3CHBAyKCEP////28sZVx8AHwBeAB8AH4R26S8AXe","validatorWallet":"0:0123012301230123012301230123012301230123012301230123012301230123","participantRewardFraction":95,"balanceThreshold":100000000000}' --abi DePool.abi.json --sign depool.json
+tonos-cli deploy DePool.tvc '{"minStake":10000000000,"validatorAssurance":100000000000000,"proxyCode":"te6ccgECHgEABV4AAib/APSkICLAAZL0oOGK7VNYMPShBwEBCvSkIPShAgIDzkAEAwAp32omhp/+mf6YB8NT/8MPwzfDH8MUAgFYBgUALV+ELIy//4Q88LP/hGzwsA+EoBzsntVIAMNfhBbpLwCN5opvxgINMf0z8zIYIQ/////rqOQXBopvtglWim/mAx34IQBV1KgKG1f/hKyM+FiM4B+gKNBEAAAAAAAAAAAAAAAAABD2mXdM8WIc8LP/hJzxbJcfsA3l8D8AeAIBIBEIAgFuEAkCASAPCgIBIA4LAYj6f40IYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABPhpIe1E0CDXScIBjhHT/9M/0wD4an/4Yfhm+GP4YgwB/o4+9AWNCGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT4anABgED0DvK91wv/+GJw+GNw+GZ/+GHi0wABn4ECANcYIPkBWPhC+RDyqN7TPwGOHvhDIbkgnzAg+COBA+iogggbd0Cgud6S+GPggDTyNNjTHyHBAyINADaCEP////28sZZbcfAB8AXgAfAB+EdukzDwBd4Aq7S3uZJ8ILdJeARvaZ/ouDRTfbBKtFN/MBjvwQgCrqVAUNq//CVkZ8LEZwD9AUaCIAAAAAAAAAAAAAAAAAHz7QcaZ4sQ54Wf/CTni2S4/YAYeAO//DPAALe23RITPhBbpLwCN7TP9Mf0XBopvtglWim/mAx34IQBV1KgKG1f/hKyM+FiM4B+gKNBEAAAAAAAAAAAAAAAAABM+vBdM8WIs8LPyHPCx/4Sc8WyXH7AFvwB3/4Z4AC3uc3oqZ8ILdJeARvaZ/pj+i4NFN9sEq0U38wGO/BCAKupUBQ2r/8JWRnwsRnAP0BRoIgAAAAAAAAAAAAAAAAATtkCyZnixFnhZ+Q54WP/CTni2S4/YAt+AO//DPACASAXEgIBIBUTAem6i1Xz/4QW6OXO1E0CDXScIBjhHT/9M/0wD4an/4Yfhm+GP4Yo4+9AWNCGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT4anABgED0DvK91wv/+GJw+GNw+GZ/+GHi3vhG8nNx+GbRcHCTIMECgUAFqOHcgg+EnPFiLPCwcxIMn5AFMzlTD4QiG63zRbpLUH6DDy4Gb4Sfhq8Ad/+GcBCbtbCzZYFgD6+EFukvAI3tM/+kDR+En4SscF8uBmcGim+2CVaKb+YDHfghAFXUqAobV/+CdvECGCEDuaygCgvvLgZ3BopvtglWim/mAx34IQBV1KgKG1fyLIz4WIzgH6Ao0EQAAAAAAAAAAAAAAAAAI7K6EkzxYjzws/yXH7AF8D8Ad/+GcCASAZGACfutvEKe+EFukvAI3tH4SoIQO5rKACLA/44tJNDTAfpAMDHIz4cgzo0EAAAAAAAAAAAAAAAACtvEKejPFiLPFiHPCz/JcfsA3luS8Afef/hngCASAdGgEJuHF1kZAbAfz4QW6S8Aje0z/T/9Mf0x/XDf+V1NHQ0//fINdLwAEBwACwk9TR0N7U+kGV1NHQ+kDf0fhJ+ErHBfLgZnBopvtglWim/mAx34IQBV1KgKG1f/gnbxAhghA7msoAoL7y4GdwaKb7YJVopv5gMd+CEAVdSoChtX8iyM+FiM4B+gIcAGCAas9Az4PIz5E5zdEuKc8LPyjPC/8nzwsfJs8LHyXPC/8kzxTNyXH7AF8I8Ad/+GcAgtxwItDTA/pAMPhpqTgA3CHHACCcMCHTHyHAACCSbCHe39whwQMighD////9vLGWW3HwAfAF4AHwAfhHbpMw8AXe","validatorWallet":"0:0123012301230123012301230123012301230123012301230123012301230123","participantRewardFraction":95}' --abi DePool.abi.json --sign depool.json --wc 0
 ```
 
 ### 6.2. (Optional) Deploy DePool Helper contract to the basechain
@@ -200,7 +206,13 @@ tonos-cli deploy DePoolHelper.tvc '{"pool":"0:37fbcb6e3279cbf5f783d61c213ed20fee
 
 ## 7. Configure DePool State Update method
 
-There are three different methods of setting up regular state updates of the DePool contract available. You have to set up one of them to run regularly.
+There are three different methods of setting up regular state updates of the DePool contract available. You have to set up one of them to run regularly. The period for state updates should be chosen based on the duration of the validation cycle on the blockchain. At the very minimum DePool's state update function should be called three times during the validation cycle:
+
+- Once after the elections begin, so DePool gets ready to receive and forward validator's election request.
+- Once after the validation begins, to find out if it won elections or not.
+- Once after unfreeze, to process stakes and rewards and rotate the rounds.
+
+In the current network configuration, 1 and 3 coincide, so DePool's state update can be called twice during the validation cycle - once during elections and once during validation.
 
 ### State update through Multisig Contract
 
@@ -320,7 +332,7 @@ Below are listed the commands used to manage stakes.
 
 > Note: All these commands are subject to an additional fee (by default 0.5 tons), that is partially spent to pay for DePool executing the command. The change is then returned to the sender. This value can be adjusted in TONOS-CLI config.
 
-> Note: Additionally, when DePool receives the stake and rewards back from elector and processes the funds of participants, 0.05 tons are deducted from every participant's share of the pool, to cover the costs of executing this action. This value is set in the `retOrReinvFee` DePool parameter, which can be viewed through `getDePoolInfo` get-method. 
+> Note: Additionally, when DePool receives the stake and rewards back from elector and processes the funds of participants, 0.04*(N+1) tons are deducted from the stake, where N is the number of participants, to cover the costs of executing this action. This fee is set in the `retOrReinvFee` DePool parameter, which can be viewed through `getDePoolInfo` get-method. 
 
 ### Configure TONOS-CLI for DePool operations
 
@@ -383,6 +395,8 @@ tonos-cli depool --addr 0:37fbcb6e3279cbf5f783d61c213ed20fee16e0b1b94a48372d20a2
 Any wallet can make a vesting stake into round and define a target participant address (beneficiary) who will own this stake. But not the whole stake is available to the beneficiary at once. Instead it is split into parts and the next part of stake becomes available to the beneficiary (is transformed into beneficiary's ordinary stake) at the end of the round that coincides with the end of the next withdrawal period. Rewards from vesting stake are always added to the beneficiary's ordinary stake. To withdraw these funds, beneficiary should use use one of the withdrawal functions.
 
 Please note, that the vesting stake is split into two equal parts by the DePool, to be used in both odd and even rounds, so to ensure DePool can participate in elections with just one vesting stake where validator wallet is beneficiary, the stake should exceed `validatorAssurance` *2. Similarly, to ensure any vesting stake is accepted, make sure it exceeds `minStake` *2.
+
+**Vesting for validator beneficiaries is subject to additional rules:** At the end of every withdrawal period, the part of the vesting stake to be released is divided proportionally into 2 parts - for rounds in this period when DePool successfully completed validation and received a reward (without slashing) and for rounds when DePool missed elections or was slashed. The portion of the stake corresponding to the successful rounds is sent to the validator, while the portion corresponding to the failed rounds is returned to the vesting stake owner. For example, if there were 100 rounds within the withdrawal period, and DePool successfully completed 80 of them, missed elections in 5 more and was slashed in the remaining 15, the validator will receive 80% of the unlocked part of the vesting stake, and the stake owner will get back 20% of it.
 
 Use the following command to make a vesting stake:
 
@@ -624,7 +638,7 @@ It is possible to configure the script to monitor the DePool status through the 
 
 ### DePool Balance
 
-Normally the DePool receives sufficient funds for its operations from validation rewards. Specifically, it tops up its balance to `balanceThreshold` every time it receives rewards. This balance is completely separate from the staking pool and the funds on it are never staked.
+Normally the DePool receives sufficient funds for its operations from validation rewards. They go to DePool's own balance, which is completely separate from the staking pool and the funds on it are never staked.
 
 However, a situation where the DePool spends its funds on regular operations, but does not receive enough rewards (for example, fails to participate in the elections or loses them), is possible.
 
@@ -636,7 +650,7 @@ tonos-cli account <depool_address>
 
 Additionally, DePool emits the `TooLowDePoolBalance` event when its balance drops too low to perform state update operations (below CRITICAL_THRESHOLD which equals 10 tons).
 
-Replenish the balance (it's recommended to top it up to 1.5*`balanceThreshold`) from any multisignature wallet with the following command:
+Replenish the balance to at least 20 tons from any multisignature wallet with the following command:
 
 ```bash
 tonos-cli depool [--addr <depool_address>] replenish --value *number* [--wallet <msig_address>] [--sign <key_file or seed_phrase>]
@@ -794,7 +808,7 @@ tonos-cli depool --addr 0:37fbcb6e3279cbf5f783d61c213ed20fee16e0b1b94a48372d20a2
 5. `ProxyHasRejectedRecoverRequest(uint64 roundId)` - event is emitted if stake cannot be returned from elector because too low balance of proxy contract.
 6. `RoundCompleted(TruncatedRound round)` - event emitted when the round was completed.
 7. `StakeSigningRequested(uint32 electionId, address proxy)` - event emitted when round switches from pooling to election indicating that DePool is waiting for signed election request from validator wallet.
-8. `TooLowDePoolBalance(uint replenishment)` - event emitted when DePool's own balance becomes too low to perform state update operations (below `CRITICAL_THRESHOLD` which equals 10 tons). `replenishment` indicates the minimal value required to resume operations. It's recommended to replenish the balance to 1.5* `balanceThreshold` if this event occurs.
+8. `TooLowDePoolBalance(uint replenishment)` - event emitted when DePool's own balance becomes too low to perform state update operations (below `CRITICAL_THRESHOLD` which equals 10 tons). `replenishment` indicates the minimal value required to resume operations. It's recommended to replenish the balance to 20 tons or more if this event occurs.
 
 
 Events command output example:
@@ -837,16 +851,16 @@ Output example:
 Result: {
   "locks": {
     "0x54": {
-      "amount": "0x5af32e47a500",
       "lastWithdrawalTime": "0x5fa517f7",
       "owner": "0:de7dc920ff73ae077035f26715986aa8039eadbec25f525a0b8fb15dfc74ad0b",
+      "remainingAmount": "0x5af32e47a500",
       "withdrawalPeriod": "0x1a5e00",
       "withdrawalValue": "0x5af32e47a500"
     },
     "0x55": {
-      "amount": "0x5af32e47a500",
       "lastWithdrawalTime": "0x5fa517f7",
       "owner": "0:de7dc920ff73ae077035f26715986aa8039eadbec25f525a0b8fb15dfc74ad0b",
+      "remainingAmount": "0x5af32e47a500",
       "withdrawalPeriod": "0x1a5e00",
       "withdrawalValue": "0x5af32e47a500"
     }
@@ -866,9 +880,9 @@ Result: {
 The participant parameters displayed by the get-method are the following:
 
 `locks` and `vestings`: participant's lock and vesting stakes, each split into two neighboring rounds. There can be only one of each, split equally into two entries. The parameters of the lock and vesting stakes are:
-- `amount`: the total initial amount staked in this round(in nanotons).
 - `lastWithdrawalTime`: last time a withdrawal period ended and a part of the stake was unlocked (in unixtime).
 - `owner`: the address that made the lock or vesting stake on behalf of the participant.
+- `remainingAmount`: the current amount staked in this round (in nanotons).
 - `withdrawalPeriod`: the period in seconds, after which the next part of the stake gets unlocked.
 - `withdrawalValue`: the value that is unlocked every withdrawal period (in nanotons).
 
@@ -896,28 +910,25 @@ Output example:
 
 ```bash
 Result: {
-  "balanceThreshold": "0x2540be400",
-  "minStake": "0x3b9aca00",
-  "participantRewardFraction": "0x5a",
+  "minStake": "0x2540be400",
+  "participantRewardFraction": "0x5f",
   "poolClosed": false,
   "proxies": [
-    "-1:f4a33af95ff8b70892e833d04e03d08793c40d8a6af41b520ef94a2cef00cbe8",
-    "-1:1aa911f7a7ee85de505f77ccba1c7799ade3aa2eb11f4bc9d4f3c73d74e6c0dd"
+    "-1:5fb31e06ea510818111fc4ede1f7ce16137c9deafa430a8d7f623cdb05256a8b",
+    "-1:97396aa81c9ef4d47780bd38d4b54ed32bb790d8db6a8380d513a444ba165dbb"
   ],
   "proxyFee": "0x55d4a80",
-  "retOrReinvFee": "0x2faf080",
+  "retOrReinvFee": "0x2625a00",
   "stakeFee": "0x1dcd6500",
-  "validatorAssurance": "0x3b9aca00",
-  "validatorRewardFraction": "0xa",
-  "validatorWallet": "0:0123012301230123012301230123012301230123012301230123012301230123"
+  "validatorAssurance": "0xd18c2e2800",
+  "validatorRewardFraction": "0x5",
+  "validatorWallet": "0:de7dc920ff73ae077035f26715986aa8039eadbec25f525a0b8fb15dfc74ad0b"
 }
 ```
 
 The round parameters displayed by the get-method are the following:
 
-  `balanceThreshold`: the balance the DePool aims to maintain (in nanotons). Is set during deployment.
-  
-  `minStake`: the minimal stake the DePool accepts from participants (in nanotons). Also set during deployment.
+  `minStake`: the minimal stake the DePool accepts from participants (in nanotons). Set during deployment.
   
   `participantRewardFraction`: percentage of the reward that goes to all participants. Also set during deployment.
   
@@ -1111,7 +1122,34 @@ Result: {
 }
 ```
 
-## 13. (Optional) Close DePool
+## 13. (Optional) Adjust validator and participant reward fraction
+
+If you want to make your DePool more attractive to potential participants, you may increase the fraction of the total reward they receive.
+
+DePool deployment keys are required for this action. Use the following command:
+
+```bash
+tonos-cli call <depool_address> setValidatorRewardFraction '{"fraction":<fraction_value>}' --abi DePool.abi.json --sign <depool_keyfile_or_seed_phrase>
+```
+
+Where
+
+`<depool_address>` - address of the DePool.
+
+`<fraction_value>` - new value of Validators reward fraction, which should be less than previous and should not be equal to 0.
+
+`<depool_keyfile_or_seed_phrase>` - DePool deployment keyfile or its corresponding seed phrase.
+
+Example:
+
+```bash
+tonos-cli call 0:53acdc8033cc0794125038a810d4b64e24e72add52ee866b82ade42d12cd9f02 setValidatorRewardFraction '{"fraction":29}' --abi DePool.abi.json --sign depool.keys.json
+```
+
+Current validator reward fraction value can be viewed with the `getDePoolInfo` get-method.
+
+
+## 14. (Optional) Close DePool
 
 The deployer of the DePool can close the DePool at any time. DePool deployment keys are required for this action:
 
@@ -1135,7 +1173,7 @@ When a DePool is closed, all the stakes invested in it are returned to their own
 
 # Rewards Distribution
 
-Every time DePool receives rewards for validation, DePool replenishes it's pure balance to be more than  `balanceThreshold` and  the rest is distributed according to the following rules:
+Every time DePool receives rewards for validation, DePool replenishes it's own balance and  the rest is distributed according to the following rules:
 
 1) `validatorRewardFraction`% of the reward, regardless of the validator’s share in the pool, goes directly to the validator wallet. This is the reward for maintaining the node and is intended to be used on operational expenses.
 
@@ -1154,15 +1192,15 @@ It should match the following values:
 
 DePool:
 
-`b4ad6c42427a12a65d9a0bffb0c2730dd9cdf830a086d94636dab7784e13eb38`
+`21bb78ae9b56ce930adb89bd1e69bdc3dca40683bade9b9a4dfe265129d21220`
 
 Proxies:
 
-`334603dc8cfd56ff3df70032abbe42b9c8a4c5fca7606d74a9d9d772097883af`
+`481d7f583b458a1672ee602f66e8aa8d2f99d3cd9ece2eaa20e25c7ddf4c7f4a`
 
 DePool Helper:
 
-`f75813a219d2a90bc9467f0f53559e514a0bd8ad2c1ad3a42cbdbeda7c3a124a`
+`f990434c02c2b532087782a2d615292c7c241ece4a9af33f8d090c535296401d`
 
 If only the Helper contract has wrong Code hash, deploying and configuring only a new Helper is enough.
 
@@ -1300,8 +1338,6 @@ Possible error codes and their meanings:
 
 `116` - participant with such address does not exist.
 
-`128` - message sender is not owner (message public key is wrong) or self call.
-
 `129` - incorrectly defined stake parameters during DePool deployment (`minStake` < 1 token or `minStake` > `validatorAssurance`). Please check your parameters in deploy message.
 
 `130` - DePool deployment isn't signed with public key. Please check your key file or seed phrase.
@@ -1310,11 +1346,16 @@ Possible error codes and their meanings:
 
 `138` - Incorrect participant reward fraction during DePool deployment (`participantRewardFraction` ≤ 0 or  ≥ 100). Please check your parameters in deploy message.
 
-`140` - too low `balanceThreshold` defined during DePool deployment, or insufficient funds sent to the DePool address prior to DePool deployment. Please check your parameters in deploy message (`balanceThreshold` needs to be 12.5 tons or higher for a DePool with a small number of participants. Recommended value = 100 tons). Also check your DePool address balance.
-
 `141` - incorrectly specified proxy code during DePool deployment. Please check your parameters in deploy message.
 
 `142` - DePool is being deployed to the wrong shardchain (workchain id ≠ 0). Please check your parameters in deploy message.
+
+`143` - new validator reward fraction is greater than old.
+
+`144` - new validator reward fraction is zero.
+
+`146` - insufficient DePool balance.
+
 
 Incorrect DePool function call by another contract:
 
