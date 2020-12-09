@@ -97,7 +97,7 @@ Terminal displays the generated seed phrase.
 `deploy.keys.json` - the file the key pair will be written to.
 The utility generates the file that contains the key pair produced from seed phrase. Use it to generate your address:
 ```
-./tonos-cli genaddr RootTokenContract.tvc RootTokenContract.abi.json --setkey deploy.keys.json --wc <workchain_id>
+./tonos-cli genaddr RootTokenContract.tvc RootTokenContract.abi --setkey deploy.keys.json --wc <workchain_id>
 ```
 * `deploy.keys.json` - the file the key pair is read from.
 * `--wc <workchain_id>` - (optional) ID of the workchain the wallet will be deployed to (-1 for masterchain, 0 for basechain). By default this value is set to 0.
@@ -134,7 +134,7 @@ Use the following command:
 > Note: "name":"54657374","symbol":"545354" means token name "Test" and symbol "TST".
 > Note: you can use `echo -n "TST" | xxd -p` for "name"/"symbol" values generation from string.
 ```
-./tonos-cli deploy RootTokenContract.tvc '{"name":"54657374","symbol":"545354", "decimals":"0","root_public_key":"0x<Root public key>","wallet_code":"'$TVM_WALLET_CODE'","total_supply":"<Number of tokens>"}' --abi RootTokenContract.abi.json --sign deploy.keys.json --wc <workchain_id>
+./tonos-cli deploy RootTokenContract.tvc '{"name":"54657374","symbol":"545354", "decimals":"0","root_public_key":"0x<Root public key>", "root_owner":"0", "wallet_code":"'$TVM_WALLET_CODE'","total_supply":"<Number of tokens>"}' --abi RootTokenContract.abi --sign deploy.keys.json --wc <workchain_id>
 ```
 Configuration parameters:
 * `name` - name of the token.
@@ -154,17 +154,17 @@ Now it should be Active.
 #### 5.4.2. Run getters of the token root contract
 Verify that state matches parameters you have provided during deploy.
 ```
-./tonos-cli run <root_address> getName {} --abi RootTokenContract.abi.json
-./tonos-cli run <root_address> getSymbol {} --abi RootTokenContract.abi.json
-./tonos-cli run <root_address> getDecimals {} --abi RootTokenContract.abi.json
-./tonos-cli run <root_address> getRootKey {} --abi RootTokenContract.abi.json
-./tonos-cli run <root_address> getTotalSupply {} --abi RootTokenContract.abi.json
-./tonos-cli run <root_address> getWalletCode {} --abi RootTokenContract.abi.json
+./tonos-cli run <root_address> getName {} --abi RootTokenContract.abi
+./tonos-cli run <root_address> getSymbol {} --abi RootTokenContract.abi
+./tonos-cli run <root_address> getDecimals {} --abi RootTokenContract.abi
+./tonos-cli run <root_address> getRootKey {} --abi RootTokenContract.abi
+./tonos-cli run <root_address> getTotalSupply {} --abi RootTokenContract.abi
+./tonos-cli run <root_address> getWalletCode {} --abi RootTokenContract.abi
 ```
 
 `getTotalGranted` must be zero for just created token root:
 ```
-./tonos-cli run <root_address> getTotalGranted {} --abi RootTokenContract.abi.json
+./tonos-cli run <root_address> getTotalGranted {} --abi RootTokenContract.abi
 ```
 
 ## 6. Token Root management
@@ -182,12 +182,12 @@ A .json configuration file will be created in the TONOS-CLI utility folder. The 
 
 ### 6.2. Calculating token wallet address for specified wallet public key
 ```
-./tonos-cli run <root_address> getWalletAddress '{"workchain_id":<workchain_id>,"pubkey":"0x<wallet public key>"}' --abi RootTokenContract.abi.json
+./tonos-cli run <root_address> getWalletAddress '{"workchain_id":<workchain_id>,"pubkey":"0x<wallet public key>", "owner_std_addr":"0"}' --abi RootTokenContract.abi
 ```
 
 ### 6.3. Deploying token wallet from token root
 ```
-./tonos-cli call <root_address> deployWallet '{"workchain_id":<workchain_id>,"pubkey":"0x<wallet public key>","tokens":"<Tokens number>","tons":<Tons>}' --sign "<seed_phrase>"
+./tonos-cli call <root_address> deployWallet '{"_answer_id":"0", "workchain_id":<workchain_id>,"pubkey":"0x<wallet public key>", "internal_owner":"0", "tokens":"<Tokens number>","grams":<Tons>}' --sign deploy.keys.json --abi RootTokenContract.abi
 ```
 The call will return the deployed wallet address. It should be equal to calculated by getWalletAddress.
 
@@ -204,13 +204,13 @@ The call will return the deployed wallet address. It should be equal to calculat
 ## 7. Token Wallet management
 ### 7.1. Token Wallet state
 ```
-./tonos-cli run <wallet_address> getName {} --abi TONTokenWallet.abi.json
-./tonos-cli run <wallet_address> getSymbol {} --abi TONTokenWallet.abi.json
-./tonos-cli run <wallet_address> getDecimals {} --abi TONTokenWallet.abi.json
-./tonos-cli run <wallet_address> getBalance {} --abi TONTokenWallet.abi.json
-./tonos-cli run <wallet_address> getWalletKey {} --abi TONTokenWallet.abi.json
-./tonos-cli run <wallet_address> getRootAddress {} --abi TONTokenWallet.abi.json
-./tonos-cli run <wallet_address> allowance {} --abi TONTokenWallet.abi.json
+./tonos-cli run <wallet_address> getName {} --abi TONTokenWallet.abi
+./tonos-cli run <wallet_address> getSymbol {} --abi TONTokenWallet.abi
+./tonos-cli run <wallet_address> getDecimals {} --abi TONTokenWallet.abi
+./tonos-cli run <wallet_address> getBalance {} --abi TONTokenWallet.abi
+./tonos-cli run <wallet_address> getWalletKey {} --abi TONTokenWallet.abi
+./tonos-cli run <wallet_address> getRootAddress {} --abi TONTokenWallet.abi
+./tonos-cli run <wallet_address> allowance {} --abi TONTokenWallet.abi
 ```
 
 ### 7.2. Transfer tokens
