@@ -38,12 +38,13 @@ __interface ITONTokenWallet {
   [[internal, noaccept]]
   void accept(TokensType tokens) = 14;
 
-  [[internal, noaccept]]
-  void onEmptyDeploy() = 15;
-
   // Receive tokens from other wallet
   [[internal, noaccept]]
-  void internalTransfer(TokensType tokens, uint256 pubkey, uint256 my_owner_addr) = 16;
+  void internalTransfer(TokensType tokens, uint256 pubkey, uint256 my_owner_addr) = 15;
+
+  // Send rest funds to `dest` and destroy the wallet
+  [[internal, external, noaccept, dyn_chain_parse]]
+  void destroy(address dest) = 16;
 
   // getters
   [[getter]]

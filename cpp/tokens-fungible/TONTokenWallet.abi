@@ -52,19 +52,20 @@
     "id": "0xe"
   },
   {
-    "name": "onEmptyDeploy",
+    "name": "internalTransfer",
     "inputs": [
+    { "name":"tokens", "type":"uint128" },
+    { "name":"pubkey", "type":"uint256" },
+    { "name":"my_owner_addr", "type":"uint256" }
     ],
     "outputs": [
     ],
     "id": "0xf"
   },
   {
-    "name": "internalTransfer",
+    "name": "destroy",
     "inputs": [
-    { "name":"tokens", "type":"uint128" },
-    { "name":"pubkey", "type":"uint256" },
-    { "name":"my_owner_addr", "type":"uint256" }
+    { "name":"dest", "type":"address" }
     ],
     "outputs": [
     ],

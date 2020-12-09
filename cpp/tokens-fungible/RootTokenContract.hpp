@@ -55,6 +55,9 @@ __interface IRootTokenContract {
 
   [[getter]]
   address getWalletAddress(int8 workchain_id, uint256 pubkey, uint256 owner_std_addr) = 23;
+
+  [[getter]]
+  uint256 getWalletCodeHash() = 24;
 };
 
 struct DRootTokenContract {
@@ -66,6 +69,7 @@ struct DRootTokenContract {
   TokensType total_granted_;
   cell wallet_code_;
   std::optional<address> owner_address_;
+  Grams start_balance_;
 };
 
 struct ERootTokenContract {

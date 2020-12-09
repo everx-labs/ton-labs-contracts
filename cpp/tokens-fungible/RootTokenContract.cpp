@@ -12,6 +12,8 @@ using namespace schema;
 template<bool Internal>
 class RootTokenContract final : public smart_interface<IRootTokenContract>, public DRootTokenContract {
 public:
+  static constexpr unsigned wallet_hash = 0xe0ad9d163163463ecce0cc8bb35b8f66de9ca7895fdd30adb4d865a2e419dec4;
+
   struct error_code : tvm::error_code {
     static constexpr unsigned message_sender_is_not_my_owner  = 100;
     static constexpr unsigned not_enough_balance              = 101;
@@ -20,6 +22,7 @@ public:
     static constexpr unsigned internal_owner_enabled          = 104;
     static constexpr unsigned internal_owner_disabled         = 105;
     static constexpr unsigned define_pubkey_or_internal_owner = 106;
+    static constexpr unsigned wrong_wallet_code_hash          = 107;
   };
 
   __always_inline
@@ -28,6 +31,8 @@ public:
                    cell wallet_code, TokensType total_supply) {
     require((root_public_key != 0 and root_owner == 0) or (root_public_key == 0 and root_owner != 0),
             error_code::define_pubkey_or_internal_owner);
+    require(__builtin_tvm_hashcu(wallet_code) == wallet_hash,
+            error_code::wrong_wallet_code_hash);
 
     name_ = name;
     symbol_ = symbol;
@@ -40,6 +45,7 @@ public:
       auto workchain_id = std::get<addr_std>(address{tvm_myaddr()}.val()).workchain_id;
       owner_address_ = address::make_std(workchain_id, root_owner);
     }
+    start_balance_ = tvm_balance();
   }
 
   __always_inline
@@ -52,29 +58,46 @@ public:
 
     tvm_accept();
 
-    auto [wallet_init, dest] = calc_wallet_init(workchain_id, pubkey, {});
+    // Gathering some funds from internal message value to keep balance for storage payments
+    //  (up to start balance of the contract)
+    if constexpr (Internal) {
+      auto value_gr = int_value();
+      tvm_rawreserve(std::max(start_balance_.get(), tvm_balance() - value_gr()), RESERVE_UP_TO);
+    }
+
+    std::optional<address> owner_addr;
+    if (internal_owner)
+      owner_addr = address::make_std(workchain_id, internal_owner);
+    auto [wallet_init, dest] = calc_wallet_init(workchain_id, pubkey, owner_addr);
     handle<ITONTokenWallet> dest_handle(dest);
     dest_handle.deploy(wallet_init, Grams(grams.get())).
       accept(tokens);
 
     total_granted_ += tokens;
 
-    set_int_return_flag(SEND_REST_GAS_FROM_INCOMING);
+    set_int_return_flag(SEND_ALL_GAS);
     return dest;
   }
 
   __always_inline
   address deployEmptyWallet(int8 workchain_id, uint256 pubkey, uint256 internal_owner,
                             WalletGramsType grams) {
+    // This protects from spending root balance to deploy message
+    auto value_gr = int_value();
+    tvm_rawreserve(std::max(start_balance_.get(), tvm_balance() - value_gr()), RESERVE_UP_TO);
+
     require((pubkey == 0 and internal_owner != 0) or (pubkey != 0 and internal_owner == 0),
             error_code::define_pubkey_or_internal_owner);
 
-    auto [wallet_init, dest] = calc_wallet_init(workchain_id, pubkey, {});
+    std::optional<address> owner_addr;
+    if (internal_owner)
+      owner_addr = address::make_std(workchain_id, internal_owner);
+    auto [wallet_init, dest] = calc_wallet_init(workchain_id, pubkey, owner_addr);
     handle<ITONTokenWallet> dest_handle(dest);
-    dest_handle.deploy(wallet_init, Grams(grams.get())).
-      onEmptyDeploy();
+    dest_handle.deploy_noop(wallet_init, Grams(grams.get()));
 
-    set_int_return_flag(SEND_REST_GAS_FROM_INCOMING);
+    // sending all rest gas except reserved old balance, processing and deployment costs
+    set_int_return_flag(SEND_ALL_GAS);
     return dest;
   }
 
@@ -156,6 +179,12 @@ public:
     save_persistent_data<IRootTokenContract, root_replay_protection_t>(hdr, persist);
     return 0;
   }
+
+  __always_inline
+  uint256 getWalletCodeHash() {
+    return uint256{__builtin_tvm_hashcu(wallet_code_)};
+  }
+
   // default processing of unknown messages
   __always_inline static int _fallback(cell msg, slice msg_body) {
     return 0;

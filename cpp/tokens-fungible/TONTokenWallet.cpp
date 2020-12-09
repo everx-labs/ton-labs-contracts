@@ -78,11 +78,6 @@ public:
   }
 
   __always_inline
-  void onEmptyDeploy() {
-    balance_ = TokensType(0);
-  }
-
-  __always_inline
   void internalTransfer(TokensType tokens, uint256 pubkey, uint256 my_owner_addr) {
     uint256 expected_address = expected_sender_address(pubkey, my_owner_addr);
     auto sender = int_sender();
@@ -93,6 +88,16 @@ public:
     tvm_accept();
 
     balance_ += tokens;
+  }
+
+  __always_inline
+  void destroy(address dest) {
+    check_owner();
+    tvm_accept();
+    auto empty_cell = builder().endc();
+    tvm_transfer(dest, 0, false,
+      SEND_ALL_GAS | SENDER_WANTS_TO_PAY_FEES_SEPARATELY | DELETE_ME_IF_I_AM_EMPTY | IGNORE_ACTION_ERRORS,
+      empty_cell);
   }
 
   // getters
