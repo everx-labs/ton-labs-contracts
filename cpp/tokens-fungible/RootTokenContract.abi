@@ -144,6 +144,15 @@
     { "name":"value0", "type":"address" }
     ],
     "id": "0x17"
+  },
+  {
+    "name": "getWalletCodeHash",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"value0", "type":"uint256" }
+    ],
+    "id": "0x18"
   }
   ],
   "events": [
