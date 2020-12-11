@@ -2,7 +2,7 @@
 
 This document contains instructions on how to deploy and configure a DePool smart contract, and run a validator node through it. For detailed information on DePool specifications, please refer to the [relevant document](https://docs.ton.dev/86757ecb2/v/0/p/45d6eb-depool-specifications).
 
-It is intended for the DePool v2 dated December 8, 2020. For instructions on the previous version of DePool see [this document](https://docs.ton.dev/86757ecb2/v/0/p/37a848-run-depool).
+It is intended for the DePool v2 dated December 11, 2020. For instructions on the previous version of DePool see [this document](https://docs.ton.dev/86757ecb2/v/0/p/37a848-run-depool).
 
 Answers to frequently asked questions can be found [here](https://docs.ton.dev/86757ecb2/p/45fa44-depool-faq).
 
@@ -140,7 +140,7 @@ Such a transaction should be repeated for every address calculated on step 4: th
 
 The recommended initial amounts are:
 
-- 20 Tons or more to the DePool conrtact
+- 20 Tons to the DePool conrtact
 - 5 Tons to the DePool Helper
 - 10 Tons should be left on the validator wallet
 
@@ -187,6 +187,8 @@ Example:
 ```bash
 tonos-cli deploy DePool.tvc '{"minStake":10000000000,"validatorAssurance":100000000000000,"proxyCode":"te6ccgECHgEABV4AAib/APSkICLAAZL0oOGK7VNYMPShBwEBCvSkIPShAgIDzkAEAwAp32omhp/+mf6YB8NT/8MPwzfDH8MUAgFYBgUALV+ELIy//4Q88LP/hGzwsA+EoBzsntVIAMNfhBbpLwCN5opvxgINMf0z8zIYIQ/////rqOQXBopvtglWim/mAx34IQBV1KgKG1f/hKyM+FiM4B+gKNBEAAAAAAAAAAAAAAAAABD2mXdM8WIc8LP/hJzxbJcfsA3l8D8AeAIBIBEIAgFuEAkCASAPCgIBIA4LAYj6f40IYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABPhpIe1E0CDXScIBjhHT/9M/0wD4an/4Yfhm+GP4YgwB/o4+9AWNCGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT4anABgED0DvK91wv/+GJw+GNw+GZ/+GHi0wABn4ECANcYIPkBWPhC+RDyqN7TPwGOHvhDIbkgnzAg+COBA+iogggbd0Cgud6S+GPggDTyNNjTHyHBAyINADaCEP////28sZZbcfAB8AXgAfAB+EdukzDwBd4Aq7S3uZJ8ILdJeARvaZ/ouDRTfbBKtFN/MBjvwQgCrqVAUNq//CVkZ8LEZwD9AUaCIAAAAAAAAAAAAAAAAAHz7QcaZ4sQ54Wf/CTni2S4/YAYeAO//DPAALe23RITPhBbpLwCN7TP9Mf0XBopvtglWim/mAx34IQBV1KgKG1f/hKyM+FiM4B+gKNBEAAAAAAAAAAAAAAAAABM+vBdM8WIs8LPyHPCx/4Sc8WyXH7AFvwB3/4Z4AC3uc3oqZ8ILdJeARvaZ/pj+i4NFN9sEq0U38wGO/BCAKupUBQ2r/8JWRnwsRnAP0BRoIgAAAAAAAAAAAAAAAAATtkCyZnixFnhZ+Q54WP/CTni2S4/YAt+AO//DPACASAXEgIBIBUTAem6i1Xz/4QW6OXO1E0CDXScIBjhHT/9M/0wD4an/4Yfhm+GP4Yo4+9AWNCGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT4anABgED0DvK91wv/+GJw+GNw+GZ/+GHi3vhG8nNx+GbRcHCTIMECgUAFqOHcgg+EnPFiLPCwcxIMn5AFMzlTD4QiG63zRbpLUH6DDy4Gb4Sfhq8Ad/+GcBCbtbCzZYFgD6+EFukvAI3tM/+kDR+En4SscF8uBmcGim+2CVaKb+YDHfghAFXUqAobV/+CdvECGCEDuaygCgvvLgZ3BopvtglWim/mAx34IQBV1KgKG1fyLIz4WIzgH6Ao0EQAAAAAAAAAAAAAAAAAI7K6EkzxYjzws/yXH7AF8D8Ad/+GcCASAZGACfutvEKe+EFukvAI3tH4SoIQO5rKACLA/44tJNDTAfpAMDHIz4cgzo0EAAAAAAAAAAAAAAAACtvEKejPFiLPFiHPCz/JcfsA3luS8Afef/hngCASAdGgEJuHF1kZAbAfz4QW6S8Aje0z/T/9Mf0x/XDf+V1NHQ0//fINdLwAEBwACwk9TR0N7U+kGV1NHQ+kDf0fhJ+ErHBfLgZnBopvtglWim/mAx34IQBV1KgKG1f/gnbxAhghA7msoAoL7y4GdwaKb7YJVopv5gMd+CEAVdSoChtX8iyM+FiM4B+gIcAGCAas9Az4PIz5E5zdEuKc8LPyjPC/8nzwsfJs8LHyXPC/8kzxTNyXH7AF8I8Ad/+GcAgtxwItDTA/pAMPhpqTgA3CHHACCcMCHTHyHAACCSbCHe39whwQMighD////9vLGWW3HwAfAF4AHwAfhHbpMw8AXe","validatorWallet":"0:0123012301230123012301230123012301230123012301230123012301230123","participantRewardFraction":95}' --abi DePool.abi.json --sign depool.json --wc 0
 ```
+
+At the time of deployment, the variable `m_balanceThreshold` is set as current DePool account balance - 5 tokens. DePool will replenish its balance from validation rewards to this value every round it receives rewards.
 
 ### 6.2. (Optional) Deploy DePool Helper contract to the basechain
 
@@ -328,11 +330,16 @@ To participate in elections, DePool has to accumulate, through stakes belonging 
 
 TONOS-CLI allows to manage several types of stakes. For details on stake types refer to the [DePool specifications](https://docs.ton.dev/86757ecb2/v/0/p/45d6eb-depool-specifications).
 
-Below are listed the commands used to manage stakes.
+#### DePool fees
 
-> Note: All these commands are subject to an additional fee (by default 0.5 tons), that is partially spent to pay for DePool executing the command. The change is then returned to the sender. This value can be adjusted in TONOS-CLI config.
+All staking commands are subject to an additional fee (by default 0.5 tons), that is partially spent to pay for DePool executing the command. The change is then returned to the sender. This value can be adjusted in TONOS-CLI config.
 
-> Note: Additionally, when DePool receives the stake and rewards back from elector and processes the funds of participants, 0.04*(N+1) tons are deducted from the stake, where N is the number of participants, to cover the costs of executing this action. This fee is set in the `retOrReinvFee` DePool parameter, which can be viewed through `getDePoolInfo` get-method. 
+Additionally, when DePool receives the stake and rewards back from elector and processes the funds of participants, it uses the rewards to top up its balance:
+
+1. first to `m_balanceThreshold` = DePool's balance at the time of deployment - 5 tons
+2. then it takes `retOrReinvFee*(N+1)` tokens, where N is the number of participants.`retOrReinvFee` is set to 0,04 tons in the current version of DePool and can only be changed in contract code. It can be viewed through `getDePoolInfo`get-method.
+
+These two fees cover DePool's operational expenses and are deducted only from validation rewards. If DePool doesn't receive rewards in a round, it will not be able to top up its balance.
 
 ### Configure TONOS-CLI for DePool operations
 
@@ -642,13 +649,13 @@ Normally the DePool receives sufficient funds for its operations from validation
 
 However, a situation where the DePool spends its funds on regular operations, but does not receive enough rewards (for example, fails to participate in the elections or loses them), is possible.
 
-DePool balance can be viewed on the [ton.live](https://ton.live/main) blockchain explorer by searching the DePool address, or through TONOS-CLI command:
+DePool balance can be viewed or through `getDePoolBalance` get-method in TONOS-CLI (requires `DePool.abi.json` file):
 
 ```bash
-tonos-cli account <depool_address>
+tonos-cli run <depool_address> getDePoolBalance {} --abi DePool.abi.json
 ```
 
-Additionally, DePool emits the `TooLowDePoolBalance` event when its balance drops too low to perform state update operations (below CRITICAL_THRESHOLD which equals 10 tons).
+Additionally, DePool emits the `TooLowDePoolBalance` event when its balance drops too low to perform state update operations (below `CRITICAL_THRESHOLD` which equals 10 tons).
 
 Replenish the balance to at least 20 tons from any multisignature wallet with the following command:
 
@@ -1122,6 +1129,19 @@ Result: {
 }
 ```
 
+### `getDePoolBalance()`
+
+Returns DePool's own balance in nanotokens (without stakes).
+
+```jsx
+tonos-cli run <depool_address> getDePoolBalance {} --abi DePool.abi.json
+```
+
+Where
+
+`<depool_address>` - address of the DePool contract.
+
+
 ## 13. (Optional) Adjust validator and participant reward fraction
 
 If you want to make your DePool more attractive to potential participants, you may increase the fraction of the total reward they receive.
@@ -1192,7 +1212,7 @@ It should match the following values:
 
 DePool:
 
-`21bb78ae9b56ce930adb89bd1e69bdc3dca40683bade9b9a4dfe265129d21220`
+`a46c6872712ec49e481a7f3fc1f42469d8bd6ef3fae906aa5b9927e5a3fb3b6b`
 
 Proxies:
 
