@@ -221,13 +221,11 @@ contract RoundsBase {
         sv.ordinary += stake;
 
         if (vesting.hasValue()) {
-            participant.haveVesting = true;
             round.stake += vesting.get().remainingAmount;
             sv.vesting = vesting;
         }
 
         if (lock.hasValue()) {
-            participant.haveLock = true;
             round.stake += lock.get().remainingAmount;
             sv.lock = lock;
         }

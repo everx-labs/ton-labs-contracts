@@ -113,8 +113,8 @@ contract ParticipantBase {
         Participant newParticipant = Participant({
             roundQty: 0,
             reward: 0,
-            haveVesting: false,
-            haveLock: false,
+            vestingParts: 0,
+            lockParts: 0,
             reinvest: true,
             withdrawValue: 0
         });

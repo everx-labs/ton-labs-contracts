@@ -8,10 +8,10 @@ struct Participant {
     uint8 roundQty;
     // Sum of all rewards from completed rounds (for logging)
     uint64 reward;
-    // have vesting in any round
-    bool haveVesting;
-    // have lock in any round
-    bool haveLock;
+    // count of parts of vesting stakes in the rounds
+    uint8 vestingParts;
+    // count of parts of lock stakes in the rounds
+    uint8 lockParts;
     // Flag whether to reinvest ordinary stakes and rewards
     bool reinvest;
     // Target tons that will be transferred to participant after rounds are completed
@@ -87,6 +87,7 @@ library InternalErrors {
 }
 
 library DePoolLib {
+
     uint64 constant PROXY_FEE = 0.09 ton; // 90_000_000 / 10_000 = 9_000 gas in masterchain
     uint64 constant MIN_PROXY_BALANCE = 1 ton;
     uint64 constant PROXY_CONSTRUCTOR_FEE = 1 ton;

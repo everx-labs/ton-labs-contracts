@@ -65,8 +65,12 @@ contract DePool is ValidatorBase, ProxyBase, ConfigParamsBase, ParticipantBase, 
     uint8 m_participantRewardFraction;
     // % of validator rewards
     uint8 m_validatorRewardFraction;
+    // Value of balance which DePool tries to maintain (by subtracting necessary value from each round reward)
+    uint64 m_balanceThreshold;
     // Value of DePool's balance below which ticktock and participateInElections functions don't execute
     uint64 constant CRITICAL_THRESHOLD = 10 ton;
+    // Min delta between m_balanceThreshold and CRITICAL_THRESHOLD
+    uint64 constant MIN_DELTA = 5 ton;
 
     /*
      * Events
@@ -132,8 +136,9 @@ contract DePool is ValidatorBase, ProxyBase, ConfigParamsBase, ParticipantBase, 
         require(participantRewardFraction > 0 && participantRewardFraction < 100, Errors.BAD_PART_REWARD);
         uint8 validatorRewardFraction = 100 -  participantRewardFraction;
 
-        require(address(this).balance >
+        require(address(this).balance >=
                     CRITICAL_THRESHOLD +
+                    MIN_DELTA +
                     DePoolLib.DEPOOL_CONSTRUCTOR_FEE +
                     2 * (DePoolLib.MIN_PROXY_BALANCE + DePoolLib.PROXY_CONSTRUCTOR_FEE),
                 Errors.BAD_ACCOUNT_BALANCE);
@@ -161,6 +166,9 @@ contract DePool is ValidatorBase, ProxyBase, ConfigParamsBase, ParticipantBase, 
         m_validatorAssurance = validatorAssurance;
         m_participantRewardFraction = participantRewardFraction;
         m_validatorRewardFraction = validatorRewardFraction;
+        m_balanceThreshold = uint64(address(this).balance)
+                - DePoolLib.DEPOOL_CONSTRUCTOR_FEE
+                - 2 * (DePoolLib.MIN_PROXY_BALANCE + DePoolLib.PROXY_CONSTRUCTOR_FEE);
 
         (, uint32 electionsStartBefore, ,) = roundTimeParams();
         (uint256 curValidatorHash, , uint32 validationEnd) = getCurValidatorData();
@@ -411,13 +419,23 @@ contract DePool is ValidatorBase, ProxyBase, ConfigParamsBase, ParticipantBase, 
             attachedValue += newStake;
             if (newVesting.hasValue()) {
                 newVesting.get().owner.transfer(newVesting.get().remainingAmount, false, 1);
+                newVesting.reset();
+                --participant.vestingParts;
             }
             if (newLock.hasValue()) {
                 newLock.get().owner.transfer(newLock.get().remainingAmount, false, 1);
+                newLock.reset();
+                --participant.lockParts;
             }
         } else {
-            if (newVesting.hasValue() && newVesting.get().remainingAmount == 0) newVesting.reset();
-            if (newLock.hasValue() && newLock.get().remainingAmount == 0) newLock.reset();
+            if (newVesting.hasValue() && newVesting.get().remainingAmount == 0) {
+                newVesting.reset();
+                --participant.vestingParts;
+            }
+            if (newLock.hasValue() && newLock.get().remainingAmount == 0) {
+                newLock.reset();
+                --participant.lockParts;
+            }
 
             if (!participant.reinvest) {
                 attachedValue += newStake;
@@ -537,7 +555,15 @@ contract DePool is ValidatorBase, ProxyBase, ConfigParamsBase, ParticipantBase, 
         addVestingOrLock(stake, beneficiary, withdrawalPeriod, totalPeriod, false);
     }
 
-    function addVestingOrLock(uint64 stake, address beneficiary, uint32 withdrawalPeriod, uint32 totalPeriod, bool isVesting) private {
+    function addVestingOrLock(
+        uint64 stake,
+        address beneficiary,
+        uint32 withdrawalPeriod,
+        uint32 totalPeriod,
+        bool isVesting
+    )
+        private
+    {
         if (m_poolClosed) {
             return _sendError(STATUS_DEPOOL_CLOSED, 0);
         }
@@ -578,13 +604,15 @@ contract DePool is ValidatorBase, ProxyBase, ConfigParamsBase, ParticipantBase, 
 
         Participant participant = getOrCreateParticipant(beneficiary);
         if (isVesting) {
-            if (participant.haveVesting) {
+            if (participant.vestingParts > 0) {
                 return _sendError(STATUS_PARTICIPANT_ALREADY_HAS_VESTING, 0);
             }
+            participant.vestingParts = 2;
         } else {
-            if (participant.haveLock) {
+            if (participant.lockParts > 0) {
                 return _sendError(STATUS_PARTICIPANT_ALREADY_HAS_LOCK, 0);
             }
+            participant.lockParts = 2;
         }
 
         uint64 withdrawalValue = math.muldiv(halfStake, withdrawalPeriod, totalPeriod);
@@ -1101,11 +1129,24 @@ contract DePool is ValidatorBase, ProxyBase, ConfigParamsBase, ParticipantBase, 
         return stakes;
     }
 
+    function cutDePoolReward(uint64 reward, Round round2) private view returns (uint64) {
+        uint64 balance = uint64(address(this).balance);
+        // round2 is still in state WaitingRoundReward but reward is received
+        uint64 roundStakes = round2.stake + reward + totalParticipantFunds(round2.id);
+        // if after sending rewards DePool balance (without round stakes) becomes less than m_balanceThreshold
+        if (balance < m_balanceThreshold + roundStakes) {
+            uint64 dePoolReward = math.min(reward, m_balanceThreshold + roundStakes - balance);
+            reward -= dePoolReward;
+        }
+        return reward;
+    }
+
     function acceptRewardAndStartRoundCompleting(Round round2, uint64 value) private returns (Round) {
         uint64 effectiveStake = round2.stake - round2.unused;
         uint64 reward = value - effectiveStake;
         round2.grossReward = reward;
 
+        reward = cutDePoolReward(reward, round2);
         // DePool take fee for stake returning/reinvesting
         reward -= math.min(reward, RET_OR_REINV_FEE + round2.participantQty * RET_OR_REINV_FEE);
 
@@ -1328,6 +1369,7 @@ contract DePool is ValidatorBase, ProxyBase, ConfigParamsBase, ParticipantBase, 
         uint64 validatorAssurance,
         uint8 participantRewardFraction,
         uint8 validatorRewardFraction,
+        uint64 balanceThreshold,
 
         address validatorWallet,
         address[] proxies,
@@ -1342,6 +1384,7 @@ contract DePool is ValidatorBase, ProxyBase, ConfigParamsBase, ParticipantBase, 
         validatorAssurance = m_validatorAssurance;
         participantRewardFraction = m_participantRewardFraction;
         validatorRewardFraction = m_validatorRewardFraction;
+        balanceThreshold = m_balanceThreshold;
 
         validatorWallet = m_validatorWallet;
         proxies = m_proxies;
@@ -1363,5 +1406,11 @@ contract DePool is ValidatorBase, ProxyBase, ConfigParamsBase, ParticipantBase, 
             }
             pair = m_participants.next(p);
         }
+    }
+
+    function getDePoolBalance() public view returns (int256) {
+        int256 stakes = totalParticipantFunds(0);
+        int256 balance = address(this).balance;
+        return balance - stakes;
     }
 }
