@@ -214,6 +214,7 @@
 				{"name":"validatorAssurance","type":"uint64"},
 				{"name":"participantRewardFraction","type":"uint8"},
 				{"name":"validatorRewardFraction","type":"uint8"},
+				{"name":"balanceThreshold","type":"uint64"},
 				{"name":"validatorWallet","type":"address"},
 				{"name":"proxies","type":"address[]"},
 				{"name":"stakeFee","type":"uint64"},
@@ -227,6 +228,14 @@
 			],
 			"outputs": [
 				{"name":"participants","type":"address[]"}
+			]
+		},
+		{
+			"name": "getDePoolBalance",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"value0","type":"int256"}
 			]
 		},
 		{
