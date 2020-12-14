@@ -140,7 +140,7 @@ Such a transaction should be repeated for every address calculated on step 4: th
 
 The recommended initial amounts are:
 
-- 20 Tons to the DePool conrtact
+- 21 Tons to the DePool conrtact
 - 5 Tons to the DePool Helper
 - 10 Tons should be left on the validator wallet
 
