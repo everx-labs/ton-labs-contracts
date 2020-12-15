@@ -1,0 +1,116 @@
+{
+  "ABI version": 2,
+  "header": [
+    "pubkey",
+    "time",
+    "expire"
+  ],
+  "functions": [
+  {
+    "name": "constructor",
+    "inputs": [
+    { "name":"name", "type":"bytes" },
+    { "name":"symbol", "type":"bytes" },
+    { "name":"root_public_key", "type":"uint256" },
+    { "name":"wallet_public_key", "type":"uint256" },
+    { "name":"root_address", "type":"address" },
+    { "name":"code", "type":"cell" }
+    ],
+    "outputs": [
+    ],
+    "id": "0xa"
+  },
+  {
+    "name": "accept",
+    "inputs": [
+    { "name":"rightId", "type":"uint256" }
+    ],
+    "outputs": [
+    ],
+    "id": "0xb"
+  },
+  {
+    "name": "deny",
+    "inputs": [
+    { "name":"rightId", "type":"uint256" }
+    ],
+    "outputs": [
+    ],
+    "id": "0xc"
+  },
+  {
+    "name": "destroy",
+    "inputs": [
+    ],
+    "outputs": [
+    ],
+    "id": "0xd"
+  },
+  {
+    "name": "getName",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"value0", "type":"bytes" }
+    ],
+    "id": "0xe"
+  },
+  {
+    "name": "getSymbol",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"value0", "type":"bytes" }
+    ],
+    "id": "0xf"
+  },
+  {
+    "name": "getWalletKey",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"value0", "type":"uint256" }
+    ],
+    "id": "0x10"
+  },
+  {
+    "name": "getRootAddress",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"value0", "type":"address" }
+    ],
+    "id": "0x11"
+  },
+  {
+    "name": "getRightsCount",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"value0", "type":"uint256" }
+    ],
+    "id": "0x12"
+  },
+  {
+    "name": "getRightByIndex",
+    "inputs": [
+    { "name":"index", "type":"uint256" }
+    ],
+    "outputs": [
+    { "name":"value0", "type":"uint256" }
+    ],
+    "id": "0x13"
+  },
+  {
+    "name": "getRights",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"value0", "type":"uint256[]" }
+    ],
+    "id": "0x14"
+  }
+  ],
+  "events": [
+  ]
+}
