@@ -1,0 +1,161 @@
+{
+	"ABI version": 2,
+	"header": ["pubkey", "time", "expire"],
+	"functions": [
+		{
+			"name": "constructor",
+			"inputs": [
+				{"name":"options","type":"uint8"},
+				{"name":"debotAbi","type":"bytes"},
+				{"name":"targetAbi","type":"bytes"},
+				{"name":"targetAddr","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "fetch",
+			"inputs": [
+			],
+			"outputs": [
+				{"components":[{"name":"id","type":"uint8"},{"name":"desc","type":"bytes"},{"components":[{"name":"desc","type":"bytes"},{"name":"name","type":"bytes"},{"name":"actionType","type":"uint8"},{"name":"attrs","type":"bytes"},{"name":"to","type":"uint8"},{"name":"misc","type":"cell"}],"name":"actions","type":"tuple[]"}],"name":"contexts","type":"tuple[]"}
+			]
+		},
+		{
+			"name": "getVersion",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"name","type":"bytes"},
+				{"name":"semver","type":"uint24"}
+			]
+		},
+		{
+			"name": "quit",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "getErrorDescription",
+			"inputs": [
+				{"name":"error","type":"uint32"}
+			],
+			"outputs": [
+				{"name":"desc","type":"bytes"}
+			]
+		},
+		{
+			"name": "enterMsigAddress",
+			"inputs": [
+				{"name":"wallet","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setText",
+			"inputs": [
+				{"name":"declaration","type":"bytes"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setSigns",
+			"inputs": [
+				{"name":"signatures","type":"uint64"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "getTextParam",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"str0","type":"bytes"}
+			]
+		},
+		{
+			"name": "getSignParam",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"number0","type":"uint64"}
+			]
+		},
+		{
+			"name": "invokeMultisigDebot",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"debot","type":"address"},
+				{"components":[{"name":"desc","type":"bytes"},{"name":"name","type":"bytes"},{"name":"actionType","type":"uint8"},{"name":"attrs","type":"bytes"},{"name":"to","type":"uint8"},{"name":"misc","type":"cell"}],"name":"action","type":"tuple"}
+			]
+		},
+		{
+			"name": "getDebotOptions",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"options","type":"uint8"},
+				{"name":"debotAbi","type":"bytes"},
+				{"name":"targetAbi","type":"bytes"},
+				{"name":"targetAddr","type":"address"}
+			]
+		},
+		{
+			"name": "sign",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "transfer",
+			"inputs": [
+				{"name":"str","type":"bytes"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "signers",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"signers","type":"map(address,bool)"}
+			]
+		},
+		{
+			"name": "counter",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"counter","type":"uint256"}
+			]
+		},
+		{
+			"name": "dodAddress",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"dodAddress","type":"address"}
+			]
+		},
+		{
+			"name": "happyHash",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"happyHash","type":"uint256"}
+			]
+		}
+	],
+	"data": [
+	],
+	"events": [
+	]
+}
