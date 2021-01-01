@@ -80,7 +80,7 @@ contract FreeTonContest is IContestData {
         uint8 id;           // Entry id
         uint16 avgRating;   // Average rating (multiplied by 100)
         address addr;       // address of the contestant
-        uint32 reward;      // raward (in tons)
+        uint32 reward;      // reward (in tons)
     }
     Score[] _ranking;
 
