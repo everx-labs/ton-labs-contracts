@@ -326,7 +326,7 @@ contract FreeTonContest is IContestData {
         info = _info;
     }
 
-    /* Warning! for experimental use only. to assumptions to bemade based on this */
+    /* Warning! for experimental use only. no assumptions to be made based on this */
 
     function getInfoFor(uint16 id) public view returns (ContenderInfo ci) {
         ci = _entries[id];
