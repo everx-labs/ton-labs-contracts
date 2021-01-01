@@ -45,7 +45,7 @@ contract FreeTonContest is IContestData {
         _;
     }
 
-    ContenderInfo[] _entries;   // Entries sumbitted to compete
+    ContenderInfo[] _entries;   // Entries submitted to compete
     Stage _stage;               // Current contest stage
 
     enum VoteType { Undefined, For, Abstain, Reject }
