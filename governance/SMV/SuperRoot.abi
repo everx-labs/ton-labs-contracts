@@ -1,0 +1,154 @@
+{
+  "ABI version": 2,
+  "header": [
+    "pubkey",
+    "time",
+    "expire"
+  ],
+  "functions": [
+  {
+    "name": "constructor",
+    "inputs": [
+    { "name":"budget", "type":"address" },
+    { "name":"stats", "type":"address" },
+    { "name":"depool", "type":"address" }
+    ],
+    "outputs": [
+    ]
+  },
+  {
+    "name": "setProposalRootCode",
+    "inputs": [
+    { "name":"code", "type":"cell" }
+    ],
+    "outputs": [
+    ]
+  },
+  {
+    "name": "setMultiBallotCode",
+    "inputs": [
+    { "name":"code", "type":"cell" }
+    ],
+    "outputs": [
+    ]
+  },
+  {
+    "name": "createProposal",
+    "inputs": [
+    { "name":"id", "type":"uint256" },
+    { "name":"totalVotes", "type":"uint128" },
+    { "name":"startime", "type":"uint32" },
+    { "name":"endtime", "type":"uint32" },
+    { "name":"desc", "type":"bytes" },
+    { "name":"superMajority", "type":"bool" },
+    { "name":"votePrice", "type":"uint256" },
+    { "name":"finalMsgEnabled", "type":"bool" },
+    { "name":"finalMsg", "type":"cell" },
+    { "name":"finalMsgValue", "type":"uint256" },
+    { "name":"finalMsgRequestValue", "type":"uint256" },
+    { "name":"whiteListEnabled", "type":"bool" },
+    { "name":"whitePubkeys", "type":"uint256[]" }
+    ],
+    "outputs": [
+    { "name":"value0", "type":"bool" }
+    ]
+  },
+  {
+    "name": "createMultiBallot",
+    "inputs": [
+    { "name":"pubkey", "type":"uint256" },
+    { "name":"tonsToBallot", "type":"uint256" }
+    ],
+    "outputs": [
+    { "name":"value0", "type":"address" }
+    ]
+  },
+  {
+    "name": "contestApproved",
+    "inputs": [
+    { "name":"id", "type":"uint256" },
+    { "name":"contest_addr", "type":"address" },
+    { "name":"requestValue", "type":"uint256" }
+    ],
+    "outputs": [
+    ]
+  },
+  {
+    "name": "getBudget",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"value0", "type":"address" }
+    ]
+  },
+  {
+    "name": "getStats",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"value0", "type":"address" }
+    ]
+  },
+  {
+    "name": "getDepool",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"value0", "type":"address" }
+    ]
+  },
+  {
+    "name": "getMultiBallotAddress",
+    "inputs": [
+    { "name":"pubkey", "type":"uint256" }
+    ],
+    "outputs": [
+    { "name":"value0", "type":"address" }
+    ]
+  },
+  {
+    "name": "getProposalById",
+    "inputs": [
+    { "name":"id", "type":"uint256" }
+    ],
+    "outputs": [
+    { "name":"root", "type":"address" }
+    ]
+  },
+  {
+    "name": "getProposalIds",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"value0", "type":"uint256[]" }
+    ]
+  },
+  {
+    "name": "getProposalAddress",
+    "inputs": [
+    { "name":"id", "type":"uint256" }
+    ],
+    "outputs": [
+    { "name":"value0", "type":"address" }
+    ]
+  },
+  {
+    "name": "isFullyInitialized",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"value0", "type":"bool" }
+    ]
+  },
+  {
+    "name": "getCreateMultiBallotGasPrice",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"value0", "type":"uint256" }
+    ]
+  }
+  ],
+  "events": [
+  ]
+}

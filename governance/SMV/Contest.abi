@@ -1,0 +1,99 @@
+{
+  "ABI version": 2,
+  "header": [
+    "time",
+    "expire"
+  ],
+  "functions": [
+  {
+    "name": "constructor",
+    "inputs": [
+    { "name":"title", "type":"bytes" },
+    { "name":"link", "type":"bytes" },
+    { "name":"hash", "type":"uint256" },
+    { "name":"juryAddr", "type":"address" },
+    { "name":"juryKeys", "type":"uint256[]" },
+    { "name":"startsIn", "type":"uint64" },
+    { "name":"lastsFor", "type":"uint64" },
+    { "name":"votingWindow", "type":"uint64" },
+    { "name":"sendApprovalGrams", "type":"uint256" }
+    ],
+    "outputs": [
+    ],
+    "id": "0x309"
+  },
+  {
+    "name": "sendApproval",
+    "inputs": [
+    ],
+    "outputs": [
+    ]
+  },
+  {
+    "name": "getTitle",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"value0", "type":"bytes" }
+    ]
+  },
+  {
+    "name": "getLink",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"value0", "type":"bytes" }
+    ]
+  },
+  {
+    "name": "getHash",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"value0", "type":"uint256" }
+    ]
+  },
+  {
+    "name": "getJuryAddr",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"value0", "type":"address" }
+    ]
+  },
+  {
+    "name": "getJuryKeys",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"value0", "type":"uint256[]" }
+    ]
+  },
+  {
+    "name": "getStartsIn",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"value0", "type":"uint64" }
+    ]
+  },
+  {
+    "name": "getLastsFor",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"value0", "type":"uint64" }
+    ]
+  },
+  {
+    "name": "getVotingWindow",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"value0", "type":"uint64" }
+    ]
+  }
+  ],
+  "events": [
+  ]
+}
