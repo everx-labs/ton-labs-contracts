@@ -1,0 +1,29 @@
+{
+  "ABI version": 2,
+  "header": [
+    "time",
+    "expire"
+  ],
+  "functions": [
+  {
+    "name": "constructor",
+    "inputs": [
+    { "name":"SMV_root", "type":"address" }
+    ],
+    "outputs": [
+    ]
+  },
+  {
+    "name": "request",
+    "inputs": [
+    { "name":"proposalId", "type":"uint256" },
+    { "name":"contestAddr", "type":"address" },
+    { "name":"requestValue", "type":"uint256" }
+    ],
+    "outputs": [
+    ]
+  }
+  ],
+  "events": [
+  ]
+}
