@@ -1,0 +1,43 @@
+{
+  "ABI version": 2,
+  "header": [
+    "time",
+    "expire"
+  ],
+  "functions": [
+  {
+    "name": "constructor",
+    "inputs": [
+    { "name":"SMV_root", "type":"address" }
+    ],
+    "outputs": [
+    ]
+  },
+  {
+    "name": "registerTransfer",
+    "inputs": [
+    { "name":"_answer_id", "type":"uint32" },
+    { "name":"proposalId", "type":"uint256" },
+    { "name":"contestAddr", "type":"address" },
+    { "name":"requestValue", "type":"uint256" }
+    ],
+    "outputs": [
+    { "name":"value0", "type":"bool" }
+    ]
+  },
+  {
+    "name": "getTransfers",
+    "inputs": [
+    ],
+    "outputs": [
+    { "components":[
+      { "name":"proposalId", "type":"uint256" },
+      { "name":"contestAddr", "type":"address" },
+      { "name":"requestValue", "type":"uint256" }
+    ], "name":"value0", "type":"tuple[]" }
+    ]
+  }
+  ],
+  "events": [
+  ]
+}

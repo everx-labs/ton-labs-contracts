@@ -1,0 +1,140 @@
+{
+  "ABI version": 2,
+  "header": [
+    "pubkey",
+    "time",
+    "expire"
+  ],
+  "functions": [
+  {
+    "name": "deployProposal",
+    "inputs": [
+    ],
+    "outputs": [
+    ],
+    "id": "0xb"
+  },
+  {
+    "name": "vote",
+    "inputs": [
+    { "name":"_answer_id", "type":"uint32" },
+    { "name":"pubkey", "type":"uint256" },
+    { "name":"deposit", "type":"uint256" },
+    { "name":"yes", "type":"bool" }
+    ],
+    "outputs": [
+    { "name":"yes", "type":"uint128" },
+    { "name":"no", "type":"uint128" }
+    ],
+    "id": "0xc"
+  },
+  {
+    "name": "checkFinished",
+    "inputs": [
+    { "name":"_answer_id", "type":"uint32" }
+    ],
+    "outputs": [
+    { "name":"value0", "type":"bool" }
+    ],
+    "id": "0xd"
+  },
+  {
+    "name": "checkApproved",
+    "inputs": [
+    { "name":"_answer_id", "type":"uint32" }
+    ],
+    "outputs": [
+    { "name":"value0", "type":"bool" }
+    ],
+    "id": "0xe"
+  },
+  {
+    "name": "checkResults",
+    "inputs": [
+    { "name":"_answer_id", "type":"uint32" }
+    ],
+    "outputs": [
+    { "name":"yes", "type":"uint128" },
+    { "name":"no", "type":"uint128" },
+    { "name":"finished", "type":"bool" },
+    { "name":"approved", "type":"bool" }
+    ],
+    "id": "0xf"
+  },
+  {
+    "name": "contestApproved",
+    "inputs": [
+    ],
+    "outputs": [
+    ],
+    "id": "0x10"
+  },
+  {
+    "name": "getDepool",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"value0", "type":"address" }
+    ]
+  },
+  {
+    "name": "getVotePrice",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"value0", "type":"uint256" }
+    ]
+  },
+  {
+    "name": "getProposal",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"id", "type":"uint256" },
+    { "name":"start", "type":"uint32" },
+    { "name":"end", "type":"uint32" },
+    { "name":"desc", "type":"bytes" },
+    { "name":"finished", "type":"bool" },
+    { "name":"approved", "type":"bool" },
+    { "name":"resultsSent", "type":"bool" },
+    { "name":"earlyFinished", "type":"bool" },
+    { "name":"whiteListEnabled", "type":"bool" },
+    { "name":"totalVotes", "type":"uint128" },
+    { "name":"currentVotes", "type":"uint128" },
+    { "name":"yesVotes", "type":"uint128" },
+    { "name":"noVotes", "type":"uint128" },
+    { "name":"votePrice", "type":"uint256" }
+    ]
+  },
+  {
+    "name": "getWhiteList",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"value0", "type":"uint256[]" }
+    ]
+  }
+  ],
+  "events": [  {
+    "name": "VotesChanged",
+    "inputs": [
+    { "name":"yes", "type":"uint128" },
+    { "name":"no", "type":"uint128" }
+    ],
+    "outputs": [
+    ],
+    "id": "0x1e"
+  },
+  {
+    "name": "VotingFinished",
+    "inputs": [
+    { "name":"yes", "type":"uint128" },
+    { "name":"no", "type":"uint128" },
+    { "name":"approved", "type":"bool" }
+    ],
+    "outputs": [
+    ],
+    "id": "0x1f"
+  }
+  ]
+}

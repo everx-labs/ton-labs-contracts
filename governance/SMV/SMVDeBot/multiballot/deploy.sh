@@ -32,7 +32,7 @@ fi
 sleep 1
 echo DEPLOY DEBOT
 debot_abi=$(cat $filenameabi | xxd -ps -c 20000)
-target_abi=$(cat ../../MultiBallot.abi | xxd -ps -c 20000)
+target_abi=$(cat ../MultiBallot.abi | xxd -ps -c 20000)
 
 $CLI_PATH/tonos-cli deploy $filenametvc "{\"options\":0,\"debotAbi\":\"\",\"targetAddr\":\"\",\"targetAbi\":\"\"}" --sign $filenamekeys --abi $filenameabi
 echo SET DEBOT ABI
@@ -44,11 +44,11 @@ $CLI_PATH/tonos-cli call $debot_address setMsigDebot "{\"md\":\"$MSIG_DEBOT_ADDR
 echo SET MULTIBALOT
 $CLI_PATH/tonos-cli call $debot_address setMbAbi "{\"dabi\":\"$target_abi\"}" --sign $filenamekeys --abi $filenameabi
 echo SET SUPERROOT
-sr_abi=$(cat ../../SuperRoot.abi | xxd -ps -c 20000)
+sr_abi=$(cat ../SuperRoot.abi | xxd -ps -c 20000)
 $CLI_PATH/tonos-cli call $debot_address setSrAbi "{\"dabi\":\"$sr_abi\"}" --sign $filenamekeys --abi $filenameabi
 $CLI_PATH/tonos-cli call $debot_address setSrAddr "{\"addr\":\"$SUPER_ROOT_ADDRESS\"}" --sign $filenamekeys --abi $filenameabi
 echo SET PROPOSALROOT
-pr_abi=$(cat ../../ProposalRoot.abi | xxd -ps -c 20000)
+pr_abi=$(cat ../ProposalRoot.abi | xxd -ps -c 20000)
 $CLI_PATH/tonos-cli call $debot_address setPrAbi "{\"dabi\":\"$pr_abi\"}" --sign $filenamekeys --abi $filenameabi
 
 echo DONE

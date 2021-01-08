@@ -31,7 +31,7 @@ giver_local $debot_address
 fi
 echo DEPLOY DEBOT
 debot_abi=$(cat $filenameabi | xxd -ps -c 20000)
-target_abi=$(cat ../../SuperRoot.abi | xxd -ps -c 20000)
+target_abi=$(cat ../SuperRoot.abi | xxd -ps -c 20000)
 
 $CLI_PATH/tonos-cli deploy $filenametvc "{\"options\":0,\"debotAbi\":\"\",\"targetAddr\":\"\",\"targetAbi\":\"\"}" --sign $filenamekeys --abi $filenameabi
 echo SET DEBOT ABI
@@ -52,6 +52,10 @@ $CLI_PATH/tonos-cli call $debot_address setProposalDebot "{\"adr\":\"$pr_deobt\"
 echo SET STAT DEBOT ADDRESS
 stat_debot=$(cat ../smvStats/address.log)
 $CLI_PATH/tonos-cli call $debot_address setStatDebot "{\"adr\":\"$stat_debot\"}" --sign $filenamekeys --abi $filenameabi
+echo SET DEPLOY PROPOSAL DEBOT ADDRESS
+dp_debot=$(cat ../deployProposal/address.log)
+$CLI_PATH/tonos-cli call $debot_address setDeployProposalDebot "{\"adr\":\"$dp_debot\"}" --sign $filenamekeys --abi $filenameabi
+
 
 echo DONE
 echo $debot_address > address.log

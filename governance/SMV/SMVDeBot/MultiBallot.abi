@@ -1,0 +1,105 @@
+{
+  "ABI version": 2,
+  "header": [
+    "pubkey",
+    "time",
+    "expire"
+  ],
+  "functions": [
+  {
+    "name": "deployBallot",
+    "inputs": [
+    ],
+    "outputs": [
+    ]
+  },
+  {
+    "name": "receiveNativeTransfer",
+    "inputs": [
+    { "name":"amount", "type":"uint256" }
+    ],
+    "outputs": [
+    ]
+  },
+  {
+    "name": "receiveStakeTransfer",
+    "inputs": [
+    { "name":"source", "type":"address" },
+    { "name":"amount", "type":"uint128" }
+    ],
+    "outputs": [
+    ],
+    "id": "0x23c4771d"
+  },
+  {
+    "name": "sendVote",
+    "inputs": [
+    { "name":"proposal", "type":"address" },
+    { "name":"yesOrNo", "type":"bool" }
+    ],
+    "outputs": [
+    { "name":"has_deposit", "type":"uint256" },
+    { "name":"already_sent_deposit", "type":"uint256" },
+    { "name":"new_sent_deposit", "type":"uint256" }
+    ]
+  },
+  {
+    "name": "requestDeposit",
+    "inputs": [
+    { "name":"user_wallet", "type":"address" }
+    ],
+    "outputs": [
+    ]
+  },
+  {
+    "name": "finalize",
+    "inputs": [
+    { "name":"user_wallet", "type":"address" }
+    ],
+    "outputs": [
+    ]
+  },
+  {
+    "name": "getDepool",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"value0", "type":"address" }
+    ]
+  },
+  {
+    "name": "getNativeDeposit",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"value0", "type":"uint256" }
+    ]
+  },
+  {
+    "name": "getStakeDeposit",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"value0", "type":"uint256" }
+    ]
+  },
+  {
+    "name": "getMultiBallot_receiveNativeTransfer_GasPrice",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"value0", "type":"uint256" }
+    ]
+  },
+  {
+    "name": "getMultiBallot_receiveStakeTransfer_GasPrice",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"value0", "type":"uint256" }
+    ]
+  }
+  ],
+  "events": [
+  ]
+}
