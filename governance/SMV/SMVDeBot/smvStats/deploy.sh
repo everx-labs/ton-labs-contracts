@@ -31,7 +31,7 @@ giver_local $debot_address
 fi
 echo DEPLOY DEBOT
 debot_abi=$(cat $filenameabi | xxd -ps -c 20000)
-target_abi=$(cat ../../SMVStats.abi | xxd -ps -c 20000)
+target_abi=$(cat ../SMVStats.abi | xxd -ps -c 20000)
 
 $CLI_PATH/tonos-cli deploy $filenametvc "{\"options\":4,\"debotAbi\":\"\",\"targetAddr\":\"$SMV_STAT_ADDRESS\",\"targetAbi\":\"\"}" --sign $filenamekeys --abi $filenameabi
 echo SET DEBOT ABI

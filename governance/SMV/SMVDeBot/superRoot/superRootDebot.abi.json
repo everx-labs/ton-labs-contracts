@@ -22,6 +22,14 @@
 			]
 		},
 		{
+			"name": "setDeployProposalDebot",
+			"inputs": [
+				{"name":"adr","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "setMultiballotDebot",
 			"inputs": [
 				{"name":"adr","type":"address"}
@@ -108,164 +116,6 @@
 				{"name":"msig","type":"address"}
 			],
 			"outputs": [
-			]
-		},
-		{
-			"name": "enterProposalId",
-			"inputs": [
-				{"name":"id","type":"uint256"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "enterProposalTotalVotes",
-			"inputs": [
-				{"name":"totalVotes","type":"uint128"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "enterProposalStartTime",
-			"inputs": [
-				{"name":"startime","type":"uint32"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "enterProposalEndTime",
-			"inputs": [
-				{"name":"endtime","type":"uint32"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "enterProposalDescription",
-			"inputs": [
-				{"name":"desc","type":"bytes"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setProposalSuperMajorityTrue",
-			"inputs": [
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setProposalSuperMajorityFalse",
-			"inputs": [
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "enterProposalVotePrice",
-			"inputs": [
-				{"name":"votePrice","type":"bytes"}
-			],
-			"outputs": [
-				{"components":[{"name":"desc","type":"bytes"},{"name":"name","type":"bytes"},{"name":"actionType","type":"uint8"},{"name":"attrs","type":"bytes"},{"name":"to","type":"uint8"},{"name":"misc","type":"cell"}],"name":"actions","type":"tuple[]"}
-			]
-		},
-		{
-			"name": "setProposalVotePrice",
-			"inputs": [
-				{"name":"arg1","type":"uint64"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setProposalYesFinalMsg",
-			"inputs": [
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setProposalNoFinalMsg",
-			"inputs": [
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "enterProposalFinalMsg",
-			"inputs": [
-				{"name":"finalMsg","type":"cell"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "enterProposalFinalMsgValue",
-			"inputs": [
-				{"name":"finalMsgValue","type":"bytes"}
-			],
-			"outputs": [
-				{"components":[{"name":"desc","type":"bytes"},{"name":"name","type":"bytes"},{"name":"actionType","type":"uint8"},{"name":"attrs","type":"bytes"},{"name":"to","type":"uint8"},{"name":"misc","type":"cell"}],"name":"actions","type":"tuple[]"}
-			]
-		},
-		{
-			"name": "setProposalFinalMsgValue",
-			"inputs": [
-				{"name":"arg1","type":"uint64"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "enterProposalFinalMsgRequestValue",
-			"inputs": [
-				{"name":"finalMsgRequestValue","type":"bytes"}
-			],
-			"outputs": [
-				{"components":[{"name":"desc","type":"bytes"},{"name":"name","type":"bytes"},{"name":"actionType","type":"uint8"},{"name":"attrs","type":"bytes"},{"name":"to","type":"uint8"},{"name":"misc","type":"cell"}],"name":"actions","type":"tuple[]"}
-			]
-		},
-		{
-			"name": "setProposalFinalMsgRequestValue",
-			"inputs": [
-				{"name":"arg1","type":"uint64"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setWhiteListTrue",
-			"inputs": [
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setWhiteListFalse",
-			"inputs": [
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "enterProposalWhiteListPubkey",
-			"inputs": [
-				{"name":"pubkey","type":"uint256"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "invokeCreateProposal",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"debot","type":"address"},
-				{"components":[{"name":"desc","type":"bytes"},{"name":"name","type":"bytes"},{"name":"actionType","type":"uint8"},{"name":"attrs","type":"bytes"},{"name":"to","type":"uint8"},{"name":"misc","type":"cell"}],"name":"action","type":"tuple"}
 			]
 		},
 		{
@@ -431,6 +281,15 @@
 		},
 		{
 			"name": "invokeStatDebot",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"debot","type":"address"},
+				{"components":[{"name":"desc","type":"bytes"},{"name":"name","type":"bytes"},{"name":"actionType","type":"uint8"},{"name":"attrs","type":"bytes"},{"name":"to","type":"uint8"},{"name":"misc","type":"cell"}],"name":"action","type":"tuple"}
+			]
+		},
+		{
+			"name": "invokeDeployProposalDebot",
 			"inputs": [
 			],
 			"outputs": [
