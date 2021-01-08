@@ -247,4 +247,30 @@ address createMultiBallot(uint256 pubkey, address depool, uint256 tonsToBallot);
 The internal call will return the deployed MultiBallot address with the rest of funds. The returned address should be equal to calculated by getWalletAddress.
 
 ## 7. It is recommended to use SMV DeBots for proposal/multiballot creation and voting.
-
+### 7.1 Deploy SMV DeBot
+DeBots should be deployed in the following order:
+* SMVStatDebot
+* ProposalRootDebot
+* MultiBallotDebot
+* SuperRootDebot
+> Note: You can see `deployall.sh` script file for more details.
+### 7.2 How to vote
+#### 7.2.1 Deploy MultiBallot
+To vote for proposals you need to have MultiBallot account(smart-contract). To deploy your  MultiBallot first of all you need seed phrase and keypair. You can use tonos-cli to generate it. Run command to generate seed phrase:
+```./tonos-cli genphrase```
+Than you can create a key pair file from a seed phrase using the following command:
+```./tonos-cli getkeypair <keyfile.json> "<seed_phrase>"```
+Now you can start deploy MultiBallot from SMV DeBot. Select command `3) Deploy MultiBallot`. Enter the address of the multisig wallet from which you want to pay for the deployment.  At second step you should enter your generated public key. And then enter the amount of tons you want to send to you MultiBallot as mainterance (1 ton will be fine). Select `1) Yes - let's deploy!` and submit transaction with you  multisig  seed phrase or keypair file. Now you  MultiBallot is deployed.
+Select `1) Vote` and enter your MultiBallot public key. Now you need to make deposit. Select `4) Add deposit from msig` or `5) Add deposit from depool` and follow instructions. You allways can check you deposit with `3) Get total deposit` command. You can withdraw you deposit with command `6) Withdraw deposit`. 
+> Note: you cannot withdraw your deposit until all proposals you voted for have been completed
+#### 7.2.2 Vote
+Select `1) Vote`command from SMV DeBot. Enter your MultiBallot public key and run `1) Vote` command to see all proposals you can vote and then vote for them.
+If you know the specific proposal address you can vote for it with `2) Vote by proposal address` command.
+### 7.3 Other commands
+* To see information about budget transfers use command  `4) Show statistic`.
+* You can use command `2) Deploy proposal` for deploy the proposal. 
+* Some additional information can be obtain from `5) Additional information` command:
+`1) Get proposal ids` - show the list of created proposals id.
+`2) Get proposal address by id` – get the proposal address by its id.
+`3) Get multiballot address` -  get the multiballot address by its public key
+`4) Show proposal info` – show proposal info by the proposal address
