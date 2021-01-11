@@ -12,7 +12,7 @@ using namespace schema;
 template<bool Internal>
 class RootTokenContract final : public smart_interface<IRootTokenContract>, public DRootTokenContract {
 public:
-  static constexpr unsigned wallet_hash = 0xe0ad9d163163463ecce0cc8bb35b8f66de9ca7895fdd30adb4d865a2e419dec4;
+  static constexpr unsigned wallet_hash = 0xdfdd2547c0e4fcf05aae09a4689c6945395f4fbf14ebc7b7e6b0cbd17c722b52;
 
   struct error_code : tvm::error_code {
     static constexpr unsigned message_sender_is_not_my_owner  = 100;
@@ -62,7 +62,7 @@ public:
     //  (up to start balance of the contract)
     if constexpr (Internal) {
       auto value_gr = int_value();
-      tvm_rawreserve(std::max(start_balance_.get(), tvm_balance() - value_gr()), RESERVE_UP_TO);
+      tvm_rawreserve(std::max(start_balance_.get(), tvm_balance() - value_gr()), rawreserve_flag::up_to);
     }
 
     std::optional<address> owner_addr;
@@ -84,7 +84,7 @@ public:
                             WalletGramsType grams) {
     // This protects from spending root balance to deploy message
     auto value_gr = int_value();
-    tvm_rawreserve(std::max(start_balance_.get(), tvm_balance() - value_gr()), RESERVE_UP_TO);
+    tvm_rawreserve(std::max(start_balance_.get(), tvm_balance() - value_gr()), rawreserve_flag::up_to);
 
     require((pubkey == 0 and internal_owner != 0) or (pubkey != 0 and internal_owner == 0),
             error_code::define_pubkey_or_internal_owner);
