@@ -187,7 +187,7 @@ A .json configuration file will be created in the TONOS-CLI utility folder. The 
 
 ### 6.3. Deploying token wallet from token root
 ```
-./tonos-cli call <root_address> deployWallet '{"workchain_id":<workchain_id>,"pubkey":"0x<wallet public key>","tokens":"<Tokens number>","tons":<Tons>}' --sign "<seed_phrase>"
+./tonos-cli call <root_address> deployWallet '{"workchain_id":<workchain_id>,"pubkey":"0x<wallet public key>","tokens":"<Tokens number>","grams":<Tons>}' --sign "<seed_phrase>"
 ```
 The call will return the deployed wallet address. It should be equal to calculated by getWalletAddress.
 
@@ -198,7 +198,7 @@ The call will return the deployed wallet address. It should be equal to calculat
 
 ### 6.5. Granting tokens to existing token wallet
 ```
-./tonos-cli call <root_address> grant '{"dest":"<token wallet address>","tokens":"<Tokens number>","tons":"<Tons>"}' --sign "<seed_phrase>"
+./tonos-cli call <root_address> grant '{"dest":"<token wallet address>","tokens":"<Tokens number>","grams":"<Tons>"}' --sign "<seed_phrase>"
 ```
 
 ## 7. Token Wallet management
@@ -215,7 +215,7 @@ The call will return the deployed wallet address. It should be equal to calculat
 
 ### 7.2. Transfer tokens
 ```
-./tonos-cli call <wallet_address> transfer '{"dest":"<dest token wallet address>","tokens":<Tokens number>,"tons":<Tons>}' --sign "<seed_phrase>"
+./tonos-cli call <wallet_address> transfer '{"dest":"<dest token wallet address>","tokens":<Tokens number>,"grams":<Tons>}' --sign "<seed_phrase>"
 ```
 
 ### 7.3. Set allowance

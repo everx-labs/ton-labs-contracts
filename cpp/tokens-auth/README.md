@@ -184,7 +184,7 @@ The call will return the deployed wallet address. It should be equal to calculat
 
 ### 6.4. Granting rights to existing token wallet
 ```
-./tonos-cli call <root_address> grant '{"dest":"<token wallet address>","rightId":"<Tokens number>","tons":"<Tons>"}' --sign "<seed_phrase>"
+./tonos-cli call <root_address> grant '{"dest":"<token wallet address>","rightId":"<Tokens number>","grams":"<Tons>"}' --sign "<seed_phrase>"
 ```
 
 ## 7. Token Wallet management
