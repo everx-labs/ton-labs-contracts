@@ -6,7 +6,7 @@ interface IContestData {
     /* General contest information */
     struct ContestInfo {
         uint32 gid;         // Contract global ID
-        string title;       // Title of the cotract
+        string title;       // Title of the contract
         string link;        // Link to the document location
         uint hash;          // Hash of the proposal
     }

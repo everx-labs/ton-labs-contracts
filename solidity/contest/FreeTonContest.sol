@@ -45,7 +45,7 @@ contract FreeTonContest is IContestData {
         _;
     }
 
-    ContenderInfo[] _entries;   // Entries sumbitted to compete
+    ContenderInfo[] _entries;   // Entries submitted to compete
     Stage _stage;               // Current contest stage
 
     enum VoteType { Undefined, For, Abstain, Reject }
@@ -80,7 +80,7 @@ contract FreeTonContest is IContestData {
         uint8 id;           // Entry id
         uint16 avgRating;   // Average rating (multiplied by 100)
         address addr;       // address of the contestant
-        uint32 reward;      // raward (in tons)
+        uint32 reward;      // reward (in tons)
     }
     Score[] _ranking;
 
@@ -326,7 +326,7 @@ contract FreeTonContest is IContestData {
         info = _info;
     }
 
-    /* Warning! for experimental use only. to assumptions to bemade based on this */
+    /* Warning! for experimental use only. no assumptions to be made based on this */
 
     function getInfoFor(uint16 id) public view returns (ContenderInfo ci) {
         ci = _entries[id];
