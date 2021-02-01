@@ -17,6 +17,10 @@ struct Participant {
     // Target tons that will be transferred to participant after rounds are completed
     // After each round this value is decreased
     uint64 withdrawValue;
+    // address from which vesting stake can be given for the participant
+    address vestingDonor;
+    // address from which lock stake can be given for the participant
+    address lockDonor;
 }
 
 // Request for elections from validator wallet.
@@ -60,30 +64,35 @@ library Errors {
     uint8 constant BAD_PART_REWARD = 138;
     uint8 constant BAD_PROXY_CODE = 141;
     uint8 constant NOT_WORKCHAIN0 = 142;
-    uint8 constant NEW_VALIDATOR_FRACTION_MUST_BE_GREATER_THAN_OLD = 143;
+    uint8 constant NEW_VALIDATOR_FRACTION_MUST_BE_LESS_THAN_OLD = 143;
     uint8 constant FRACTION_MUST_NOT_BE_ZERO = 144;
     uint8 constant BAD_ACCOUNT_BALANCE = 146;
+    uint8 constant VALIDATOR_IS_ZERO_ADDR = 147;
+    // message sender is not proxy contract
+    uint constant IS_NOT_ROUND_PROXY = 148;
+    uint constant BAD_MIN_STAKE_AND_ASSURANCE = 149;
 }
 
 // Internal errors:
 library InternalErrors {
-    uint constant ERROR507 = 507;
-    uint constant ERROR508 = 508;
-    uint constant ERROR509 = 509;
-    uint constant ERROR511 = 511;
-    uint constant ERROR513 = 513;
-    uint constant ERROR516 = 516;
-    uint constant ERROR517 = 517;
-    uint constant ERROR518 = 518;
-    uint constant ERROR519 = 519;
-    uint constant ERROR521 = 521;
-    uint constant ERROR522 = 522;
-    uint constant ERROR523 = 523;
-    uint constant ERROR524 = 524;
-    uint constant ERROR525 = 525;
-    uint constant ERROR526 = 526;
-    uint constant ERROR527 = 527;
-    uint constant ERROR528 = 528;
+    uint16 constant ERROR507 = 507;
+    uint16 constant ERROR508 = 508;
+    uint16 constant ERROR509 = 509;
+    uint16 constant ERROR511 = 511;
+    uint16 constant ERROR516 = 516;
+    uint16 constant ERROR517 = 517;
+    uint16 constant ERROR518 = 518;
+    uint16 constant ERROR519 = 519;
+    uint16 constant ERROR521 = 521;
+    uint16 constant ERROR522 = 522;
+    uint16 constant ERROR523 = 523;
+    uint16 constant ERROR524 = 524;
+    uint16 constant ERROR525 = 525;
+    uint16 constant ERROR526 = 526;
+    uint16 constant ERROR527 = 527;
+    uint16 constant ERROR528 = 528;
+    uint16 constant ERROR529 = 529;
+    uint16 constant ERROR530 = 530;
 }
 
 library DePoolLib {
