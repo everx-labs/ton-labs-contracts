@@ -582,7 +582,7 @@ Example:
 tonos-cli depool --addr 0:37fbcb6e3279cbf5f783d61c213ed20fee16e0b1b94a48372d20a2596b700ace stake transfer --wallet 0:1b91c010f35b1f5b42a05ad98eb2df80c302c37df69651e1f5ac9c69b7e90d4e --value 1000 --dest 0:1b91c010f35b1f5b42a05ad98eb2df80c302c37df69651e1f5ac9c69b7e90d4e --sign "dizzy modify exotic daring gloom rival pipe disagree again film neck fuel"
 ```
 
-> **Note**: Stakes cannot be transferred from or to DePool's validator wallet, and between any wallets during round completion step.
+> **Note**: Stakes cannot be transferred from or to DePool's validator wallet, and between any wallets during round completion step (RoundStep = Completing = 8).
 
 
 ### Withdraw Stakes
@@ -1189,7 +1189,7 @@ Result: {
 
 `recoveredStake`: the total stake returned by elector (in nanotons).
 
-`unused`: if the stake was cut off by the elector (this can happen if there is a significant number of election candidates with much smaller stakes), this value equals the amount cut off (in nanotons). This amount is not lost to participants - it simply isn't staked in this round and the rewards for the round will be proportionally smaller.
+`unused`: if the stake was cut off by the elector (this can happen if there is a significant number of election candidates with much smaller stakes), this value equals the amount cut off (in nanotons). This amount is not lost to participants - it simply isn't staked in this round and the rewards for the round will be proportionally smaller. If DePool did not receive a ticktock call during the validation period, this value will remain 0, even if some funds were cut off.
 
 `isValidatorStakeCompleted`: indicates whether validator's stake has been processed during Completing round step. Whenever participants receive rewards, validator's stake should be processed first, as any losses the total stake sustains due to poor node rerformance are first deducted from validator's share of the pool.
 
