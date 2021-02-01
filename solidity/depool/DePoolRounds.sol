@@ -106,7 +106,9 @@ struct Round {
     // Gross reward
     uint64 grossReward;
     // Round rewards for all participants (it's not whole reward)
-    uint64 rewards;
+    uint64 participantReward;
+    // Round rewards for validator
+    uint64 validatorReward;
     // Number of participants in round
     uint32 participantQty;
     // Participant's stakes in round
@@ -135,9 +137,10 @@ struct LastRoundInfo {
     uint32 participantQty;
     uint64 roundStake;
     address validatorWallet;
-    uint256 validatorPubkey;
     uint64 validatorAssurance;
-    uint64 reward;
+    uint64 grossReward;
+    uint64 validatorReward;
+    uint64 participantReward;
     uint8 reason;
     bool isDePoolClosed;
 }
@@ -271,8 +274,8 @@ contract RoundsBase {
 
 
         uint64 newDestStake = round.stakes[destination].ordinary + deltaDestinationStake;
-        if ((0 < newSourceStake && newSourceStake < minStake) ||
-            (0 < newDestStake && newDestStake < minStake)) {
+        if ((0 < newSourceStake && newSourceStake < minStake) || newDestStake < minStake)
+        {
             return (round, 0, prevSourceStake, sourceParticipant, destinationParticipant);
         }
 
@@ -360,7 +363,7 @@ contract RoundsBase {
         uint64 recoveredStake;
         uint64 unused;
         bool isValidatorStakeCompleted;
-        uint64 rewards;
+        uint64 participantReward;
         uint32 participantQty;
         uint64 validatorStake;
         uint64 validatorRemainingStake;
@@ -381,7 +384,7 @@ contract RoundsBase {
             recoveredStake: round.recoveredStake,
             unused: round.unused,
             isValidatorStakeCompleted: round.isValidatorStakeCompleted,
-            rewards: round.rewards,
+            participantReward: round.participantReward,
             participantQty: round.participantQty,
             validatorStake: round.validatorStake,
             validatorRemainingStake: round.validatorRemainingStake,

@@ -62,6 +62,13 @@
 			]
 		},
 		{
+			"name": "withdrawExcessTons",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "getProxyInfo",
 			"inputs": [
 			],
@@ -72,6 +79,9 @@
 		}
 	],
 	"data": [
+		{"key":1,"name":"m_id","type":"uint8"},
+		{"key":2,"name":"m_dePool","type":"address"},
+		{"key":3,"name":"m_validatorWallet","type":"address"}
 	],
 	"events": [
 	]

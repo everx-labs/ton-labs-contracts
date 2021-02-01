@@ -27,7 +27,7 @@ contract ProxyBase {
         return m_proxies[roundId % 2];
     }
 
-    function _recoverStake(address proxy, uint64 requestId, address elector) internal {
+    function _recoverStake(address proxy, uint64 requestId, address elector) pure internal {
         IProxy(proxy).recover_stake{value: DePoolLib.ELECTOR_FEE + DePoolLib.PROXY_FEE}(requestId, elector);
     }
 
@@ -38,10 +38,9 @@ contract ProxyBase {
         Request req,
         address elector
     )
-        internal
+        internal pure
     {
-        // send stake + 1 ton  + 2 * 0.01 ton (proxy fee),
-        // 1 ton will be used by Elector to return confirmation back to DePool contract.
+        // DePoolLib.ELECTOR_FEE ton will be used by Elector to return confirmation back to DePool contract.
         IProxy(proxy).process_new_stake{value: validatorStake + DePoolLib.ELECTOR_FEE + DePoolLib.PROXY_FEE}(
             requestId,
             req.validatorKey,
@@ -59,15 +58,16 @@ contract ConfigParamsBase {
     function getCurValidatorData() virtual pure internal returns (uint256 hash, uint32 utime_since, uint32 utime_until) {
         (TvmCell cell, bool ok) = tvm.rawConfigParam(34);
         require(ok, InternalErrors.ERROR508);
-        hash = tvm.hash(cell);
         TvmSlice s = cell.toSlice();
         (, utime_since, utime_until) = s.decode(uint8, uint32, uint32);
+        hash = utime_since;
     }
 
-    function getPrevValidatorHash() virtual pure internal returns (uint) {
+    function getPrevValidatorHash() virtual pure internal returns (uint256 hash) {
         (TvmCell cell, bool ok) = tvm.rawConfigParam(32);
         require(ok, InternalErrors.ERROR507);
-        return tvm.hash(cell);
+        TvmSlice s = cell.toSlice();
+        (, hash) = s.decode(uint8, uint32);
     }
 
     function roundTimeParams() virtual pure internal returns (
@@ -116,7 +116,9 @@ contract ParticipantBase {
             vestingParts: 0,
             lockParts: 0,
             reinvest: true,
-            withdrawValue: 0
+            withdrawValue: 0,
+            vestingDonor: address(0),
+            lockDonor: address(0)
         });
         return newParticipant;
     }

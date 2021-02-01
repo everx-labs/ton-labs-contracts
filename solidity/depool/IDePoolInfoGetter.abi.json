@@ -5,7 +5,7 @@
 		{
 			"name": "receiveDePoolInfo",
 			"inputs": [
-				{"components":[{"name":"supposedElectedAt","type":"uint32"},{"name":"participantRewardFraction","type":"uint8"},{"name":"validatorRewardFraction","type":"uint8"},{"name":"participantQty","type":"uint32"},{"name":"roundStake","type":"uint64"},{"name":"validatorWallet","type":"address"},{"name":"validatorPubkey","type":"uint256"},{"name":"validatorAssurance","type":"uint64"},{"name":"reward","type":"uint64"},{"name":"reason","type":"uint8"},{"name":"isDePoolClosed","type":"bool"}],"name":"lastRoundInfo","type":"tuple"}
+				{"components":[{"name":"supposedElectedAt","type":"uint32"},{"name":"participantRewardFraction","type":"uint8"},{"name":"validatorRewardFraction","type":"uint8"},{"name":"participantQty","type":"uint32"},{"name":"roundStake","type":"uint64"},{"name":"validatorWallet","type":"address"},{"name":"validatorAssurance","type":"uint64"},{"name":"grossReward","type":"uint64"},{"name":"validatorReward","type":"uint64"},{"name":"participantReward","type":"uint64"},{"name":"reason","type":"uint8"},{"name":"isDePoolClosed","type":"bool"}],"name":"lastRoundInfo","type":"tuple"}
 			],
 			"outputs": [
 			]

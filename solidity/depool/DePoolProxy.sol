@@ -10,27 +10,21 @@ contract DePoolProxyContract is IProxy {
 
     uint constant ERROR_IS_NOT_DEPOOL = 102;
     uint constant ERROR_BAD_BALANCE = 103;
+    uint constant ERROR_IS_NOT_VALIDATOR = 104;
 
-    address m_dePool;
+    uint8 static m_id;
+    address static m_dePool;
+    address static m_validatorWallet;
 
     constructor() public {
-        bool ok = false;
-        for (uint8 i = 0; i < 2; ++i) {
-            TvmBuilder b;
-            b.store(address(msg.sender), i);
-            uint256 publicKey = tvm.hash(b.toCell());
-            ok = ok || tvm.pubkey() == publicKey;
-        }
-        require(ok, ERROR_IS_NOT_DEPOOL);
-        m_dePool = msg.sender;
+        require(msg.sender == m_dePool, ERROR_IS_NOT_DEPOOL);
     }
 
     modifier onlyDePoolAndCheckBalance {
         require(msg.sender == m_dePool, ERROR_IS_NOT_DEPOOL);
 
         // this check is needed for correct work of proxy
-        uint carry = msg.value - DePoolLib.PROXY_FEE;
-        require(address(this).balance >= carry + DePoolLib.MIN_PROXY_BALANCE, ERROR_BAD_BALANCE);
+        require(address(this).balance >= msg.value + DePoolLib.MIN_PROXY_BALANCE, ERROR_BAD_BALANCE);
         _;
     }
 
@@ -54,14 +48,20 @@ contract DePoolProxyContract is IProxy {
     }
 
     /// @dev Elector answer from process_new_stake in case of success.
-    function onStakeAccept(uint64 queryId, uint32 comment) public functionID(0xF374484C) {
+    function onStakeAccept(uint64 queryId, uint32 comment) public functionID(0xF374484C) view {
         // Elector contract always sends 1 ton
-        IDePool(m_dePool).onStakeAccept{value: msg.value - DePoolLib.PROXY_FEE}(queryId, comment, msg.sender);
+        IDePool(m_dePool).onStakeAccept{
+            value: msg.value - DePoolLib.PROXY_FEE,
+            bounce: false
+        }(queryId, comment, msg.sender);
     }
 
     /// @dev Elector answer from process_new_stake in case of error.
-    function onStakeReject(uint64 queryId, uint32 comment) public functionID(0xEE6F454C) {
-        IDePool(m_dePool).onStakeReject{value: msg.value - DePoolLib.PROXY_FEE}(queryId, comment, msg.sender);
+    function onStakeReject(uint64 queryId, uint32 comment) view public functionID(0xEE6F454C) {
+        IDePool(m_dePool).onStakeReject{
+            value: msg.value - DePoolLib.PROXY_FEE,
+            bounce: false
+        }(queryId, comment, msg.sender);
     }
 
     /*
@@ -74,19 +74,34 @@ contract DePoolProxyContract is IProxy {
     }
 
     /// @dev Elector answer from recover_stake in case of success.
-    function onSuccessToRecoverStake(uint64 queryId) public functionID(0xF96F7324) {
-        IDePool(m_dePool).onSuccessToRecoverStake{value: msg.value - DePoolLib.PROXY_FEE}(queryId, msg.sender);
+    function onSuccessToRecoverStake(uint64 queryId) public view functionID(0xF96F7324) {
+        IDePool(m_dePool).onSuccessToRecoverStake{
+            value: msg.value - DePoolLib.PROXY_FEE,
+            bounce: false
+        }(queryId, msg.sender);
     }
 
-    fallback() external {
+    fallback() external view {
         TvmSlice payload = msg.data;
         (uint32 functionId, uint64 queryId) = payload.decode(uint32, uint64);
         if (functionId == 0xfffffffe) {
-            IDePool(m_dePool).onFailToRecoverStake{value: msg.value - DePoolLib.PROXY_FEE}(queryId, msg.sender);
+            IDePool(m_dePool).onFailToRecoverStake{
+                value: msg.value - DePoolLib.PROXY_FEE,
+                bounce: false
+            }(queryId, msg.sender);
         }
     }
 
     receive() external {}
+
+    function withdrawExcessTons() public view {
+        require(msg.sender == m_validatorWallet, ERROR_IS_NOT_VALIDATOR);
+        uint128 balance = address(this).balance;
+        if (balance >= 2 * DePoolLib.MIN_PROXY_BALANCE) {
+            uint128 returnValue = balance - 2 * DePoolLib.MIN_PROXY_BALANCE;
+            m_validatorWallet.transfer({value: returnValue, bounce: false, flag: 0});
+        }
+    }
 
     /*
      * Public Getters
