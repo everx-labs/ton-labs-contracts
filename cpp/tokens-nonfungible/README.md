@@ -187,18 +187,18 @@ A .json configuration file will be created in the TONOS-CLI utility folder. The 
 
 ### 6.3. Deploying token wallet from token root
 ```
-./tonos-cli call <root_address> deployWallet '{"workchain_id":<workchain_id>,"pubkey":"0x<wallet public key>","tokens":"<Tokens number>","grams":<Tons>}' --sign "<seed_phrase>"
+./tonos-cli call <root_address> deployWallet '{"workchain_id":<workchain_id>,"pubkey":"0x<wallet public key>","tokens":"<Tokens number>","grams":<Tons>}' --sign "<seed_phrase>" --abi RootTokenContract.abi.json
 ```
 The call will return the deployed wallet address. It should be equal to calculated by getWalletAddress.
 
 ### 6.4. Minting new tokens
 ```
-./tonos-cli call <root_address> mint '{"tokens":"<Tokens number>"}' --sign "<seed_phrase>"
+./tonos-cli call <root_address> mint '{"tokens":"<Tokens number>"}' --sign "<seed_phrase>" --abi RootTokenContract.abi.json
 ```
 
 ### 6.5. Granting tokens to existing token wallet
 ```
-./tonos-cli call <root_address> grant '{"dest":"<token wallet address>","tokens":"<Tokens number>","grams":"<Tons>"}' --sign "<seed_phrase>"
+./tonos-cli call <root_address> grant '{"dest":"<token wallet address>","tokens":"<Tokens number>","grams":"<Tons>"}' --sign "<seed_phrase>" --abi RootTokenContract.abi.json
 ```
 
 ## 7. Token Wallet management
@@ -215,16 +215,16 @@ The call will return the deployed wallet address. It should be equal to calculat
 
 ### 7.2. Transfer tokens
 ```
-./tonos-cli call <wallet_address> transfer '{"dest":"<dest token wallet address>","tokens":<Tokens number>,"grams":<Tons>}' --sign "<seed_phrase>"
+./tonos-cli call <wallet_address> transfer '{"dest":"<dest token wallet address>","tokens":<Tokens number>,"grams":<Tons>}' --sign "<seed_phrase>" --abi TONTokenWallet.abi.json
 ```
 
 ### 7.3. Set allowance
 ```
-./tonos-cli call <wallet_address> approve '{"spender":"<spender token wallet address>","remainingTokens":0,"tokens":<Tokens number>}' --sign "<seed_phrase>"
+./tonos-cli call <wallet_address> approve '{"spender":"<spender token wallet address>","remainingTokens":0,"tokens":<Tokens number>}' --sign "<seed_phrase>" --abi TONTokenWallet.abi.json
 ```
 
 ### 7.4. Unset allowance
 ```
-./tonos-cli call <wallet_address> disapprove {} --sign "<seed_phrase>"
+./tonos-cli call <wallet_address> disapprove {} --sign "<seed_phrase>" --abi TONTokenWallet.abi.json
 ```
 
