@@ -1,0 +1,327 @@
+{
+	"ABI version": 2,
+	"header": ["pubkey", "time", "expire"],
+	"functions": [
+		{
+			"name": "constructor",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setABI",
+			"inputs": [
+				{"name":"dabi","type":"bytes"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setTargetABI",
+			"inputs": [
+				{"name":"tabi","type":"bytes"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setDePressCode",
+			"inputs": [
+				{"name":"code","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "fetch",
+			"inputs": [
+			],
+			"outputs": [
+				{"components":[{"name":"id","type":"uint8"},{"name":"desc","type":"bytes"},{"components":[{"name":"desc","type":"bytes"},{"name":"name","type":"bytes"},{"name":"actionType","type":"uint8"},{"name":"attrs","type":"bytes"},{"name":"to","type":"uint8"},{"name":"misc","type":"cell"}],"name":"actions","type":"tuple[]"}],"name":"contexts","type":"tuple[]"}
+			]
+		},
+		{
+			"name": "start",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "getVersion",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"name","type":"bytes"},
+				{"name":"semver","type":"uint24"}
+			]
+		},
+		{
+			"name": "quit",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "menuWithdraw",
+			"inputs": [
+				{"name":"index","type":"uint32"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "enterWithdrawPublicKey",
+			"inputs": [
+				{"name":"value","type":"uint256"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "getWithdrawAccountType",
+			"inputs": [
+				{"name":"acc_type","type":"int8"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "getWithdrawBalance",
+			"inputs": [
+				{"name":"nanotokens","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "enterWithdrawTons",
+			"inputs": [
+				{"name":"value","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "enterWithdrawAddress",
+			"inputs": [
+				{"name":"value","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "withdrawBool",
+			"inputs": [
+				{"name":"value","type":"bool"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "sendTokensTransaction",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onWithdrawError",
+			"inputs": [
+				{"name":"sdkError","type":"uint32"},
+				{"name":"exitCode","type":"uint32"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onWithdrawSuccess",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "menuSign",
+			"inputs": [
+				{"name":"index","type":"uint32"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "enterPublicKey",
+			"inputs": [
+				{"name":"value","type":"uint256"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "getAccountType",
+			"inputs": [
+				{"name":"acc_type","type":"int8"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setInfo",
+			"inputs": [
+				{"name":"text","type":"bytes"},
+				{"name":"publications","type":"bytes[]"},
+				{"name":"signkey","type":"uint256"},
+				{"name":"enckey","type":"uint256"},
+				{"name":"nonce","type":"uint32"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "printKeyMembers",
+			"inputs": [
+				{"name":"pubkeys","type":"map(uint256,bool)"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "enterEncryptionKey",
+			"inputs": [
+				{"name":"value","type":"bytes"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setRawBytes",
+			"inputs": [
+				{"name":"data","type":"bytes"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "startSign",
+			"inputs": [
+				{"name":"output","type":"bytes"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "signInput",
+			"inputs": [
+				{"name":"value","type":"bool"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onError",
+			"inputs": [
+				{"name":"sdkError","type":"uint32"},
+				{"name":"exitCode","type":"uint32"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setSigned",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "printText",
+			"inputs": [
+				{"name":"output","type":"bytes"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "menuText",
+			"inputs": [
+				{"name":"index","type":"uint32"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "menuMain",
+			"inputs": [
+				{"name":"index","type":"uint32"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "showFirstDecPublication",
+			"inputs": [
+				{"name":"output","type":"bytes"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "showLastDecPublication",
+			"inputs": [
+				{"name":"output","type":"bytes"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "showPublications",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "printInfo",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "transfer",
+			"inputs": [
+				{"name":"dest","type":"address"},
+				{"name":"value","type":"uint128"},
+				{"name":"bounce","type":"bool"},
+				{"name":"flags","type":"uint16"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "upgrade",
+			"inputs": [
+				{"name":"state","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "getDebotOptions",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"options","type":"uint8"},
+				{"name":"debotAbi","type":"bytes"},
+				{"name":"targetAbi","type":"bytes"},
+				{"name":"targetAddr","type":"address"}
+			]
+		}
+	],
+	"data": [
+	],
+	"events": [
+	]
+}
