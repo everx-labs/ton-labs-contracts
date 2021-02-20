@@ -1,10 +1,10 @@
-pragma solidity >= 0.6.0;
+pragma ton-solidity >=0.35.0;
 interface ISdk {
 //account info
 function getBalance(uint32 answerId, address addr) external returns (uint128 nanotokens);
 function getAccountType(uint32 answerId, address addr) external returns (int8 acc_type);
 function getAccountCodeHash(uint32 answerId, address addr) external returns (uint256 code_hash);
-//crypto 
+//crypto
 function chacha20(uint32 answerId, bytes data, bytes nonce, uint256 key) external returns (bytes output);
 //crypto utils
 function signHash(uint32 answerId, uint256 hash) external returns (bytes arg1);
@@ -64,7 +64,7 @@ contract SdkABI is ISdk {
 function getBalance(uint32 answerId, address addr) external override returns (uint128 nanotokens) {}
 function getAccountType(uint32 answerId, address addr) external override returns (int8 acc_type) {}
 function getAccountCodeHash(uint32 answerId, address addr) external override returns (uint256 code_hash) {}
-//crypto 
+//crypto
 function chacha20(uint32 answerId, bytes data, bytes nonce, uint256 key) external override returns (bytes output) {}
 //crypto utils
 function signHash(uint32 answerId, uint256 hash) external override returns (bytes arg1) {}

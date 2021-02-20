@@ -1,7 +1,7 @@
-pragma solidity >= 0.6.0;
+pragma ton-solidity >=0.35.0;
 
 interface ITerminal {
-	
+
 	function inputStr(uint32 answerId, string prompt, bool multiline) external returns (string value);
 	function inputInt (uint32 answerId, string prompt) external returns (int256 value);
 	function inputUint(uint32 answerId, string prompt) external returns (uint256 value);
