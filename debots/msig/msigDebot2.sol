@@ -54,7 +54,7 @@ interface IMultisig {
     function getTransactions() external returns (Transaction[] transactions);
 }
 
-contract MsigDebot is Debot, Upgradable {
+contract MsigDebot is Debot {
 
     address m_wallet;
     uint128 m_balance;
