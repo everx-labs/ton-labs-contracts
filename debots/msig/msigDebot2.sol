@@ -1,4 +1,4 @@
-pragma solidity >= 0.6.0;
+pragma ton-solidity >=0.35.0;
 pragma AbiHeader expire;
 pragma AbiHeader time;
 pragma AbiHeader pubkey;
@@ -74,21 +74,15 @@ contract MsigDebot is Debot {
     * Debot Basic API
     */
 
-    function fetch() public override returns (Context[] contexts) {}
-
     function start() public override {
-        Menu.select("Main menu", "Hello, i'm a multisig debot. I can help transfer tokens from your multisignature wallet.", [
-            MenuItem("Select wallet", "", tvm.functionId(selectWallet)),
+        Menu.select("Main menu", "Hello, i'm a multisig debot. I can help transfer tokens.", [
+            MenuItem("Select account", "", tvm.functionId(selectWallet)),
             MenuItem("Exit", "", 0)
         ]);
     }
 
-    function quit() public override {
-
-    }
-
     function getVersion() public override returns (string name, uint24 semver) {
-        (name, semver) = ("Multisig Debot", 4 << 8);
+        (name, semver) = ("Multisig Debot", 1 << 16);
     }
 
     /*
@@ -97,7 +91,7 @@ contract MsigDebot is Debot {
 
     function selectWallet(uint32 index) public {
         index = index;
-        Terminal.print(0, "Please, enter your multisignature wallet address:");
+        Terminal.print(0, "Enter multisignature wallet address");
         AddressInput.select(tvm.functionId(checkWallet));
 	}
 
@@ -113,43 +107,44 @@ contract MsigDebot is Debot {
 
     function getWalletInfo(int8 acc_type) public {
         if (acc_type == -1)  {
-            Terminal.print(0, format("Account with address {} doesn't exist", m_wallet));
-        } else {
-            string state = "";
-            if (acc_type == 0) {
-                state = "Uninit";
-            } else if (acc_type == 2) {
-                state = "Frozen";
-            } else if (acc_type == 1) {
-                state = "Active";
-            }
-            Terminal.print(0, "Account state: " + state);
-            (uint64 dec, uint64 float) = tokens(m_balance);
-            Terminal.print(0, format("Account balance: {}.{}", dec, float));
-            if (state != "Active") {
-                return;
-            }
-
-            optional(uint256) pubkey;
-            IMultisig(m_wallet).getCustodians{
-                extMsg: true,
-                time: uint64(now),
-                sign: false,
-                pubkey: pubkey,
-                expire: tvm.functionId(setCustodians)
-            }();
-
-            Terminal.inputTons(tvm.functionId(setTons), "Enter number of tokens to transfer:");
-            Terminal.print(0, "Enter address of destination account:");
-            AddressInput.select(tvm.functionId(setDest));
-            Terminal.inputBoolean(tvm.functionId(setBounce), "Does the destination account exist?");
+            Terminal.print(0, "Wallet doesn't exist");
+            return;
         }
+        if (acc_type == 0) {
+            Terminal.print(0, "Wallet is not initialized");
+            return;
+        }
+        if (acc_type == 2) {
+            Terminal.print(0, "Wallet is frozen");
+            return;
+        }
+
+        (uint64 dec, uint64 float) = tokens(m_balance);
+        Terminal.print(tvm.functionId(queryCustodians), format("Wallet balance is {}.{} tons", dec, float));
+    }
+
+    function queryCustodians() public view  {
+        optional(uint256) pubkey;
+        IMultisig(m_wallet).getCustodians{
+            abiVer: 2,
+            extMsg: true,
+            sign: false,
+            pubkey: pubkey,
+            time: uint64(now),
+            expire: 0,
+            callbackId: tvm.functionId(setCustodians),
+            onErrorId: 0
+        }();
     }
 
     function setCustodians(CustodianInfo[] custodians) public {
         m_custodians = custodians;
         string str = format("Wallet has {} custodian(s)", custodians.length);
-        Terminal.print(tvm.functionId(submit), str);
+        Terminal.print(0, str);
+        Terminal.inputTons(tvm.functionId(setTons), "Enter number of tokens to transfer");
+        Terminal.print(0, "Select destination account");
+        AddressInput.select(tvm.functionId(setDest));
+        m_bounce = true;
     }
 
     function setTons(uint128 value) public {
@@ -158,26 +153,36 @@ contract MsigDebot is Debot {
 
     function setDest(address value) public {
         m_dest = value;
+        (uint64 dec, uint64 float) = tokens(m_tons);
+        string fmt = format("Transfer {}.{} tokens to account {} ?", dec, float, m_dest);
+        Terminal.inputBoolean(tvm.functionId(submit), fmt);
     }
 
     function setBounce(bool value) public {
         m_bounce = value;
     }
 
-    function submit() public view {
+    function submit(bool value) public {
+        if (!value) {
+            Terminal.print(0, "Ok, maybe next time. Bye!");
+            return;
+        }
         TvmCell empty;
         optional(uint256) pubkey = 0;
         IMultisig(m_wallet).submitTransaction{
+                abiVer: 2,
                 extMsg: true,
-                time: uint64(now),
                 sign: true,
                 pubkey: pubkey,
-                expire: tvm.functionId(setResult)
-            }(m_dest, m_tons, m_bounce, false,  empty);
+                time: uint64(now),
+                expire: 0,
+                callbackId: tvm.functionId(setResult),
+                onErrorId: 0
+            }(m_dest, m_tons, m_bounce, false, empty);
     }
 
     function setResult() public {
-        Terminal.print(0, "Transaction succeeded. Bye!");
+        Terminal.print(0, "Transfer succeeded. Bye!");
     }
 
     function tokens(uint128 nanotokens) private pure returns (uint64, uint64) {
@@ -185,5 +190,5 @@ contract MsigDebot is Debot {
         uint64 float = uint64(nanotokens - (decimal * 1e9));
         return (decimal, float);
     }
-    
+
 }

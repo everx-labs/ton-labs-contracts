@@ -1,5 +1,5 @@
 /* solium-disable error-reason */
-pragma solidity >= 0.6.0;
+pragma ton-solidity >=0.35.0;
 pragma AbiHeader expire;
 pragma AbiHeader time;
 pragma AbiHeader pubkey;
@@ -27,7 +27,7 @@ abstract contract Debot {
     uint8 constant STATE_CURRENT= 253; // placeholder for a current context
     uint8 constant STATE_PREV   = 254; // placeholder for a previous context
     uint8 constant STATE_EXIT   = 255; // we're done
-    
+
     struct Context {
         uint8 id;		    // Context ordinal
         string desc;        // message to be printed to the user
@@ -51,13 +51,13 @@ abstract contract Debot {
         // Action Context
         TvmCell misc;
     }
-    
+
     uint8 m_options;
     optional(string) m_debotAbi;
     optional(string) m_targetAbi;
     optional(address) m_target;
     TvmCell empty;
-    
+
     // debot developer should call this function from debot constructor
     function init(uint8 options, string debotAbi, string targetAbi, address targetAddr) internal {
         if (options & DEBOT_ABI != 0) m_debotAbi.set(debotAbi);
@@ -70,7 +70,7 @@ abstract contract Debot {
      * Public debot interface
      */
 
-    /// @notice Invoked by DEngine to get debot contexts. If Debot has no contexts 
+    /// @notice Invoked by DEngine to get debot contexts. If Debot has no contexts
     /// then `start` is called to start debot.
     function fetch() public virtual returns (Context[] contexts);
 
@@ -111,7 +111,7 @@ abstract contract Debot {
         return setAttrs(ActionPrint(desc, text, to), "instant");
     }
 
-    function ActionPrintEx(string desc, string text, bool instant, optional(string) fargs, uint8 to) 
+    function ActionPrintEx(string desc, string text, bool instant, optional(string) fargs, uint8 to)
         internal inline view returns (Action) {
         Action act = ActionPrint(desc, text, to);
         if (instant) {
@@ -131,7 +131,7 @@ abstract contract Debot {
         return setAttrs(ActionRun(desc, name, to), "instant");
     }
 
-    function ActionGetMethod(string desc, string getmethod, optional(string) args, string callback, bool instant, uint8 to) 
+    function ActionGetMethod(string desc, string getmethod, optional(string) args, string callback, bool instant, uint8 to)
         internal inline view returns (Action) {
         string attrs = "func=" + getmethod;
         if (instant) {
@@ -151,7 +151,7 @@ abstract contract Debot {
         return Action(desc, handlerFunc, ACTION_INVOKE_DEBOT, "", to, empty);
     }
 
-    function callEngine(string func, string arg, string callback, optional(string) argsGetter) 
+    function callEngine(string func, string arg, string callback, optional(string) argsGetter)
         internal inline view returns (Action) {
         string attrs = "func=" + callback;
         if (argsGetter.hasValue()) {

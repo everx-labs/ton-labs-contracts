@@ -1,4 +1,4 @@
-pragma solidity >= 0.6.0;
+pragma ton-solidity >=0.35.0;
 
 interface IAddressInput {
 	function select(uint32 answerId) external returns (address value);
@@ -16,4 +16,4 @@ library AddressInput {
 
 contract AddressInputABI is IAddressInput {
     function select(uint32 answerId) external override returns (address value) {}
-} 
+}
