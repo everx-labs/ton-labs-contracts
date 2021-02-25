@@ -86,8 +86,6 @@ public:
     auto value_gr = int_value();
     tvm_rawreserve(std::max(start_balance_.get(), tvm_balance() - value_gr()), rawreserve_flag::up_to);
 
-    require((pubkey == 0 and internal_owner != 0) or (pubkey != 0 and internal_owner == 0),
-            error_code::define_pubkey_or_internal_owner);
 
     std::optional<address> owner_addr;
     if (internal_owner)
@@ -234,4 +232,3 @@ DEFINE_JSON_ABI(IRootTokenContract, DRootTokenContract, ERootTokenContract);
 
 // ----------------------------- Main entry functions ---------------------- //
 DEFAULT_MAIN_ENTRY_FUNCTIONS_TMPL(RootTokenContract, IRootTokenContract, DRootTokenContract, ROOT_TIMESTAMP_DELAY)
-
