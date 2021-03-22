@@ -134,7 +134,7 @@ Use the following command:
 > Note: "name":"54657374","symbol":"545354" means token name "Test" and symbol "TST".
 > Note: you can use `echo -n "TST" | xxd -p` for "name"/"symbol" values generation from string.
 ```
-./tonos-cli deploy RootTokenContract.tvc '{"name":"54657374","symbol":"545354", "decimals":"0","root_public_key":"0x<Root public key>","wallet_code":"'$TVM_WALLET_CODE'","total_supply":"<Number of tokens>"}' --abi RootTokenContract.abi.json --sign deploy.keys.json --wc <workchain_id>
+./tonos-cli deploy RootTokenContract.tvc '{"name":"54657374","symbol":"545354", "decimals":"0","root_public_key":"0x<Root public key>","wallet_code":"'$TVM_WALLET_CODE'"}' --abi RootTokenContract.abi.json --sign deploy.keys.json --wc <workchain_id>
 ```
 Configuration parameters:
 * `name` - name of the token.
@@ -142,7 +142,6 @@ Configuration parameters:
 * `decimals` - the number of decimals the token uses; e.g. 8, means to divide the token amount by 100,000,000 to get its user representation.
 * `root_public_key` - public key from deploy.keys.json. Make sure public key is enclosed in quotes and start with `0x...`.
 * `wallet_code` - base64-encoded token wallet code.
-* `total_supply` - total number of initial tokens minted.
 * `--wc <workchain_id>` - (optional) ID of the workchain the wallet will be deployed to (-1 for masterchain, 0 for basechain). By default this value is set to 0.
 
 #### 5.4.1. Check the token root status again
