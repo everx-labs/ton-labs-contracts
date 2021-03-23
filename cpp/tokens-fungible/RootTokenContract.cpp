@@ -53,8 +53,6 @@ public:
                        TokensType tokens, WalletGramsType grams) {
     check_owner();
     require(total_granted_ + tokens <= total_supply_, error_code::not_enough_balance);
-    require((pubkey == 0 and internal_owner != 0) or (pubkey != 0 and internal_owner == 0),
-            error_code::define_pubkey_or_internal_owner);
 
     tvm_accept();
 
