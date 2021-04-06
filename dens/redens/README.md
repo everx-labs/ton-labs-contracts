@@ -20,7 +20,7 @@ Important: dont forget or loose the phrase. It is needed to upgrade ReDeNS to re
 
 ## Prepare ReDeNS Image
 
-Copy and rename the original certificate image:
+Copy and rename the original ReDeNS image:
 
     cp redens.tvc redens<DebotName>.tvc
 
