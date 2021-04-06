@@ -1,0 +1,43 @@
+{
+	"ABI version": 2,
+	"header": ["pubkey", "time", "expire"],
+	"functions": [
+		{
+			"name": "constructor",
+			"inputs": [
+				{"name":"pubkey","type":"uint256"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "getAuthorKey",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"authorKey","type":"uint256"}
+			]
+		},
+		{
+			"name": "upgrade",
+			"inputs": [
+				{"name":"state","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "codeHash",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"codeHash","type":"uint256"}
+			]
+		}
+	],
+	"data": [
+		{"key":1,"name":"codeHash","type":"uint256"}
+	],
+	"events": [
+	]
+}
