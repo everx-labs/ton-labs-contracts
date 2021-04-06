@@ -53,8 +53,9 @@ Deploy image using cli:
 
 Run `update.sh` script:
 
-    update.sh <address> <DeBotFileName>
+    update.sh <address> <DeBotFileName> "author seed phrase"
 
 `address` - Free TON address of Reverse DeBot Certificate.
 `DeBotFileName` - the name of DeBot used as prefix for tvc and abi.json files. For example, if name is `msigDebot` then script will try to read `msigDebot.tvc` and `msigDebot.abi.json` files.
+`author seed phrase` - author seed phrase.
 

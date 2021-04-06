@@ -15,7 +15,7 @@ new_state=$( base64 -w 0 $debot_name.tvc)
 signer=$3
 
 echo "{\"state\":\"$new_state\"}" > upgrade.txt
-$tos call $debot upgrade upgrade.txt --sign $signer --abi $debot_name.abi.json
-$tos call $debot setABI "{\"dabi\":\"$debot_abi\"}" --sign $signer --abi $debot_name.abi.json
+$tos call $debot upgrade upgrade.txt --sign "$signer" --abi $debot_name.abi.json
+$tos call $debot setABI "{\"dabi\":\"$debot_abi\"}" --sign "$signer" --abi $debot_name.abi.json
 rm upgrade.txt
 echo DONE
