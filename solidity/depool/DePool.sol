@@ -1,6 +1,6 @@
 // 2020 (c) TON Venture Studio Ltd
 
-pragma solidity >=0.6.0;
+pragma ton-solidity >= 0.46.0;
 pragma AbiHeader expire;
 pragma AbiHeader time;
 
@@ -26,7 +26,7 @@ contract DePool is ValidatorBase, ProxyBase, ConfigParamsBase, ParticipantBase, 
 
 
     // Hash of code of proxy contract
-    uint256 constant PROXY_CODE_HASH = 0xc05938cde3cee21141caacc9e88d3b8f2a4a4bc3968cb3d455d83cd0498d4375;
+    uint256 constant PROXY_CODE_HASH = 0xd938d7c19af7ba65342e6fc2f4c6827b7e16ce378722ce134bb461f9d62f6c76;
 
     // Status codes for messages sent back to participants as result of
     // operations (add/remove/continue/withdraw stake):
@@ -282,6 +282,7 @@ contract DePool is ValidatorBase, ProxyBase, ConfigParamsBase, ParticipantBase, 
 
     function cutWithdrawalValue(InvestParams p, bool doPunish, uint32 punishInterval)
         private
+        view
         returns (optional(InvestParams), uint64, uint64)
     {
         uint64 withdrawalTons = 0;
@@ -949,7 +950,7 @@ contract DePool is ValidatorBase, ProxyBase, ConfigParamsBase, ParticipantBase, 
             {
                 // recover stake and complete round
                 round2.step = RoundStep.WaitingReward;
-                _recoverStake(round2.proxy, round2.id, round2.elector);
+                _recoverStake(round2.proxy, round2.id, round2.elector, round2.supposedElectedAt);
             }
         }
         return round2;
@@ -983,7 +984,7 @@ contract DePool is ValidatorBase, ProxyBase, ConfigParamsBase, ParticipantBase, 
         )
         {
             round1.step = RoundStep.WaitingIfValidatorWinElections;
-            _recoverStake(round1.proxy, round1.id, round1.elector);
+            _recoverStake(round1.proxy, round1.id, round1.elector, round1.supposedElectedAt);
         }
 
         // try to switch rounds
@@ -1272,7 +1273,16 @@ contract DePool is ValidatorBase, ProxyBase, ConfigParamsBase, ParticipantBase, 
         setRound(queryId, round);
     }
 
-    function onFailToRecoverStake(uint64 queryId, address elector) public override {
+    function onFailToRecoverStake_NoFunds(uint64 queryId, address elector) public override {
+        optional(uint32) unfreezeAt;
+        onFailToRecoverStake(queryId, elector, unfreezeAt);
+    }
+
+    function onFailToRecoverStake_TooEarly(uint64 queryId, address elector, uint32 unfreezeAt) public override {
+        onFailToRecoverStake(queryId, elector, unfreezeAt);
+    }
+
+    function onFailToRecoverStake(uint64 queryId, address elector, optional(uint32) unfreezeAt) private {
         require(msg.sender == m_proxies[0] || msg.sender == m_proxies[1], Errors.IS_NOT_PROXY);
         optional(Round) optRound = fetchRound(queryId);
         if (!optRound.hasValue()) {
@@ -1284,10 +1294,20 @@ contract DePool is ValidatorBase, ProxyBase, ConfigParamsBase, ParticipantBase, 
         tvm.accept();
         if (round.step == RoundStep.WaitingIfValidatorWinElections) {
             // DePool won elections and our stake is locked by elector.
-             round.step = RoundStep.WaitingUnfreeze;
+            if (unfreezeAt.hasValue()) {
+                // Request "Return funds" has been sent in validation moment
+                // but answer has been received in unfreeze period
+                round.unfreeze = unfreezeAt.get();
+            }
+            round.step = RoundStep.WaitingUnfreeze;
         } else if (round.step == RoundStep.WaitingReward) {
-            // Validator is banned! Cry.
-            round = startRoundCompleting(round, CompletionReason.ValidatorIsPunished);
+            if (unfreezeAt.hasValue()) {
+                round.unfreeze = unfreezeAt.get();
+                round.step = RoundStep.WaitingUnfreeze; // step back
+            } else {
+                // Validator is banned! Cry.
+                round = startRoundCompleting(round, CompletionReason.ValidatorIsPunished);
+            }
         } else {
             return errorEvent(InternalErrors.ERROR521);
         }
@@ -1364,7 +1384,7 @@ contract DePool is ValidatorBase, ProxyBase, ConfigParamsBase, ParticipantBase, 
     onBounce(TvmSlice body) external {
         uint32 functionId = body.decode(uint32);
         bool isProcessNewStake = functionId == tvm.functionId(IProxy.process_new_stake);
-        bool isRecoverStake = functionId == tvm.functionId(IProxy.recover_stake);
+        bool isRecoverStake = functionId == tvm.functionId(IProxy.recover_stake_gracefully);
         if (isProcessNewStake || isRecoverStake) {
             uint64 roundId = body.decode(uint64);
             optional(Round) optRound = fetchRound(roundId);

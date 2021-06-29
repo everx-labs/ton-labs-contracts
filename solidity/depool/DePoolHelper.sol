@@ -1,6 +1,6 @@
 // 2020 (c) TON Venture Studio Ltd
 
-pragma solidity >0.5.0;
+pragma ton-solidity >= 0.46.0;
 pragma AbiHeader expire;
 
 import "IDePool.sol";

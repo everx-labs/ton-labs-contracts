@@ -168,10 +168,20 @@
 			]
 		},
 		{
-			"name": "onFailToRecoverStake",
+			"name": "onFailToRecoverStake_NoFunds",
 			"inputs": [
 				{"name":"queryId","type":"uint64"},
 				{"name":"elector","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onFailToRecoverStake_TooEarly",
+			"inputs": [
+				{"name":"queryId","type":"uint64"},
+				{"name":"elector","type":"address"},
+				{"name":"unfreezeAt","type":"uint32"}
 			],
 			"outputs": [
 			]

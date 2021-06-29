@@ -1,7 +1,7 @@
 // 2020 (c) TON Venture Studio Ltd
 
-pragma solidity >=0.6.0;
-import "IElector.sol";
+pragma ton-solidity >= 0.46.0;
+import "../elector/IElector.sol";
 import "IDePool.sol";
 import "IProxy.sol";
 import "DePoolLib.sol";
@@ -69,11 +69,11 @@ contract DePoolProxyContract is IProxy {
      */
 
     /// @dev Allows to recover validator stake
-    function recover_stake(uint64 queryId, address elector) public override onlyDePoolAndCheckBalance {
-        IElector(elector).recover_stake{value: msg.value - DePoolLib.PROXY_FEE}(queryId);
+    function recover_stake_gracefully(uint64 queryId, address elector, uint32 elect_id) public override onlyDePoolAndCheckBalance {
+        IElector(elector).recover_stake_gracefully{value: msg.value - DePoolLib.PROXY_FEE}(queryId, elect_id);
     }
 
-    /// @dev Elector answer from recover_stake in case of success.
+    /// @dev Elector answer from recover_stake_gracefully in case of success.
     function onSuccessToRecoverStake(uint64 queryId) public view functionID(0xF96F7324) {
         IDePool(m_dePool).onSuccessToRecoverStake{
             value: msg.value - DePoolLib.PROXY_FEE,
@@ -81,18 +81,22 @@ contract DePoolProxyContract is IProxy {
         }(queryId, msg.sender);
     }
 
-    fallback() external view {
-        TvmSlice payload = msg.data;
-        (uint32 functionId, uint64 queryId) = payload.decode(uint32, uint64);
-        if (functionId == 0xfffffffe) {
-            IDePool(m_dePool).onFailToRecoverStake{
-                value: msg.value - DePoolLib.PROXY_FEE,
-                bounce: false
-            }(queryId, msg.sender);
-        }
+    function onFailToRecoverStake_NoFunds(uint64 queryId, uint32 body) public view functionID(0xFFFFFFFE) {
+        body = body; // suspend warning: unused-var
+        // body always equal to 0x47657425
+
+        IDePool(m_dePool).onFailToRecoverStake_NoFunds{
+            value: msg.value - DePoolLib.PROXY_FEE,
+            bounce: false
+        }(queryId, msg.sender);
     }
 
-    receive() external {}
+    function onFailToRecoverStake_TooEarly(uint64 queryId, uint32 unfreezeAt) public view functionID(0xFFFFFFFD) {
+        IDePool(m_dePool).onFailToRecoverStake_TooEarly{
+            value: msg.value - DePoolLib.PROXY_FEE,
+            bounce: false
+        }(queryId, msg.sender, unfreezeAt);
+    }
 
     function withdrawExcessTons() public view {
         require(msg.sender == m_validatorWallet, ERROR_IS_NOT_VALIDATOR);

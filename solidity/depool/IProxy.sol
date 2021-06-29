@@ -1,8 +1,9 @@
 // 2020 (c) TON Venture Studio Ltd
 
-pragma solidity >=0.5.0;
+pragma ton-solidity >= 0.46.0;
 
 interface IProxy {
+
     function process_new_stake(
         uint64 queryId,
         uint256 validatorKey,
@@ -13,5 +14,5 @@ interface IProxy {
         address elector
     ) external;
 
-    function recover_stake(uint64 queryId, address elector) external;
+    function recover_stake_gracefully(uint64 queryId, address elector, uint32 elect_id) external;
 }

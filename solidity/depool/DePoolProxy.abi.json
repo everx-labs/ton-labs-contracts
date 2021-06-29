@@ -44,10 +44,11 @@
 			]
 		},
 		{
-			"name": "recover_stake",
+			"name": "recover_stake_gracefully",
 			"inputs": [
 				{"name":"queryId","type":"uint64"},
-				{"name":"elector","type":"address"}
+				{"name":"elector","type":"address"},
+				{"name":"elect_id","type":"uint32"}
 			],
 			"outputs": [
 			]
@@ -57,6 +58,26 @@
 			"id": "0xF96F7324",
 			"inputs": [
 				{"name":"queryId","type":"uint64"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onFailToRecoverStake_NoFunds",
+			"id": "0xFFFFFFFE",
+			"inputs": [
+				{"name":"queryId","type":"uint64"},
+				{"name":"body","type":"uint32"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onFailToRecoverStake_TooEarly",
+			"id": "0xFFFFFFFD",
+			"inputs": [
+				{"name":"queryId","type":"uint64"},
+				{"name":"unfreezeAt","type":"uint32"}
 			],
 			"outputs": [
 			]

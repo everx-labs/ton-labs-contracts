@@ -1,6 +1,6 @@
 // 2020 (c) TON Venture Studio Ltd
 
-pragma solidity >=0.6.0;
+pragma ton-solidity >= 0.46.0;
 
 // Describes contract that deposits stakes in DePool pool
 struct Participant {

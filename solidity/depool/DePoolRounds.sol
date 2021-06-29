@@ -1,6 +1,6 @@
 // 2020 (c) TON Venture Studio Ltd
 
-pragma solidity >=0.6.0;
+pragma ton-solidity >= 0.46.0;
 
 import "DePoolLib.sol";
 
@@ -82,7 +82,8 @@ struct Round {
     uint64 id;
     // Supposed time when validation is started (Real time can be greater. Elections are postponed)
     uint32 supposedElectedAt;
-    // Time when stake will be unfreezed. Set when validation phase is ended
+    // Time when stake will be unfreezed. It is set when validation phase is ended.
+    // It can be updated in onFailToRecoverStake_TooEarly
     uint32 unfreeze;
     // investigation period in seconds
     uint32 stakeHeldFor;
@@ -208,7 +209,7 @@ contract RoundsBase {
         optional(InvestParams) vesting,
         optional(InvestParams) lock
     )
-        internal inline returns (Round, Participant)
+        internal pure inline returns (Round, Participant)
     {
         if (stake == 0 && !vesting.hasValue() && !lock.hasValue()) {
             return (round, participant);
@@ -248,7 +249,7 @@ contract RoundsBase {
         uint64 amount,
         uint64 minStake
     )
-        internal inline
+        internal pure inline
         returns (
             Round, // updated round
             uint64, // transferred value
@@ -336,7 +337,7 @@ contract RoundsBase {
     }
 
 
-    function stakeSum(StakeValue stakes) internal view inline returns (uint64) {
+    function stakeSum(StakeValue stakes) internal pure inline returns (uint64) {
         optional(InvestParams) v = stakes.vesting;
         optional(InvestParams) l = stakes.lock;
         return

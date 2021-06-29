@@ -1,11 +1,12 @@
 // 2020 (c) TON Venture Studio Ltd
 
-pragma solidity >=0.5.0;
+pragma ton-solidity >= 0.46.0;
 
 interface IDePool {
     function onStakeAccept(uint64 queryId, uint32 comment, address elector) external;
     function onStakeReject(uint64 queryId, uint32 comment, address elector) external;
     function onSuccessToRecoverStake(uint64 queryId, address elector) external;
-    function onFailToRecoverStake(uint64 queryId, address elector) external;
+    function onFailToRecoverStake_NoFunds(uint64 queryId, address elector) external;
+    function onFailToRecoverStake_TooEarly(uint64 queryId, address elector, uint32 unfreezeAt) external;
     function ticktock() external;
 }

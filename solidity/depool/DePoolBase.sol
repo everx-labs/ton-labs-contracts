@@ -1,6 +1,6 @@
 // 2020 (c) TON Venture Studio Ltd
 
-pragma solidity >=0.6.0;
+pragma ton-solidity >= 0.46.0;
 
 import "DePoolLib.sol";
 import "IProxy.sol";
@@ -27,8 +27,8 @@ contract ProxyBase {
         return m_proxies[roundId % 2];
     }
 
-    function _recoverStake(address proxy, uint64 requestId, address elector) pure internal {
-        IProxy(proxy).recover_stake{value: DePoolLib.ELECTOR_FEE + DePoolLib.PROXY_FEE}(requestId, elector);
+    function _recoverStake(address proxy, uint64 requestId, address elector, uint32 elect_id) pure internal {
+        IProxy(proxy).recover_stake_gracefully{value: DePoolLib.ELECTOR_FEE + DePoolLib.PROXY_FEE}(requestId, elector, elect_id);
     }
 
     function _sendElectionRequest(
