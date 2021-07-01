@@ -1,7 +1,7 @@
 // 2020 (c) TON Venture Studio Ltd
 
 pragma ton-solidity >= 0.46.0;
-import "../elector/IElector.sol";
+import "IElector.sol";
 import "IDePool.sol";
 import "IProxy.sol";
 import "DePoolLib.sol";
