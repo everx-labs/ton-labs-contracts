@@ -1034,11 +1034,11 @@ Message: 7b226d7367223a7b226d6573736167655f6964223a22313735316265333036333633383
 <QR code>
 ```
 
-Copy the message text or scan the QR code and [broadcast](#411-broadcast-previously-generated-message) the message online..
+Copy the message text or scan the QR code and [broadcast](#411-broadcast-previously-generated-message) the message online.
 
 ## 4.10. Generate deploy message offline
 
-If needed, signed deploy message can be generated without immediately broadcasting it to the blockchain. Generated message can be [broadcasted]](#411-broadcast-previously-generated-message) later.
+If needed, signed deploy message can be generated without immediately broadcasting it to the blockchain. Generated message can be [broadcasted](#411-broadcast-previously-generated-message) later.
 
 ```bash
 tonos-cli deploy_message [--raw] [--output <path_to_file>] [--sign <deploy_seed_or_keyfile>] [--wc <int8>] [--abi <contract.abi.json>] <contract.tvc> <params>
