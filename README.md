@@ -1,4 +1,4 @@
-# TON Labs smart contracts
+# TON Labs Smart Contracts
 Smart contracts for Free TON blockchain.
 Solidity and C++ contracts and accompanying documentation are in their respective folders.
 
