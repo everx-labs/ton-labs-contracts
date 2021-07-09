@@ -84,7 +84,7 @@ Answers to frequently asked questions can be found [here](https://docs.ton.dev/8
 Resources required to run a node available:
 
 - [For C++ node](https://docs.ton.dev/86757ecb2/v/0/p/708260-run-validator/t/2177a7)
-- [For Rust node](https://docs.ton.dev/86757ecb2/v/0/p/7991ca-run-rust-validator/t/21e415)
+- [For Rust node](https://github.com/tonlabs/rustnet.ton.dev#1-system-requirements)
 
 # Procedure
 
@@ -107,7 +107,7 @@ When using DePool you may set up the validator wallet **on the basechain**, as t
 With that in mind, follow:
 
 - For C++ node -  [this procedure](https://docs.ton.dev/86757ecb2/v/0/p/708260-run-validator) up to step 4.4 (the validator script in step 5 will be [different](#10-set-up-validator-script)) 
-- For Rust node - [this procedure](https://docs.ton.dev/86757ecb2/v/0/p/7991ca-run-rust-validator) up to step 6
+- For Rust node - [this procedure](https://github.com/tonlabs/rustnet.ton.dev) up to step 6
 
 and make sure to set up at least three custodians for your wallet.
 
@@ -175,7 +175,12 @@ tonos-cli genaddr DePool.tvc DePool.abi.json --setkey depool.json --wc 0
 
 Save the DePool address.
 
-Put it into `~/ton-keys/depool.addr` file in your validator node setup. It will be required for the [validator script](#10-set-up-validator-script).
+Put it into the following files in in your validator node setup:
+
+- `~/ton-keys/depool.addr` file - for C++ Node 
+- `/ton-node/configs/depool.addr` - for Rust Node
+
+It will be required for the [validator script](#10-set-up-validator-script).
 
 ### 4.2. (Optional) Calculate DePool Helper address
 
@@ -290,13 +295,17 @@ tonos-cli deploy DePoolHelper.tvc '{"pool":"0:37fbcb6e3279cbf5f783d61c213ed20fee
 
 ## 7. Configure DePool State Update method
 
-There are three different methods of setting up regular state updates of the DePool contract available. You have to set up one of them to run regularly. The period for state updates should be chosen based on the duration of the validation cycle on the blockchain. At the very minimum DePool's state update function should be called three times during the validation cycle:
+There are three different methods of setting up regular state updates of the DePool contract available. You have to set up one of them to run regularly. The period for state updates should be chosen based on the duration of the validation cycle on the blockchain. At the very minimum DePool's state update function should be called four times during the validation cycle:
 
-- Once after the elections begin, so DePool gets ready to receive and forward validator's election request.
-- Once after the validation begins, to find out if it won elections or not.
-- Once after unfreeze, to process stakes and rewards and rotate the rounds.
+1) At least twice after the elections begin, so DePool gets ready to receive and forward validator's election request.
+2) Once after the validation begins, to find out if it won elections or not.
+3) Once after unfreeze, to process stakes and rewards and rotate the rounds.
 
-In the current network configuration, 1 and 3 coincide, so DePool's state update can be called twice during the validation cycle - once during elections and once during validation.
+In the current network configuration, 1 and 3 coincide, so DePool's state update should be called be called at least three times during the validation cycle - at least twice twice during elections and once during validation.
+
+For Rust node you can use the [provided](
+https://github.com/tonlabs/rustnet.ton.dev/blob/main/docker-compose/ton-node/scripts/send_depool_tick_tock.sh) ticktock script, which sends 5 ticktocks after the elections open.
+
 
 ### State update through Multisig Contract
 
@@ -1497,11 +1506,11 @@ This can be caused by DePool setup errors, low balance on some of the contracts 
 2. Check balance of all contracts and top up if any of them have run out of funds (see [section 11](#11-maintain-positive-balance-on-depool-and-supplementary-contracts) for details).
 
 ### For C++ Node
-3. Check that the DePool address is specified in the in the `~/ton-keys/depool.addr` file in your validator node files and matches your current DePool address.
-4. Check that the validator wallet address is specified in the `~/ton-keys/$(hostname -s).addr` file according to the [node setup procedure](https://docs.ton.dev/86757ecb2/p/708260-run-validator/t/906cb8).
-5. Check that the validator wallet keys are saved to the `~/ton-keys/msig.keys.json` file according to the [node setup procedure](https://docs.ton.dev/86757ecb2/p/708260-run-validator/t/05caf5).
-6. Check validator script output log (`/var/ton-work/validator_depool.log` file if script is set up according to the given example). They may help identify the cause of the issue.
-7. Rerun the command to send election request manually. It can be found in the validator script output log (`/var/ton-work/validator_depool.log` file if set up according to the given example) and used as is.
+1. Check that the DePool address is specified in the in the `~/ton-keys/depool.addr` file in your validator node files and matches your current DePool address.
+2. Check that the validator wallet address is specified in the `~/ton-keys/$(hostname -s).addr` file according to the [node setup procedure](https://docs.ton.dev/86757ecb2/p/708260-run-validator/t/906cb8).
+3. Check that the validator wallet keys are saved to the `~/ton-keys/msig.keys.json` file according to the [node setup procedure](https://docs.ton.dev/86757ecb2/p/708260-run-validator/t/05caf5).
+4. Check validator script output log (`/var/ton-work/validator_depool.log` file if script is set up according to the given example). They may help identify the cause of the issue.
+5. Rerun the command to send election request manually. It can be found in the validator script output log (`/var/ton-work/validator_depool.log` file if set up according to the given example) and used as is.
 
     Example:
 
@@ -1509,7 +1518,7 @@ This can be caused by DePool setup errors, low balance on some of the contracts 
     tonos-cli call -1:fd05bd9be4e2d3ee7789d1fbc5811e0bd85cf1d14968028fd46a9e1c7b1066cc submitTransaction '{"dest":"0:10fdf438953430949ca33147f792b9fd9002e7979e50c94547c771c51fb643b9","value":"1000000000","bounce":true,"allBalance":false,"payload":"te6cckEBAgEAmQABqE5zdEsAAAAAXz7BoZOzdxrAyZXWwptpyrV5ZV1EkLrRdSsfm0KFiFpOuB4XXz7FVAADAACIUt3MiEtCLfPfKEWoVz2sTA9yS/Sl8N88ZkQ8CB1c3QEAgNnX/KhAEKVKe/MO4ArCIMLXM1kgYu34Ujp9dSq2lkSo8vfj0s+yySs6Ac2ufavtXO4DLZ1afugAVwUjvKvI3Agoizgf"}' --abi /validation/configs/SafeMultisigWallet.abi.json --sign /keys/msig.keys.json
     ```
 
-8. Run validator script with verbose logs to get more diagnostic information:
+6. Run validator script with verbose logs to get more diagnostic information:
 
     ```bash
     bash -x ./validator_depool.sh
@@ -1517,7 +1526,10 @@ This can be caused by DePool setup errors, low balance on some of the contracts 
 
 ### For Rust Node
 
-Refer to [this document](https://docs.ton.dev/86757ecb2/v/0/p/7991ca-run-rust-validator/t/93fdbd) for Rust node troubleshooting.
+1. Check that the DePool address is specified in the in the `/ton-node/configs/depool.addr` file in your validator node files and matches your current DePool address.
+2. Check that the validator wallet address is specified in the `/ton-node/configs/${VALIDATOR_NAME}.addr` file
+3. Check that the validator wallet keys are saved to the `/ton-node/configs/keys/msig.keys.json` file
+4. Refer to [this document](https://github.com/tonlabs/rustnet.ton.dev#troubleshooting) for Rust node troubleshooting.
     
 ## 4. DePool function terminates with error in TONOS-CLI
 
