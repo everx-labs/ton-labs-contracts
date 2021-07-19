@@ -329,11 +329,9 @@ Succeeded
 
 Use the following command to create a new transaction from another existing wallet:
 ```
-tonos-cli call <source_address> submitTransaction '{"dest":"<raw_address>","value":<nanotokens>,"bounce":false,"allBalance":false,"payload":""}' --abi <MultisigWallet.abi.json> --sign "<source_seed>"
+tonos-cli call <source_address> submitTransaction '{"dest":"<raw_address>","value":<nanotokens>,"bounce":false,"allBalance":false,"payload":""}' --abi <MultisigWallet.abi.json> --sign "<source_seed_or_keyfile>"
 ```
 `<source_address>` - address of the wallet the funds are sent from.
-
-`<source_seed>` - seed phrase for the wallet the funds are sent from.
 
 `"dest":<raw_address>` - new wallet address generated at step **3.3**. Example: `"0:f22e02a1240dd4b5201f8740c38f2baf5afac3cedf8f97f3bd7cbaf23c7261e3"`
 
@@ -341,11 +339,18 @@ tonos-cli call <source_address> submitTransaction '{"dest":"<raw_address>","valu
 
 `"bounce"` - use `false` to transfer funds to a non-existing contract to create it.
 
-`"allBalance"` - use `true` (and value = 0) if you need to transfer all contract funds. Don't use value equal to contract balance to send all remaining tokens, such transaction will fail because before the value is subtracted from balance, gas and storage fees are consumed and the remaining balance will be less than `value`.
+`"payload"` - use "" for simple transfer. Otherwise payload is used as a body of outbound internal message.
 
-`"payload"` - use `""` for simple transfer.
+`"allBalance"` - used to transfer all funds in the wallet. Use `false` for a simple transfer.
+
+> **Note**: Due to a bug setting `allBalance` to `true` currently causes errors. Single-custodian multisig wallets may use `sendTransaction` method with flag `130` and value `0` instead:
+```
+tonos-cli call <multisig_address> sendTransaction '{"dest":"raw_address","value":0,"bounce":true,"flags":130,"payload":""}' --abi <MultisigWallet.abi.json> --sign <seed_or_keyfile>
+```
 
 `<MultisigWallet.abi.json>` - either `SafeMultisigWallet.abi.json` or `SetcodeMultisigWallet.abi.json` depending on the contract you have selected at step [2.2](#22-download-contract-files).
+
+`"<source_seed_or_keyfile>"` - seed phrase in quotes or path to keyfile of the source wallet.
 
 Example:
 
@@ -377,11 +382,11 @@ If the sponsoring wallet has multiple custodians, the transaction may require co
 
 To confirm the transaction use the following command:
 ```
-tonos-cli call <source_address> confirmTransaction '{"transactionId":"<id>"}' --abi <MultisigWallet.abi.json> --sign "<source_seed>"
+tonos-cli call <source_address> confirmTransaction '{"transactionId":"<id>"}' --abi <MultisigWallet.abi.json> --sign "<source_seed_or_keyfile>"
 ```
 `<source_address>` - address of the wallet to funds are sent from.
 
-`<source_seed>` - seed phrase for the wallet the funds are sent from.
+`"<source_seed_or_keyfile>"` - seed phrase in quotes or path to keyfile of the source wallet.
 
 `transactionId` – the ID of the transaction transferring tokens to the new  wallet.
 
@@ -735,11 +740,16 @@ tonos-cli call <multisig_address> submitTransaction '{"dest":"raw_address","valu
 
 > **Note**: at step [3.4]](#34-send-tokens-to-the-new-address-from-another-wallet) of the wallet deployment procedure use `false`.
 
-`"allBalance"` - use `true` (and value = 0) if you need to transfer all contract funds. Don't use value equal to contract balance to send all remaining tokens, such transaction will fail because before the value is subtracted from balance, gas and storage fees are consumed and the remaining balance will be less than `value`.
+`"payload"` - use "" for simple transfer. Otherwise payload is used as a body of outbound internal message.
+
+`"allBalance"` - used to transfer all funds in the wallet. Use `false` for a simple transfer.
+
+> **Note**: Due to a bug setting `allBalance` to `true` currently causes errors. Single-custodian multisig wallets may use `sendTransaction` method with flag `130` and value `0` instead:
+```
+tonos-cli call <multisig_address> sendTransaction '{"dest":"raw_address","value":0,"bounce":true,"flags":130,"payload":""}' --abi <MultisigWallet.abi.json> --sign <seed_or_keyfile>
+```
 
 `<MultisigWallet.abi.json>` - either `SafeMultisigWallet.abi.json` or `SetcodeMultisigWallet.abi.json` depending on the contract you have selected at step [2.2](#22-download-contract-files).
-
-`"payload"` - use `""` for simple transfer. Otherwise payload is used as a body of outbound internal message.
 
 `<seed_or_keyfile>` - can either be the custodian seed phrase or the corresponding custodian key pair file. If seed phrase is used, enclose it in double quotes.
 
@@ -810,9 +820,14 @@ or
 
 > **Note**: at step [3.4](#34-send-tokens-to-the-new-address-from-another-wallet) of the wallet deployment procedure use `false`.
 
-`allBalance` - use `true` (and value = 0) if you need to transfer all contract funds. Don't use value equal to contract balance to send all remaining tokens, such transaction will fail because before the value is subtracted from balance, gas and storage fees are consumed and the remaining balance will be less than `value`.
+`payload` - use "" for simple transfer. Otherwise payload is used as a body of outbound internal message.
 
-`payload` - use `""` for simple transfer. Otherwise payload is used as a body of outbound internal message.
+`allBalance` - used to transfer all funds in the wallet. Use `false` for a simple transfer.
+
+> **Note**: Due to a bug setting `allBalance` to `true` currently causes errors. Single-custodian multisig wallets may use `sendTransaction` method with flag `130` and value `0` instead:
+```
+tonos-cli callex sendTransaction <multisig_address> <MultisigWallet.abi.json> <seed_or_keyfile> --dest <raw_address> --value 0 --bounce <true|false> --flags 130 --payload ""
+```
 
 Example:
 
@@ -942,9 +957,14 @@ tonos-cli message <multisig_address> submitTransaction '{"dest":"raw_address","v
 
 `"bounce"` - use `false` to transfer funds to a non-existing contract to create it. Use `true` to transfer funds to an Active contract.
 
-`"allBalance"` - use `true` (and value = 0) if you need to transfer all contract funds. Don't use value equal to contract balance to send all remaining tokens, such transaction will fail because before the value is subtracted from balance, gas and storage fees are consumed and the remaining balance will be less than `value`.
+`"payload"` - use "" for simple transfer. Otherwise payload is used as a body of outbound internal message.
 
-`"payload"` - use `""` for simple transfer. Otherwise payload is used as a body of outbound internal message.
+`"allBalance"` - used to transfer all funds in the wallet. Use `false` for a simple transfer.
+
+> **Note**: Due to a bug setting `allBalance` to `true` currently causes errors. Single-custodian multisig wallets may use `sendTransaction` method with flag `130` and value `0` instead:
+```
+tonos-cli message <multisig_address> sendTransaction '{"dest":"raw_address","value":0,"bounce":true,"flags":130,"payload":""}' --abi <MultisigWallet.abi.json> --sign <seed_or_keyfile> --lifetime 3600
+```
 
 `<MultisigWallet.abi.json>` - either `SafeMultisigWallet.abi.json` or `SetcodeMultisigWallet.abi.json` depending on the contract you have selected at step [2.2](#22-download-contract-files).
 
