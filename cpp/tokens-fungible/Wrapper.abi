@@ -1,0 +1,116 @@
+{
+  "ABI version": 2,
+  "header": [
+    "pubkey",
+    "time",
+    "expire"
+  ],
+  "functions": [
+  {
+    "name": "init",
+    "inputs": [
+    { "name":"_answer_id", "type":"uint32" },
+    { "name":"external_wallet", "type":"address" }
+    ],
+    "outputs": [
+    { "name":"value0", "type":"bool" }
+    ]
+  },
+  {
+    "name": "setInternalWalletCode",
+    "inputs": [
+    { "name":"_answer_id", "type":"uint32" },
+    { "name":"wallet_code", "type":"cell" }
+    ],
+    "outputs": [
+    { "name":"value0", "type":"bool" }
+    ]
+  },
+  {
+    "name": "deployEmptyWallet",
+    "inputs": [
+    { "name":"_answer_id", "type":"uint32" },
+    { "name":"pubkey", "type":"uint256" },
+    { "name":"internal_owner", "type":"address" },
+    { "name":"grams", "type":"uint128" }
+    ],
+    "outputs": [
+    { "name":"value0", "type":"address" }
+    ]
+  },
+  {
+    "name": "onTip3Transfer",
+    "inputs": [
+    { "name":"_answer_id", "type":"uint32" },
+    { "name":"answer_addr", "type":"address" },
+    { "name":"balance", "type":"uint128" },
+    { "name":"new_tokens", "type":"uint128" },
+    { "name":"pubkey", "type":"uint256" },
+    { "name":"internal_owner", "type":"address" },
+    { "name":"payload", "type":"cell" }
+    ],
+    "outputs": [
+    { "name":"err_code", "type":"uint32" },
+    { "name":"flex_wallet", "type":"address" }
+    ],
+    "id": "0xca"
+  },
+  {
+    "name": "burn",
+    "inputs": [
+    { "name":"answer_addr", "type":"address" },
+    { "name":"sender_pubkey", "type":"uint256" },
+    { "name":"sender_owner", "type":"address" },
+    { "name":"out_pubkey", "type":"uint256" },
+    { "name":"out_internal_owner", "type":"address" },
+    { "name":"tokens", "type":"uint128" }
+    ],
+    "outputs": [
+    ]
+  },
+  {
+    "name": "requestTotalGranted",
+    "inputs": [
+    { "name":"_answer_id", "type":"uint32" }
+    ],
+    "outputs": [
+    { "name":"value0", "type":"uint128" }
+    ]
+  },
+  {
+    "name": "getDetails",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"name", "type":"bytes" },
+    { "name":"symbol", "type":"bytes" },
+    { "name":"decimals", "type":"uint8" },
+    { "name":"root_public_key", "type":"uint256" },
+    { "name":"total_granted", "type":"uint128" },
+    { "name":"wallet_code", "type":"cell" },
+    { "name":"owner_address", "type":"address" },
+    { "name":"external_wallet", "type":"address" }
+    ]
+  },
+  {
+    "name": "hasInternalWalletCode",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"value0", "type":"bool" }
+    ]
+  },
+  {
+    "name": "getWalletAddress",
+    "inputs": [
+    { "name":"pubkey", "type":"uint256" },
+    { "name":"owner", "type":"address" }
+    ],
+    "outputs": [
+    { "name":"value0", "type":"address" }
+    ]
+  }
+  ],
+  "events": [
+  ]
+}

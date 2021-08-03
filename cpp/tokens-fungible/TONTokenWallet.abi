@@ -7,60 +7,92 @@
   ],
   "functions": [
   {
-    "name": "constructor",
-    "inputs": [
-    { "name":"name", "type":"bytes" },
-    { "name":"symbol", "type":"bytes" },
-    { "name":"decimals", "type":"uint8" },
-    { "name":"root_public_key", "type":"uint256" },
-    { "name":"wallet_public_key", "type":"uint256" },
-    { "name":"root_address", "type":"address" },
-    { "name":"code", "type":"cell" }
-    ],
-    "outputs": [
-    ],
-    "id": "0xb"
-  },
-  {
     "name": "transfer",
     "inputs": [
-    { "name":"dest", "type":"address" },
+    { "name":"answer_addr", "type":"address" },
+    { "name":"to", "type":"address" },
     { "name":"tokens", "type":"uint128" },
-    { "name":"grams", "type":"uint128" }
+    { "name":"grams", "type":"uint128" },
+    { "name":"return_ownership", "type":"bool" }
     ],
     "outputs": [
-    ],
-    "id": "0xc"
+    ]
   },
   {
-    "name": "getBalance_InternalOwner",
+    "name": "transferWithNotify",
+    "inputs": [
+    { "name":"answer_addr", "type":"address" },
+    { "name":"to", "type":"address" },
+    { "name":"tokens", "type":"uint128" },
+    { "name":"grams", "type":"uint128" },
+    { "name":"return_ownership", "type":"bool" },
+    { "name":"payload", "type":"cell" }
+    ],
+    "outputs": [
+    ]
+  },
+  {
+    "name": "transferToRecipient",
+    "inputs": [
+    { "name":"answer_addr", "type":"address" },
+    { "name":"recipient_public_key", "type":"uint256" },
+    { "name":"recipient_internal_owner", "type":"address" },
+    { "name":"tokens", "type":"uint128" },
+    { "name":"grams", "type":"uint128" },
+    { "name":"deploy", "type":"bool" },
+    { "name":"return_ownership", "type":"bool" }
+    ],
+    "outputs": [
+    ]
+  },
+  {
+    "name": "transferToRecipientWithNotify",
+    "inputs": [
+    { "name":"answer_addr", "type":"address" },
+    { "name":"recipient_public_key", "type":"uint256" },
+    { "name":"recipient_internal_owner", "type":"address" },
+    { "name":"tokens", "type":"uint128" },
+    { "name":"grams", "type":"uint128" },
+    { "name":"deploy", "type":"bool" },
+    { "name":"return_ownership", "type":"bool" },
+    { "name":"payload", "type":"cell" }
+    ],
+    "outputs": [
+    ]
+  },
+  {
+    "name": "requestBalance",
     "inputs": [
     { "name":"_answer_id", "type":"uint32" }
     ],
     "outputs": [
     { "name":"value0", "type":"uint128" }
-    ],
-    "id": "0xd"
+    ]
   },
   {
     "name": "accept",
     "inputs": [
-    { "name":"tokens", "type":"uint128" }
+    { "name":"_answer_id", "type":"uint32" },
+    { "name":"tokens", "type":"uint128" },
+    { "name":"answer_addr", "type":"address" },
+    { "name":"keep_grams", "type":"uint128" }
     ],
     "outputs": [
-    ],
-    "id": "0xe"
+    { "name":"value0", "type":"bool" }
+    ]
   },
   {
     "name": "internalTransfer",
     "inputs": [
     { "name":"tokens", "type":"uint128" },
-    { "name":"pubkey", "type":"uint256" },
-    { "name":"my_owner_addr", "type":"uint256" }
+    { "name":"answer_addr", "type":"address" },
+    { "name":"sender_pubkey", "type":"uint256" },
+    { "name":"sender_owner", "type":"address" },
+    { "name":"notify_receiver", "type":"bool" },
+    { "name":"payload", "type":"cell" }
     ],
     "outputs": [
-    ],
-    "id": "0xf"
+    ]
   },
   {
     "name": "destroy",
@@ -68,81 +100,34 @@
     { "name":"dest", "type":"address" }
     ],
     "outputs": [
-    ],
-    "id": "0x10"
+    ]
   },
   {
-    "name": "getName",
+    "name": "getDetails",
     "inputs": [
     ],
     "outputs": [
-    { "name":"value0", "type":"bytes" }
-    ],
-    "id": "0x11"
-  },
-  {
-    "name": "getSymbol",
-    "inputs": [
-    ],
-    "outputs": [
-    { "name":"value0", "type":"bytes" }
-    ],
-    "id": "0x12"
-  },
-  {
-    "name": "getDecimals",
-    "inputs": [
-    ],
-    "outputs": [
-    { "name":"value0", "type":"uint8" }
-    ],
-    "id": "0x13"
-  },
-  {
-    "name": "getBalance",
-    "inputs": [
-    ],
-    "outputs": [
-    { "name":"value0", "type":"uint128" }
-    ],
-    "id": "0x14"
-  },
-  {
-    "name": "getWalletKey",
-    "inputs": [
-    ],
-    "outputs": [
-    { "name":"value0", "type":"uint256" }
-    ],
-    "id": "0x15"
-  },
-  {
-    "name": "getRootAddress",
-    "inputs": [
-    ],
-    "outputs": [
-    { "name":"value0", "type":"address" }
-    ],
-    "id": "0x16"
-  },
-  {
-    "name": "getOwnerAddress",
-    "inputs": [
-    ],
-    "outputs": [
-    { "name":"value0", "type":"address" }
-    ],
-    "id": "0x17"
-  },
-  {
-    "name": "allowance",
-    "inputs": [
-    ],
-    "outputs": [
-    { "name":"spender", "type":"address" },
-    { "name":"remainingTokens", "type":"uint128" }
-    ],
-    "id": "0x18"
+    { "name":"name", "type":"bytes" },
+    { "name":"symbol", "type":"bytes" },
+    { "name":"decimals", "type":"uint8" },
+    { "name":"balance", "type":"uint128" },
+    { "name":"root_public_key", "type":"uint256" },
+    { "name":"wallet_public_key", "type":"uint256" },
+    { "name":"root_address", "type":"address" },
+    { "name":"owner_address", "type":"address" },
+    { "components":[
+      { "name":"lend_addr", "type":"address" },
+      { "name":"lend_balance", "type":"uint128" },
+      { "name":"lend_finish_time", "type":"uint32" }
+    ], "name":"lend_ownership", "type":"tuple[]" },
+    { "name":"lend_balance", "type":"uint128" },
+    { "name":"code", "type":"cell" },
+    { "components":[
+      { "name":"spender", "type":"address" },
+      { "name":"remainingTokens", "type":"uint128" }
+    ], "name":"allowance", "type":"tuple" },
+    { "name":"workchain_id", "type":"int8" }
+    ]
   },
   {
     "name": "approve",
@@ -152,38 +137,51 @@
     { "name":"tokens", "type":"uint128" }
     ],
     "outputs": [
-    ],
-    "id": "0x19"
+    ]
   },
   {
     "name": "transferFrom",
     "inputs": [
-    { "name":"dest", "type":"address" },
+    { "name":"answer_addr", "type":"address" },
+    { "name":"from", "type":"address" },
     { "name":"to", "type":"address" },
     { "name":"tokens", "type":"uint128" },
     { "name":"grams", "type":"uint128" }
     ],
     "outputs": [
+    ]
+  },
+  {
+    "name": "transferFromWithNotify",
+    "inputs": [
+    { "name":"answer_addr", "type":"address" },
+    { "name":"from", "type":"address" },
+    { "name":"to", "type":"address" },
+    { "name":"tokens", "type":"uint128" },
+    { "name":"grams", "type":"uint128" },
+    { "name":"payload", "type":"cell" }
     ],
-    "id": "0x1a"
+    "outputs": [
+    ]
   },
   {
     "name": "internalTransferFrom",
     "inputs": [
+    { "name":"answer_addr", "type":"address" },
     { "name":"to", "type":"address" },
-    { "name":"tokens", "type":"uint128" }
+    { "name":"tokens", "type":"uint128" },
+    { "name":"notify_receiver", "type":"bool" },
+    { "name":"payload", "type":"cell" }
     ],
     "outputs": [
-    ],
-    "id": "0x1b"
+    ]
   },
   {
     "name": "disapprove",
     "inputs": [
     ],
     "outputs": [
-    ],
-    "id": "0x1c"
+    ]
   }
   ],
   "events": [
