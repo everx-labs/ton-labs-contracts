@@ -1427,11 +1427,20 @@ If only the Helper contract has wrong Code hash, deploying and configuring only 
 
 If DePool or proxies have wrong Code hash, all contracts have to be redeployed, and the node reconfigured to work with the new DePool.
 
-> **Note**: For RustCup, contract code hash is different:
+> **Note**: For RustCup, contract code hash is different.
+>
+>  Initially the following contracts were used:
 > 
 > `891d1afd26d99ee4f9def21fbd4bccffe25143e79729669573c7d792a646f4e9` for DePool
 > 
 > `d938d7c19af7ba65342e6fc2f4c6827b7e16ce378722ce134bb461f9d62f6c76` for proxy
+>
+> After the August 5 update the code hashes are as follows:
+>
+> `cef9fe9fed144e25e24aa671da1118244dfb2d1e316e9961522cd9b015bbba59` for DePool
+>
+> `b633f0b5bc420abd8cb74b03eb0960df2a91c6c123d5cb18ed7283bb26e491bd` for proxy
+
 
 ## 2. DePool isn't emitting events
 
