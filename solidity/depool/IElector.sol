@@ -15,4 +15,6 @@ interface IElector {
 
     /// @dev Allows to get back validator's stake
     function recover_stake_gracefully(uint64 query_id, uint32 elect_id) external functionID(0x47657425);
+
+    function get_elect_at(uint64 query_id) external functionID(0x47657426);
 }

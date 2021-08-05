@@ -26,7 +26,7 @@ contract DePool is ValidatorBase, ProxyBase, ConfigParamsBase, ParticipantBase, 
 
 
     // Hash of code of proxy contract
-    uint256 constant PROXY_CODE_HASH = 0xd938d7c19af7ba65342e6fc2f4c6827b7e16ce378722ce134bb461f9d62f6c76;
+    uint256 constant PROXY_CODE_HASH = 0xb633f0b5bc420abd8cb74b03eb0960df2a91c6c123d5cb18ed7283bb26e491bd;
 
     // Status codes for messages sent back to participants as result of
     // operations (add/remove/continue/withdraw stake):
@@ -461,7 +461,7 @@ contract DePool is ValidatorBase, ProxyBase, ConfigParamsBase, ParticipantBase, 
         }
 
         _setOrDeleteParticipant(addr, participant);
-        IParticipant(addr).onRoundComplete{value: attachedValue, bounce: false}(
+        IParticipant(addr).onRoundComplete{value: attachedValue, bounce: false, flag: 1}(
             round2.id,
             reward,
             stakes.ordinary,
@@ -987,45 +987,46 @@ contract DePool is ValidatorBase, ProxyBase, ConfigParamsBase, ParticipantBase, 
             _recoverStake(round1.proxy, round1.id, round1.elector, round1.supposedElectedAt);
         }
 
-        // try to switch rounds
         if (areElectionsStarted && // elections are started
-            round1.vsetHashInElectionPhase != curValidatorHash && // and pooling round is not switched to election phase yet
-            round2.step == RoundStep.Completed // and round2 completed (stakes are reinvested to pooling round)
+            round1.vsetHashInElectionPhase != curValidatorHash // and pooling round is not switched to election phase yet)
         ) {
-            // we need to rotate rounds
-            delete m_rounds[round2.id];
-            round2 = round1;
-            round1 = round0;
-            round0 = roundPre0;
-            roundPre0 = generateRound();
+            if (round0.supposedElectedAt == 0) {
+                round0.elector = getElector();
+                IProxy(round0.proxy).get_elect_at{value: DePoolLib.ELECTOR_FEE + DePoolLib.PROXY_FEE}(round0.id, round0.elector);
+            } else if (round2.step == RoundStep.Completed){ // and round2 completed (stakes are reinvested to pooling round)
+                // we need to rotate rounds
+                delete m_rounds[round2.id];
+                round2 = round1;
+                round1 = round0;
+                round0 = roundPre0;
+                roundPre0 = generateRound();
 
-            // upd round2
-            round2 = updateRound2(round2, prevValidatorHash, curValidatorHash, validationStart);
+                // upd round2
+                round2 = updateRound2(round2, prevValidatorHash, curValidatorHash, validationStart);
 
-            // upd round1
-            if (!m_poolClosed) {
-                round1.supposedElectedAt = validationEnd;
-                round1.validatorsElectedFor = validatorsElectedFor;
-                round1.elector = getElector();
-                round1.vsetHashInElectionPhase = curValidatorHash;
-                (, , ,uint32 stakeHeldFor) = roundTimeParams();
-                round1.stakeHeldFor = stakeHeldFor;
-                // check that validator wallet made a necessary minimal stake in round
-                round1.validatorStake = stakeSum(round1.stakes[m_validatorWallet]);
-                bool isValidatorStakeOk  = round1.validatorStake >= m_validatorAssurance;
-                if (!isValidatorStakeOk) {
-                    round1.step = RoundStep.WaitingUnfreeze;
-                    round1.completionReason = CompletionReason.ValidatorStakeIsTooSmall;
-                    round1.unfreeze = 0;
-                } else {
-                    round1.step = RoundStep.WaitingValidatorRequest;
-                    emit StakeSigningRequested(round1.supposedElectedAt, round1.proxy);
+                // upd round1
+                if (!m_poolClosed) {
+                    round1.validatorsElectedFor = validatorsElectedFor;
+                    round1.vsetHashInElectionPhase = curValidatorHash;
+                    (, , ,uint32 stakeHeldFor) = roundTimeParams();
+                    round1.stakeHeldFor = stakeHeldFor;
+                    // check that validator wallet made a necessary minimal stake in round
+                    round1.validatorStake = stakeSum(round1.stakes[m_validatorWallet]);
+                    bool isValidatorStakeOk  = round1.validatorStake >= m_validatorAssurance;
+                    if (!isValidatorStakeOk) {
+                        round1.step = RoundStep.WaitingUnfreeze;
+                        round1.completionReason = CompletionReason.ValidatorStakeIsTooSmall;
+                        round1.unfreeze = 0;
+                    } else {
+                        round1.step = RoundStep.WaitingValidatorRequest;
+                        emit StakeSigningRequested(round1.supposedElectedAt, round1.proxy);
+                    }
                 }
-            }
 
-            // upd round0
-            if (!m_poolClosed)
-                round0.step = RoundStep.Pooling;
+                // upd round0
+                if (!m_poolClosed)
+                    round0.step = RoundStep.Pooling;
+            }
         }
 
         setRoundPre0(roundPre0);
@@ -1311,6 +1312,27 @@ contract DePool is ValidatorBase, ProxyBase, ConfigParamsBase, ParticipantBase, 
         } else {
             return errorEvent(InternalErrors.ERROR521);
         }
+        setRound(queryId, round);
+    }
+
+    function onReceiveElectAt(uint64 queryId, bool election_open, uint32 elect_at, address elector) external override {
+        require(msg.sender == m_proxies[0] || msg.sender == m_proxies[1], Errors.IS_NOT_PROXY);
+        optional(Round) optRound = fetchRound(queryId);
+        if (!optRound.hasValue()) {
+            return errorEvent(InternalErrors.ERROR529);
+        }
+        Round round = optRound.get();
+        require(msg.sender == round.proxy, Errors.IS_NOT_ROUND_PROXY);
+        require(elector == round.elector, Errors.IS_NOT_ELECTOR);
+        tvm.accept();
+
+        if (election_open && round.supposedElectedAt == 0) {
+            round.supposedElectedAt = elect_at;
+            this.ticktock{value: VALUE_FOR_SELF_CALL, bounce: false}();
+        } else {
+            return errorEvent(InternalErrors.ERROR530);
+        }
+
         setRound(queryId, round);
     }
 

@@ -8,5 +8,6 @@ interface IDePool {
     function onSuccessToRecoverStake(uint64 queryId, address elector) external;
     function onFailToRecoverStake_NoFunds(uint64 queryId, address elector) external;
     function onFailToRecoverStake_TooEarly(uint64 queryId, address elector, uint32 unfreezeAt) external;
+    function onReceiveElectAt(uint64 query_id, bool election_open, uint32 elect_at, address elector) external;
     function ticktock() external;
 }

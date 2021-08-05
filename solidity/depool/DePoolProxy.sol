@@ -98,6 +98,18 @@ contract DePoolProxyContract is IProxy {
         }(queryId, msg.sender, unfreezeAt);
     }
 
+
+    function get_elect_at(uint64 queryId, address elector) public override onlyDePoolAndCheckBalance {
+        IElector(elector).get_elect_at{value: msg.value - DePoolLib.PROXY_FEE}(queryId);
+    }
+
+    function receive_elect_at(uint64 query_id, bool election_open, uint32 elect_at) view functionID(0xf8229612) external {
+        IDePool(m_dePool).onReceiveElectAt{
+            value: msg.value - DePoolLib.PROXY_FEE,
+            bounce: false
+        }(query_id, election_open, elect_at, msg.sender);
+    }
+
     function withdrawExcessTons() public view {
         require(msg.sender == m_validatorWallet, ERROR_IS_NOT_VALIDATOR);
         uint128 balance = address(this).balance;

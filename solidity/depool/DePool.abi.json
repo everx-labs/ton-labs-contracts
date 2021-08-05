@@ -187,6 +187,17 @@
 			]
 		},
 		{
+			"name": "onReceiveElectAt",
+			"inputs": [
+				{"name":"queryId","type":"uint64"},
+				{"name":"election_open","type":"bool"},
+				{"name":"elect_at","type":"uint32"},
+				{"name":"elector","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "terminator",
 			"inputs": [
 			],

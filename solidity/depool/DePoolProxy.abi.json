@@ -83,6 +83,26 @@
 			]
 		},
 		{
+			"name": "get_elect_at",
+			"inputs": [
+				{"name":"queryId","type":"uint64"},
+				{"name":"elector","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "receive_elect_at",
+			"id": "0xF8229612",
+			"inputs": [
+				{"name":"query_id","type":"uint64"},
+				{"name":"election_open","type":"bool"},
+				{"name":"elect_at","type":"uint32"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "withdrawExcessTons",
 			"inputs": [
 			],

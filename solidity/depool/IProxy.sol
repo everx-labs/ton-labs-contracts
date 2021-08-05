@@ -15,4 +15,6 @@ interface IProxy {
     ) external;
 
     function recover_stake_gracefully(uint64 queryId, address elector, uint32 elect_id) external;
+
+    function get_elect_at(uint64 queryId, address elector) external;
 }
