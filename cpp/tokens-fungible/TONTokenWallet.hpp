@@ -49,8 +49,8 @@ struct lend_array_record {
 using lend_ownership_array = dict_array<lend_array_record>;
 
 struct details_info {
-  bytes name;
-  bytes symbol;
+  string name;
+  string symbol;
   uint8 decimals;
   uint128 balance;
   uint256 root_public_key;
@@ -100,7 +100,7 @@ __interface ITONTokenWallet {
     uint128 tokens,
     uint128 grams,
     bool_t  return_ownership
-  );
+  ) = 10;
 
   // Notify versions have answer_id to provide tail call answer
 #ifdef TIP3_IMPROVED_TRANSFER
@@ -113,7 +113,7 @@ __interface ITONTokenWallet {
     uint128 grams,
     bool_t  return_ownership,
     cell    payload
-  );
+  ) = 11;
 
   TIP3_EXTERNAL
   [[internal, noaccept]]
@@ -125,7 +125,7 @@ __interface ITONTokenWallet {
     uint128 grams,
     bool_t  deploy,
     bool_t  return_ownership
-  );
+  ) = 12;
 
   TIP3_EXTERNAL
   [[internal, noaccept, answer_id]]
@@ -138,15 +138,15 @@ __interface ITONTokenWallet {
     bool_t  deploy,
     bool_t  return_ownership,
     cell    payload
-  );
+  ) = 13;
 
   [[internal, noaccept, answer_id]]
-  uint128 requestBalance();
+  uint128 requestBalance() = 14;
 #endif // TIP3_IMPROVED_TRANSFER
 
   // Receive tokens from root
   [[internal, noaccept, answer_id]]
-  bool_t accept(uint128 tokens, address answer_addr, uint128 keep_grams);
+  bool_t accept(uint128 tokens, address answer_addr, uint128 keep_grams) = 15;
 
   // Receive tokens from other wallet
   [[internal, noaccept, answer_id]]
@@ -157,19 +157,19 @@ __interface ITONTokenWallet {
     address sender_owner,
     bool_t  notify_receiver,
     cell    payload
-  );
+  ) = 16;
 
 #ifdef TIP3_IMPROVED_TRANSFER
   // Send rest !native! funds to `dest` and destroy the wallet.
   // balance must be zero. Not allowed for lend ownership.
   TIP3_EXTERNAL
   [[internal, noaccept]]
-  void destroy(address dest);
+  void destroy(address dest) = 17;
 #endif // TIP3_IMPROVED_TRANSFER
 
 #ifdef TIP3_ENABLE_BURN
   [[internal, noaccept, answer_id]]
-  void burn(uint256 out_pubkey, address out_internal_owner);
+  void burn(uint256 out_pubkey, address out_internal_owner) = 18;
 #endif
 
 #ifdef TIP3_ENABLE_LEND_OWNERSHIP
@@ -185,16 +185,21 @@ __interface ITONTokenWallet {
     uint32  lend_finish_time,
     cell    deploy_init_cl,
     cell    payload
-  );
+  ) = 19;
 
   // return ownership back to the original owner
   [[internal, noaccept]]
-  void returnOwnership();
+  void returnOwnership() = 20;
 #endif // TIP3_ENABLE_LEND_OWNERSHIP
 
   // =============================== getters =============================== //
   [[getter]]
-  details_info getDetails();
+  details_info getDetails() = 21;
+
+#ifdef TIP3_ENABLE_EXTERNAL
+  [[getter]]
+  uint128 getBalance() = 22;
+#endif // TIP3_ENABLE_EXTERNAL
 
 #ifdef TIP3_ENABLE_ALLOWANCE
   // ========================= allowance interface ========================= //
@@ -204,7 +209,7 @@ __interface ITONTokenWallet {
     address spender,
     uint128 remainingTokens,
     uint128 tokens
-  );
+  ) = 23;
 
   TIP3_EXTERNAL
   [[internal, noaccept]]
@@ -214,7 +219,7 @@ __interface ITONTokenWallet {
     address to,
     uint128 tokens,
     uint128 grams
-  );
+  ) = 24;
 
   TIP3_EXTERNAL
   [[internal, noaccept]]
@@ -225,7 +230,7 @@ __interface ITONTokenWallet {
     uint128 tokens,
     uint128 grams,
     cell    payload
-  );
+  ) = 25;
 
   TIP3_EXTERNAL
   [[internal]]
@@ -235,18 +240,18 @@ __interface ITONTokenWallet {
     uint128 tokens,
     bool_t  notify_receiver,
     cell    payload
-  );
+  ) = 26;
 
   TIP3_EXTERNAL
   [[internal, noaccept]]
-  void disapprove();
+  void disapprove() = 27;
 #endif // TIP3_ENABLE_ALLOWANCE
 };
 using ITONTokenWalletPtr = handle<ITONTokenWallet>;
 
 struct DTONTokenWallet {
-  bytes name_;
-  bytes symbol_;
+  string name_;
+  string symbol_;
   uint8 decimals_;
   uint128 balance_;
   uint256 root_public_key_;
@@ -271,8 +276,8 @@ struct DTONTokenWallet {
 // using DTONTokenWalletExternal = __reflect_filter<DTONTokenWallet, [[disable("lend_ownership"), enable("allowance")]]>;
 
 struct DTONTokenWalletExternal {
-  bytes name_;
-  bytes symbol_;
+  string name_;
+  string symbol_;
   uint8 decimals_;
   uint128 balance_;
   uint256 root_public_key_;
@@ -285,8 +290,8 @@ struct DTONTokenWalletExternal {
 };
 
 struct DTONTokenWalletInternal {
-  bytes name_;
-  bytes symbol_;
+  string name_;
+  string symbol_;
   uint8 decimals_;
   uint128 balance_;
   uint256 root_public_key_;
@@ -303,7 +308,7 @@ struct ETONTokenWallet {
 
 inline
 DTONTokenWallet prepare_wallet_data(
-  bytes name, bytes symbol, uint8 decimals, uint256 root_public_key,
+  string name, string symbol, uint8 decimals, uint256 root_public_key,
   uint256 wallet_public_key, address root_address, std::optional<address> owner_address,
   cell code, int8 workchain_id
 ) {
@@ -343,7 +348,7 @@ std::pair<StateInit, uint256> prepare_wallet_state_init_and_addr(DTONTokenWallet
 
 inline
 std::pair<StateInit, uint256> prepare_external_wallet_state_init_and_addr(
-  bytes name, bytes symbol, uint8 decimals, uint256 root_public_key,
+  string name, string symbol, uint8 decimals, uint256 root_public_key,
   uint256 wallet_public_key, address root_address, std::optional<address> owner_address,
   cell code, int8 workchain_id
 ) {
@@ -366,7 +371,7 @@ std::pair<StateInit, uint256> prepare_external_wallet_state_init_and_addr(
 
 inline
 std::pair<StateInit, uint256> prepare_internal_wallet_state_init_and_addr(
-  bytes name, bytes symbol, uint8 decimals, uint256 root_public_key,
+  string name, string symbol, uint8 decimals, uint256 root_public_key,
   uint256 wallet_public_key, address root_address, std::optional<address> owner_address,
   cell code, int8 workchain_id
 ) {

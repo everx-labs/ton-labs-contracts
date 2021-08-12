@@ -95,7 +95,6 @@ public:
 
   __always_inline
   uint128 requestBalance() {
-    check_internal_owner(/*original_owner_only*/false, /*allowed_for_original_owner_in_lend_state*/true);
     tvm_rawreserve(tvm_balance() - int_value().get(), rawreserve_flag::up_to);
     set_int_return_flag(SEND_ALL_GAS);
     return balance_;
@@ -230,10 +229,10 @@ public:
              getCode(), allowance(), workchain_id_ };
   }
 
-  __always_inline bytes getName() {
+  __always_inline string getName() {
     return name_;
   }
-  __always_inline bytes getSymbol() {
+  __always_inline string getSymbol() {
     return symbol_;
   }
   __always_inline uint8 getDecimals() {

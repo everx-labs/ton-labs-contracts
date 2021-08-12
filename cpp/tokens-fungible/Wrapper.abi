@@ -1,5 +1,6 @@
 {
   "ABI version": 2,
+  "version": "2.1.0",
   "header": [
     "pubkey",
     "time",
@@ -82,8 +83,8 @@
     "inputs": [
     ],
     "outputs": [
-    { "name":"name", "type":"bytes" },
-    { "name":"symbol", "type":"bytes" },
+    { "name":"name", "type":"string" },
+    { "name":"symbol", "type":"string" },
     { "name":"decimals", "type":"uint8" },
     { "name":"root_public_key", "type":"uint256" },
     { "name":"total_granted", "type":"uint128" },
@@ -110,6 +111,23 @@
     { "name":"value0", "type":"address" }
     ]
   }
+  ],
+  "fields": [
+    { "name":"__uninitialized", "type":"bool" },
+    { "name":"name_", "type":"string" },
+    { "name":"symbol_", "type":"string" },
+    { "name":"decimals_", "type":"uint8" },
+    { "name":"workchain_id_", "type":"int8" },
+    { "name":"root_public_key_", "type":"uint256" },
+    { "name":"total_granted_", "type":"uint128" },
+    { "components":[
+      { "name":"dict_", "type":"cell" }
+    ], "name":"internal_wallet_code_", "type":"tuple" },
+    { "name":"owner_address_", "type":"optional(address)" },
+    { "name":"start_balance_", "type":"varuint16" },
+    { "components":[
+      { "name":"addr_", "type":"address" }
+    ], "name":"external_wallet_", "type":"optional(tuple)" }
   ],
   "events": [
   ]
