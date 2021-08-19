@@ -48,8 +48,8 @@ public:
     check_owner();
     tvm_accept();
     require(!internal_wallet_code_, error_code::cant_override_wallet_code);
-    //require(__builtin_tvm_hashcu(wallet_code) == internal_wallet_hash,
-    //        error_code::wrong_wallet_code_hash);
+    require(__builtin_tvm_hashcu(wallet_code) == internal_wallet_hash,
+            error_code::wrong_wallet_code_hash);
     internal_wallet_code_ = wallet_code;
 
     if constexpr (Internal) {
@@ -145,11 +145,11 @@ public:
              getOwnerAddress(), getExternalWallet() };
   }
 
-  __always_inline bytes getName() {
+  __always_inline string getName() {
     return name_;
   }
 
-  __always_inline bytes getSymbol() {
+  __always_inline string getSymbol() {
     return symbol_;
   }
 

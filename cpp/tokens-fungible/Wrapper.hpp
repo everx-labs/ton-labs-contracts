@@ -19,8 +19,8 @@ struct FLeXDeployWalletArgs {
 };
 
 struct wrapper_details_info {
-  bytes   name;
-  bytes   symbol;
+  string   name;
+  string   symbol;
   uint8   decimals;
   uint256 root_public_key;
   uint128 total_granted;
@@ -81,8 +81,8 @@ __interface IWrapper {
 using IWrapperPtr = handle<IWrapper>;
 
 struct DWrapper {
-  bytes   name_;
-  bytes   symbol_;
+  string   name_;
+  string   symbol_;
   uint8   decimals_;
   int8    workchain_id_;
   uint256 root_public_key_;

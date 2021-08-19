@@ -1,5 +1,6 @@
 {
   "ABI version": 2,
+  "version": "2.1.0",
   "header": [
     "pubkey",
     "time",
@@ -16,11 +17,13 @@
     { "name":"return_ownership", "type":"bool" }
     ],
     "outputs": [
-    ]
+    ],
+    "id": "0xa"
   },
   {
     "name": "transferWithNotify",
     "inputs": [
+    { "name":"_answer_id", "type":"uint32" },
     { "name":"answer_addr", "type":"address" },
     { "name":"to", "type":"address" },
     { "name":"tokens", "type":"uint128" },
@@ -29,7 +32,8 @@
     { "name":"payload", "type":"cell" }
     ],
     "outputs": [
-    ]
+    ],
+    "id": "0xb"
   },
   {
     "name": "transferToRecipient",
@@ -43,11 +47,13 @@
     { "name":"return_ownership", "type":"bool" }
     ],
     "outputs": [
-    ]
+    ],
+    "id": "0xc"
   },
   {
     "name": "transferToRecipientWithNotify",
     "inputs": [
+    { "name":"_answer_id", "type":"uint32" },
     { "name":"answer_addr", "type":"address" },
     { "name":"recipient_public_key", "type":"uint256" },
     { "name":"recipient_internal_owner", "type":"address" },
@@ -58,7 +64,8 @@
     { "name":"payload", "type":"cell" }
     ],
     "outputs": [
-    ]
+    ],
+    "id": "0xd"
   },
   {
     "name": "requestBalance",
@@ -67,7 +74,8 @@
     ],
     "outputs": [
     { "name":"value0", "type":"uint128" }
-    ]
+    ],
+    "id": "0xe"
   },
   {
     "name": "accept",
@@ -79,11 +87,13 @@
     ],
     "outputs": [
     { "name":"value0", "type":"bool" }
-    ]
+    ],
+    "id": "0xf"
   },
   {
     "name": "internalTransfer",
     "inputs": [
+    { "name":"_answer_id", "type":"uint32" },
     { "name":"tokens", "type":"uint128" },
     { "name":"answer_addr", "type":"address" },
     { "name":"sender_pubkey", "type":"uint256" },
@@ -92,7 +102,8 @@
     { "name":"payload", "type":"cell" }
     ],
     "outputs": [
-    ]
+    ],
+    "id": "0x10"
   },
   {
     "name": "destroy",
@@ -100,15 +111,16 @@
     { "name":"dest", "type":"address" }
     ],
     "outputs": [
-    ]
+    ],
+    "id": "0x11"
   },
   {
     "name": "getDetails",
     "inputs": [
     ],
     "outputs": [
-    { "name":"name", "type":"bytes" },
-    { "name":"symbol", "type":"bytes" },
+    { "name":"name", "type":"string" },
+    { "name":"symbol", "type":"string" },
     { "name":"decimals", "type":"uint8" },
     { "name":"balance", "type":"uint128" },
     { "name":"root_public_key", "type":"uint256" },
@@ -127,7 +139,17 @@
       { "name":"remainingTokens", "type":"uint128" }
     ], "name":"allowance", "type":"tuple" },
     { "name":"workchain_id", "type":"int8" }
-    ]
+    ],
+    "id": "0x15"
+  },
+  {
+    "name": "getBalance",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"value0", "type":"uint128" }
+    ],
+    "id": "0x16"
   },
   {
     "name": "approve",
@@ -137,7 +159,8 @@
     { "name":"tokens", "type":"uint128" }
     ],
     "outputs": [
-    ]
+    ],
+    "id": "0x17"
   },
   {
     "name": "transferFrom",
@@ -149,7 +172,8 @@
     { "name":"grams", "type":"uint128" }
     ],
     "outputs": [
-    ]
+    ],
+    "id": "0x18"
   },
   {
     "name": "transferFromWithNotify",
@@ -162,7 +186,8 @@
     { "name":"payload", "type":"cell" }
     ],
     "outputs": [
-    ]
+    ],
+    "id": "0x19"
   },
   {
     "name": "internalTransferFrom",
@@ -174,15 +199,34 @@
     { "name":"payload", "type":"cell" }
     ],
     "outputs": [
-    ]
+    ],
+    "id": "0x1a"
   },
   {
     "name": "disapprove",
     "inputs": [
     ],
     "outputs": [
-    ]
+    ],
+    "id": "0x1b"
   }
+  ],
+  "fields": [
+    { "name":"__uninitialized", "type":"bool" },
+    { "name":"name_", "type":"string" },
+    { "name":"symbol_", "type":"string" },
+    { "name":"decimals_", "type":"uint8" },
+    { "name":"balance_", "type":"uint128" },
+    { "name":"root_public_key_", "type":"uint256" },
+    { "name":"wallet_public_key_", "type":"uint256" },
+    { "name":"root_address_", "type":"address" },
+    { "name":"owner_address_", "type":"optional(address)" },
+    { "name":"code_", "type":"cell" },
+    { "components":[
+      { "name":"spender", "type":"address" },
+      { "name":"remainingTokens", "type":"uint128" }
+    ], "name":"allowance_", "type":"optional(tuple)" },
+    { "name":"workchain_id_", "type":"int8" }
   ],
   "events": [
   ]

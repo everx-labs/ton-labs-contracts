@@ -12,7 +12,7 @@ using namespace schema;
 template<bool Internal>
 class RootTokenContract final : public smart_interface<IRootTokenContract>, public DRootTokenContract {
 public:
-  static constexpr unsigned wallet_hash = 0x79c9ee7e8afd15a8c45d03836db58a3439d199e9c3ab96427bee2a593b64fe3;
+  static constexpr unsigned wallet_hash = 0x5300be5b5c3b30c9d592f9816473d78721dfed025ca1c90c40aff60756fa468e;
 
   struct error_code : tvm::error_code {
     static constexpr unsigned message_sender_is_not_my_owner  = 100;
@@ -29,8 +29,8 @@ public:
 
   __always_inline
   void constructor(
-    bytes name,
-    bytes symbol,
+    string name,
+    string symbol,
     uint8 decimals,
     uint256 root_public_key,
     address root_owner,
@@ -54,8 +54,8 @@ public:
     check_owner();
     tvm_accept();
     require(!wallet_code_, error_code::cant_override_wallet_code);
-    //require(__builtin_tvm_hashcu(wallet_code) == wallet_hash,
-    //        error_code::wrong_wallet_code_hash);
+    require(__builtin_tvm_hashcu(wallet_code) == wallet_hash,
+            error_code::wrong_wallet_code_hash);
     wallet_code_ = wallet_code;
 
     if constexpr (Internal) {
@@ -154,8 +154,10 @@ public:
 
     tvm_accept();
 
-    auto value_gr = int_value();
-    tvm_rawreserve(tvm_balance() - value_gr(), rawreserve_flag::up_to);
+    if constexpr (Internal) {
+      auto value_gr = int_value();
+      tvm_rawreserve(tvm_balance() - value_gr(), rawreserve_flag::up_to);
+    }
 
     total_supply_ += tokens;
 
@@ -172,11 +174,11 @@ public:
   }
 
   // getters
-  __always_inline bytes getName() {
+  __always_inline string getName() {
     return name_;
   }
 
-  __always_inline bytes getSymbol() {
+  __always_inline string getSymbol() {
     return symbol_;
   }
 
