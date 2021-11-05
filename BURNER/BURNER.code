@@ -1,3 +1,2 @@
 .selector
-SETCP0
-NOP
+THROW 0
