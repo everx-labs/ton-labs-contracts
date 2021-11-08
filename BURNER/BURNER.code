@@ -1,2 +1,3 @@
 .selector
+SETCP0
 THROW 0
