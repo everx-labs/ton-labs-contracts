@@ -1,6 +1,8 @@
 # BURNER address in mainnet
 
-0:3f078d3b7e22c8944e5561909a236ae48b48a7ea42f28dd861c22b6f64d7e97b
+-1:efd5a14409a8a129686114fc092525fddd508f1ea56d1b649a3a695d3a5b188c
+
+NOTE: The Burner smc is very simple, so it does not have ABI interface.
 
 # How to build BurnerDeployer
 
