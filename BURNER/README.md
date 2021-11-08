@@ -38,6 +38,23 @@ echo -n te6ccgEBAQEAAgAAAA== | base64 -d | xxd
 
 First 13 bytes is a boc header after which there is no data bytes, it means that there is no public key.
 
+### Another way to check Burner data using tvm_linker
+
+```bash
+tonos-cli -u main.ton.dev account -1:efd5a14409a8a129686114fc092525fddd508f1ea56d1b649a3a695d3a5b188c --dumptvc acc.tvc
+tvm_linker disasm dump acc.tvc
+
+```
+
+Example of tvm_linker output:
+
+```bash
+$ tvm_linker disasm dump acc.tvc
+└ ff0000
+```
+
+Decoded Burner stateInit contains only the code cell with 2 instructions (ff00 - SETCP0, 00 - NOP) and no data cell.
+
 # How to build BurnerDeployer
 
 ## Prereq
