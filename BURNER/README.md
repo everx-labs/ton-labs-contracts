@@ -1,9 +1,15 @@
-# Prereq
+# BURNER address in mainnet
+
+0:3f078d3b7e22c8944e5561909a236ae48b48a7ea42f28dd861c22b6f64d7e97b
+
+# How to build BurnerDeployer
+
+## Prereq
 
 solc 0.51.0
 tvm_linker 0.13.83
 
-# How to build BurnerDeployer
+## Compile
 
 ```bash
 tondev sol compile BurnerDeployer.sol
