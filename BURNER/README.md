@@ -1,15 +1,32 @@
 # Prereq
 
-tvm_linker v0.13.83 (commit 8a2cbc430d5bb5185fe5529431781d4d6be5d699)
+solc 0.51.0
+tvm_linker 0.13.83
 
-# Details
-
-`data.boc` - file with serialized empty cell.
-
-# How to build
+# How to build BurnerDeployer
 
 ```bash
-LINKER_PATH=~/bin ./build.sh
+tondev sol compile BurnerDeployer.sol
 ```
 
-NOTE: define path to tvm_linker location in `LINKER_PATH` env variable.
+# How to deploy Burner
+
+## 1) Generate address for `BurnerDeployer`:
+
+```bash
+tonos-cli genaddr BurnerDeployer.tvc BurnerDeployer.abi.json --genkey BurnerDeployer.keys.json
+```
+## 2) Send 1 token to generated address.
+
+## 3) Deploy `BurnerDeployer`:
+
+```bash
+tonos-cli deploy BurnerDeployer.tvc {} --abi BurnerDeployer.abi.json --sign BurnerDeployer.keys.json
+```
+
+## 4) call `deploy` function:
+
+```bash
+tonos-cli call <deployer_address> deploy {} --abi BurnerDeployer.abi.json --sign BurnerDeployer.keys.json
+```
+<deployer_address> - insert here address of the deployer.
