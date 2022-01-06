@@ -1,4 +1,4 @@
-pragma solidity >=0.6.0;
+pragma ton-solidity ^0.47.0;
 pragma experimental ABIEncoderV2;
 pragma ignoreIntOverflow;
 pragma AbiHeader expire;
@@ -207,14 +207,15 @@ contract MultisigWallet is IAccept {
 
     /// @dev Checks that custodian with supplied public key exists in custodian set.
     function _findCustodian(uint256 senderKey) inline private view returns (uint8) {
-        (bool exists, uint8 index) = m_custodians.fetch(senderKey);
+        bool exists = m_custodians.exists(senderKey);
         require(exists, 100);
+        uint8 index = m_custodians[senderKey];
         return index;
     }
 
     /// @dev Generates new id for object.
     function _generateId() inline private view returns (uint64) {
-        return (uint64(now) << 32) | (tvm.transLT() & 0xFFFFFFFF);
+        return uint64(now) << 32;
     }
 
     /// @dev Returns timestamp after which transactions are treated as expired.
@@ -309,8 +310,9 @@ contract MultisigWallet is IAccept {
     function confirmTransaction(uint64 transactionId) public {
         uint8 index = _findCustodian(msg.pubkey());
         _removeExpiredTransactions();
-        (bool trexists, Transaction  txn) = m_transactions.fetch(transactionId);        
+        bool trexists = m_transactions.exists(transactionId);
         require(trexists, 102);
+        Transaction  txn = m_transactions[transactionId];
         require(!_isConfirmed(txn.confirmationsMask, index), 103);
         tvm.accept();
 
@@ -340,8 +342,9 @@ contract MultisigWallet is IAccept {
     /// @dev Removes expired transactions from storage.
     function _removeExpiredTransactions() inline private {
         uint64 marker = _getExpirationBound();
-        (uint64 trId, Transaction txn, bool success) = m_transactions.min();
-
+        optional(uint64, Transaction) tr = m_transactions.min();
+        bool success = tr.hasValue();
+        (uint64 trId, Transaction txn) = tr.get();
         bool needCleanup = success && (trId <= marker);
         if (!needCleanup) { return; }
 
@@ -353,7 +356,9 @@ contract MultisigWallet is IAccept {
             m_requestsMask = _decMaskValue(m_requestsMask, txn.index);
             delete m_transactions[trId];
 
-            (trId, txn, success) = m_transactions.next(trId);
+            tr = m_transactions.next(trId);
+            bool success = tr.hasValue();
+            (uint64 trId, Transaction txn) = tr.get();
             needCleanup = success && (trId <= marker);
         }        
         tvm.commit();
@@ -397,8 +402,9 @@ contract MultisigWallet is IAccept {
     /// Throws exception if transaction does not exist.
     function getTransaction(uint64 transactionId) public view
         returns (Transaction trans) {
-        (bool exists, Transaction txn) = m_transactions.fetch(transactionId);
+        bool exists = m_transactions.exists(transactionId);
         require(exists, 102);
+        Transaction txn = m_transactions[transactionId];
         trans = txn;
     }
 
@@ -407,13 +413,16 @@ contract MultisigWallet is IAccept {
     /// @return transactions Array of queued transactions.
     function getTransactions() public view returns (Transaction[] transactions) {
         uint64 bound = _getExpirationBound();
-        (uint64 id, Transaction txn, bool success) = m_transactions.min();
+        optional(uint64, Transaction) tr = m_transactions.min();
+        bool success = tr.hasValue();
         while (success) {
+            (uint64 id, Transaction txn) = tr.get();
             // returns only not expired transactions
             if (id > bound) {
                 transactions.push(txn);
             }
-            (id, txn, success) = m_transactions.next(id);
+            tr = m_transactions.next(id);
+            success = tr.hasValue();
         }
     }
 
@@ -422,10 +431,13 @@ contract MultisigWallet is IAccept {
     function getTransactionIds() public view returns (uint64[] ids) {
         uint64 trId = 0;
         bool success = false;
-        (trId, , success) = m_transactions.min();
+        optional(uint64, Transaction) tr = m_transactions.min();
+        success = tr.hasValue();
         while (success) {
+            (uint64 trId, Transaction txn) = tr.get();
             ids.push(trId);
-            (trId, , success) = m_transactions.next(trId);
+            tr = m_transactions.next(trId);
+            success = tr.hasValue();
         }
     }
 
@@ -439,12 +451,15 @@ contract MultisigWallet is IAccept {
     /// @dev Get-method that returns info about wallet custodians.
     /// @return custodians Array of custodians.
     function getCustodians() public view returns (CustodianInfo[] custodians) {
-        (uint256 key, uint8 index, bool success) = m_custodians.min();
+        optional(uint256, uint8) cus = m_custodians.min();
+        bool success = cus.hasValue();
         while (success) {
+            (uint256 key, uint8 index) = cus.get();
             custodians.push(CustodianInfo(index, key));
-            (key, index, success) = m_custodians.next(key);
+            cus = m_custodians.next(key);
+            success = cus.hasValue();
         }
-    }    
+    }
 
     /*
         SETCODE public functions
@@ -478,8 +493,9 @@ contract MultisigWallet is IAccept {
     function confirmUpdate(uint64 updateId) public {
         uint8 index = _findCustodian(msg.pubkey());
         _removeExpiredUpdateRequests();
-        (bool exists, UpdateRequest request) = m_updateRequests.fetch(updateId);
+        bool exists = m_updateRequests.exists(updateId);
         require(exists, 115);
+        UpdateRequest request = m_updateRequests[updateId];
         require(!_isConfirmed(request.confirmationsMask, index), 116);
         tvm.accept();
 
@@ -492,8 +508,9 @@ contract MultisigWallet is IAccept {
     function executeUpdate(uint64 updateId, TvmCell code) public {
         require(m_custodians.exists(msg.pubkey()), 100);
         _removeExpiredUpdateRequests();
-        (bool exists, UpdateRequest request) = m_updateRequests.fetch(updateId);
+        bool exists = m_updateRequests.exists(updateId);
         require(exists, 115);
+        UpdateRequest request = m_updateRequests[updateId];
         require(tvm.hash(code) == request.codeHash, 119);
         require(request.signs >= m_requiredVotes, 120);
         tvm.accept();
@@ -508,12 +525,15 @@ contract MultisigWallet is IAccept {
     /// @dev Get-method to query all pending update requests.
     function getUpdateRequests() public view returns (UpdateRequest[] updates) {
         uint64 bound = _getExpirationBound();
-        (uint64 updateId, UpdateRequest req, bool success) = m_updateRequests.min();
+        optional (uint64, UpdateRequest) upd = m_updateRequests.min();
+        bool success = upd.hasValue();
         while (success) {
+            (uint64 updateId, UpdateRequest req) = upd.get();
             if (updateId > bound) {
                 updates.push(req);
             }
-            (updateId, req, success) = m_updateRequests.next(updateId);
+            upd = m_updateRequests.next(updateId);
+            success = upd.hasValue();
         }
     }
 
@@ -538,8 +558,9 @@ contract MultisigWallet is IAccept {
     /// @dev Removes expired update requests.
     function _removeExpiredUpdateRequests() inline private {
         uint64 marker = _getExpirationBound();
-        (uint64 updateId, UpdateRequest req, bool success) = m_updateRequests.min();
-
+        optional (uint64, UpdateRequest) upd = m_updateRequests.min();
+        bool success = upd.hasValue();
+        (uint64 updateId, UpdateRequest req) = upd.get();
         bool needCleanup = success && (updateId <= marker);
         if (!needCleanup) { return; }
 
@@ -547,7 +568,9 @@ contract MultisigWallet is IAccept {
         while (needCleanup) {
             // transaction is expired, remove it
             _deleteUpdateRequest(updateId, req.index);
-            (updateId, req, success) = m_updateRequests.next(updateId);
+            upd = m_updateRequests.next(updateId);
+            success = upd.hasValue();
+            (uint64 updateId, UpdateRequest req) = upd.get();
             needCleanup = success && (updateId <= marker);
         }
         tvm.commit();
