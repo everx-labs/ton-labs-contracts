@@ -285,7 +285,7 @@ Succeeded.
 
 Use deployment key pair file to generate your address:
 ```
-tonos-cli genaddr <MultisigWallet.tvc> <MultisigWallet.abi.json> --setkey <deploy.keys.json> --wc <workchain_id>
+tonos-cli genaddr <MultisigWallet.tvc> --setkey <deploy.keys.json> --wc <workchain_id> --abi <MultisigWallet.abi.json>
 ```
 `<MultisigWallet.tvc>` - either `SafeMultisigWallet.tvc` or `SetcodeMultisigWallet.tvc` depending on the contract you have selected at step [2.2](#22-download-contract-files).
 
@@ -302,7 +302,7 @@ The utility displays the new multisignature wallet address (Raw_address).
 Example:
 
 ```bash
-$ tonos-cli genaddr --genkey key.json --wc -1 SafeMultisigWallet.tvc SafeMultisigWallet.abi.json
+$ tonos-cli genaddr --genkey key.json --wc -1 --abi SafeMultisigWallet.abi.json SafeMultisigWallet.tvc
 Config: /home/user/tonos-cli.conf.json
 Input arguments:
      tvc: SafeMultisigWallet.tvc
