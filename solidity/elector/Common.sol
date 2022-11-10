@@ -24,6 +24,8 @@ library Common {
         uint256 pubkey;
         uint64 weight;
         uint256 adnl_addr;
+        uint256 bls_key1;
+        uint128 bls_key2;
     }
 
     struct ValidatorSet { // config params 32, 34, 36

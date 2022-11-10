@@ -46,6 +46,8 @@ contract Elector is IElector {
         uint32 max_factor;
         uint256 addr;
         uint256 adnl_addr;
+        uint256 bls_key1;
+        uint128 bls_key2;
     }
 
     struct PastElection {
@@ -145,7 +147,7 @@ contract Elector is IElector {
 
     function process_new_stake(uint64 query_id, uint256 validator_pubkey,
                                uint32 stake_at, uint32 max_factor,
-                               uint256 adnl_addr, bytes signature)
+                               uint256 adnl_addr, uint256 bls_key1, uint128 bls_key2, bytes signature)
             override public functionID(0x4e73744b) onlyInternalMessage {
         (int8 src_wc, uint256 src_addr) = msg.sender.unpack();
         if (!m_election_open || src_wc != -1) {
@@ -208,7 +210,7 @@ contract Elector is IElector {
         tvm.accept();
         // store stake in the dictionary
         m_cur_elect.members[validator_pubkey] =
-            Member(uint128(msg_value), now, max_factor, src_addr, adnl_addr);
+            Member(uint128(msg_value), now, max_factor, src_addr, adnl_addr, bls_key1, bls_key2);
         m_cur_elect.failed = false;
         m_cur_elect.finished = false;
         m_cur_elect.total_stake = total_stake;
@@ -647,6 +649,8 @@ contract Elector is IElector {
         uint32 max_f;
         uint256 pubkey;
         uint256 adnl_addr;
+        uint256 bls_key1;
+        uint128 bls_key2;
         optional(List) tail;
     }
 
@@ -682,6 +686,8 @@ contract Elector is IElector {
         uint32 max_f;
         uint256 addr;
         uint256 adnl_addr;
+        uint256 bls_key1;
+        uint128 bls_key2;
     }
 
     function try_elect(uint128 min_stake, uint128 max_stake,
@@ -694,9 +700,9 @@ contract Elector is IElector {
         mapping(Key => Value) sdict;
         mapping(uint256 => Member) members = m_cur_elect.members;
         for ((uint256 pkey, Member _mem) : members) {
-            (uint128 stake, uint32 time, uint32 max_factor, uint256 addr, uint256 adnl_addr) = _mem.unpack();
+            (uint128 stake, uint32 time, uint32 max_factor, uint256 addr, uint256 adnl_addr, uint256 bls_key1, uint128 bls_key2) = _mem.unpack();
             sdict[Key(stake, -int32(time), pkey)] =
-                Value(math.min(max_factor, max_stake_factor), addr, adnl_addr);
+                Value(math.min(max_factor, max_stake_factor), addr, adnl_addr, bls_key1, bls_key2);
             ++n;
         }
         n = math.min(n, max_validators);
@@ -713,6 +719,8 @@ contract Elector is IElector {
                 max_f: value.max_f,
                 pubkey: key.pubkey,
                 adnl_addr: value.adnl_addr,
+                bls_key1: value.bls_key1,
+                bls_key2: value.bls_key2,
                 tail: l
             });
         }
@@ -786,7 +794,7 @@ contract Elector is IElector {
         mapping(uint256 => Frozen) frozen;
         mapping(uint256 => uint128) credits = m_credits;
         do {
-            (uint128 stake, uint32 max_f, uint256 pubkey, uint256 adnl_addr, optional(List) tail) = l.get().unpack();
+            (uint128 stake, uint32 max_f, uint256 pubkey, uint256 adnl_addr, uint256 bls_key1, uint128 bls_key2, optional(List) tail) = l.get().unpack();
             l = tail;
             // lookup source address first
             optional(Member) mem = members.fetch(pubkey);
@@ -802,7 +810,7 @@ contract Elector is IElector {
                 TvmBuilder vinfo;
                 if (adnl_addr > 0) {
                     vinfo.store(Common.ValidatorAddr(0x73, 0x8e81278a, pubkey,
-                                                     uint64(weight), adnl_addr));
+                                                     uint64(weight), adnl_addr, bls_key1, bls_key2));
                 } else {
                     vinfo.store(Common.Validator(0x53, 0x8e81278a, pubkey,
                                                  uint64(weight)));
@@ -1032,8 +1040,9 @@ contract Elector is IElector {
         uint32 elect_at = t + elect_begin_before;
         // elect_at~dump();
         uint32 elect_close = elect_at - elect_end_before;
+        mapping(uint256 => Member) nil;
         Elect n_elect = Elect(elect_at, elect_close, min_stake, 0,
-                              false, false);
+                              nil, false, false);
         m_cur_elect = n_elect;
         m_election_open = true;
         return true;

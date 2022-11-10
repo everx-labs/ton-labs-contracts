@@ -17,6 +17,8 @@ interface IElector {
         uint32 stake_at,
         uint32 max_factor,
         uint256 adnl_addr,
+        uint256 bls_key1,
+        uint128 bls_key2,
         bytes signature
     ) external functionID(0x4E73744B);
 
