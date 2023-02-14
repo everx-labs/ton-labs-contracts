@@ -4,7 +4,7 @@
     TON OS is free software: you can redistribute it and/or modify 
     it under the terms of the Apache License 2.0 (http://www.apache.org/licenses/)
 
-    Copyright 2019-2021 (c) TON LABS
+    Copyright 2019-2023 (c) EverX
 */
 
 pragma ton-solidity >=0.38.0;
@@ -16,6 +16,8 @@ interface IConfig {
 
     function set_slashed_validator_set(uint64 query_id, TvmCell vset)
         functionID(0x4e565355) external;
+
+    function upgrade_code(TvmCell code) external externalMsg;
 
     function setcode_confirmation(uint64 query_id, uint32 body)
         functionID(0xce436f64) external;
