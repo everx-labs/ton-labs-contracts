@@ -7,7 +7,7 @@
     Copyright 2019-2023 (c) EverX
 */
 
-pragma ton-solidity >=0.64.0;
+pragma ton-solidity >=0.66.0;
 pragma AbiHeader expire;
 pragma AbiHeader time;
 import "IConfig.sol";
@@ -516,7 +516,8 @@ contract Config is IConfig {
 
     function onCodeUpgrade() private functionID(2) {
         // old funC code upgrade
-        if(tvm.hash(tvm.code()) == 0xbac24be401b3489f90018d08137c4063f24bfc6def86a61836060d6dbc32e703) {
+        require(tvm.hash(tvm.code()) == 0xbac24be401b3489f90018d08137c4063f24bfc6def86a61836060d6dbc32e703, 550);
+        {
             tvm.resetStorage();
             tvm.setReplayProtTime(now);
             TvmSlice cs = tvm.getData().toSlice();
@@ -542,6 +543,50 @@ contract Config is IConfig {
         onCodeUpgrade();
     }
 
+    // dummy for tests
     function seqno() public pure returns (uint32) {}
 
+    function upgrade_old_config_code_sign_helper(uint32 msg_seqno, uint32 valid_until, TvmCell code)
+            public pure returns (TvmCell) {
+        TvmBuilder b;
+        b.storeUnsigned(0x4e436f64, 32);
+        b.store(msg_seqno);
+        b.store(valid_until);
+        b.store(code);
+        uint256 hash = tvm.hash(b.toCell());
+        TvmBuilder b1;
+        b1.store(hash);
+        return b1.toCell();
+    }
+
+    function upgrade_old_config_code_message_builder(bytes signature, uint32 msg_seqno, uint32 valid_until, TvmCell code)
+            public pure returns (TvmCell) {
+        (TvmCell cfg0, ) = tvm.rawConfigParam(0);
+        uint256 config_addr = cfg0.toSlice().loadUnsigned(256);
+        address dst = address.makeAddrStd(-1, config_addr);
+
+        TvmBuilder builder;
+        builder.storeUnsigned(2, 2);        // ext_in_msg_info$0 - constant value
+        builder.storeUnsigned(0, 2);        // src:MsgAddress we store addr_none$00
+        // Function store() allows to store variable of arbitrary type in the builder.
+        builder.store(dst);                 // dest:MsgAddressInt
+
+        builder.storeUnsigned(0, 4);        // import_fee::Grams
+
+        builder.storeUnsigned(0, 1);        // init:(Maybe (Either StateInit ^StateInit)) - we store 0, because we don't attach
+                                            // initial state of a contract.
+
+        builder.storeUnsigned(1, 1);        // body:(Either X ^X) - we store one, because body of the message is stored in the
+                                            // reference of current cell.
+
+        TvmBuilder b;
+        b.store(signature.toSlice());
+        b.storeUnsigned(0x4e436f64, 32);
+        b.store(msg_seqno);
+        b.store(valid_until);
+        b.store(code);
+        builder.storeRef(b);
+
+        return builder.toCell();
+    }
 }

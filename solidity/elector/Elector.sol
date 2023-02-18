@@ -107,7 +107,7 @@ contract Elector is IElector {
         return (elect_for, elect_begin_before, elect_end_before, stake_held);
     }
 
-    function get_current_vset() internal pure returns (TvmCell, Common.ValidatorSet) {
+    function get_current_vset() internal pure returns (TvmCell, uint64, mapping(uint16 => TvmSlice)) {
         TvmCell info;
         bool f;
         (info, f) = tvm.rawConfigParam(35);
@@ -118,7 +118,7 @@ contract Elector is IElector {
 
         Common.ValidatorSet vset = info.toSlice().decode(Common.ValidatorSet);
         require(vset.tag == 0x12, BAD_CONFIG_PARAM_34);
-        return (info, vset);
+        return (info, vset.total_weight, vset.vdict);
     }
 
     function send_message_back(address addr, uint32 ans_tag, uint64 query_id,
@@ -419,7 +419,8 @@ contract Elector is IElector {
     }
 
     function onCodeUpgrade(address s_addr, TvmSlice /*data*/, uint64 query_id) internal functionID(2) {
-        if(tvm.hash(tvm.code()) == 0xcb6eb312df8187a61e386563f4643c14cad2b98360ce0d9e78da49467188a66f) {
+        require(tvm.hash(tvm.code()) == 0xcb6eb312df8187a61e386563f4643c14cad2b98360ce0d9e78da49467188a66f, 550);
+        {
             tvm.resetStorage();
             tvm.setReplayProtTime(now);
             tvm.setPubkey(0);
@@ -592,7 +593,7 @@ contract Elector is IElector {
             return (complaints, nil, -1);
         }
         ComplaintStatus cstatus = c.get();
-        (TvmCell cur_vset, Common.ValidatorSet vset) = get_current_vset();
+        (TvmCell cur_vset, uint64 total_weight, /* mapping(uint16 => TvmCell) */) = get_current_vset();
         uint256 cur_vset_id = tvm.hash(cur_vset);
         bool vset_old = (cstatus.vset_id != cur_vset_id);
         if ((cstatus.weight_remaining < 0) && vset_old) {
@@ -604,7 +605,7 @@ contract Elector is IElector {
             cstatus.vset_id = cur_vset_id;
             mapping(uint16 => uint32) voters;
             cstatus.voters = voters;
-            (uint64 part, ) = math.muldivmod(vset.total_weight, 2, 3);
+            (uint64 part, ) = math.muldivmod(total_weight, 2, 3);
             cstatus.weight_remaining = int64(part);
         }
         if (cstatus.voters.exists(idx)) {
@@ -631,8 +632,8 @@ contract Elector is IElector {
                                    uint16 idx, uint32 elect_id, uint256 chash)
             override public functionID(0x56744370) internalMsg {
         require(sign_tag == 0x56744350, 37);
-        (/*TvmCell cur_vset*/, Common.ValidatorSet vset) = get_current_vset();
-        optional(TvmSlice) vdescr = vset.vdict.fetch(idx);
+        (/* TvmCell */, /* uint64 */, mapping(uint16 => TvmSlice) dict) = get_current_vset();
+        optional(TvmSlice) vdescr = dict.fetch(idx);
         require(vdescr.hasValue(), 41);
         Common.Validator v = vdescr.get().decode(Common.Validator);
         require((v.tag & 0xdf) == 0x53, 41);
@@ -1143,7 +1144,9 @@ contract Elector is IElector {
 
     function report(uint256 signature_hi, uint256 signature_lo, uint256 reporter_pubkey, uint256 victim_pubkey, uint8 metric_id)
         public externalMsg {
-        (/*TvmCell cur_vset*/, Common.ValidatorSet vset) = get_current_vset();
+        (TvmCell info, /* uint64 */, /* Common.ValidatorSet vset */) = get_current_vset();
+        Common.ValidatorSet vset = info.toSlice().decode(Common.ValidatorSet);
+        require(vset.tag == 0x12, BAD_CONFIG_PARAM_34);
 
         // ignore reports outside of the vset's active time interval
         require(vset.utime_since < now && now < vset.utime_until, BAD_REPORT_TIME);
@@ -1153,9 +1156,6 @@ contract Elector is IElector {
         TvmBuilder msg_body;
         msg_body.store(reporter_pubkey, victim_pubkey, metric_id);
         require(tvm.checkSign(msg_body.toSlice(), signature.toSlice(), reporter_pubkey), 34);
-
-        (TvmCell cfg16, /* bool */) = tvm.rawConfigParam(16);
-        (/*uint16*/, /* uint16 */, uint16 min_validators) = cfg16.toSlice().decode(uint16, uint16, uint16);
 
         // accept external message
         tvm.accept();
@@ -1200,7 +1200,8 @@ contract Elector is IElector {
         }
         require(victim_found, BAD_VICTIM_PUBKEY);
 
-        uint16 max_main_validators = vset.main;
+        (TvmCell cfg16, ) = tvm.rawConfigParam(16);
+        ( , uint16 max_main_validators) = cfg16.toSlice().decode(uint16, uint16);
 
         if (reporter_index < max_main_validators) {
             Bucket bucket = m_reports[victim_pubkey][metric_id];
@@ -1216,7 +1217,7 @@ contract Elector is IElector {
             if (bucket.weight >= math.muldiv(m_masterchain_vtors_weight,
                     THRESHOLD_MASTERCHAIN_NUMERATOR, THRESHOLD_MASTERCHAIN_DENOMINATOR)) {
                 // slashing condition is met
-                require(vset.main > min_validators, BAD_TOTAL_VTORS);
+                require(vset.main > max_main_validators, BAD_TOTAL_VTORS);
                 m_banned[victim_pubkey] = true;
                 emit_updated_validator_set(victim_pubkey, victim_index);
             }
@@ -1234,7 +1235,7 @@ contract Elector is IElector {
             if (bucket.weight >= math.muldiv(m_workchain_vtors_weight,
                     THRESHOLD_WORKCHAIN_NUMERATOR, THRESHOLD_WORKCHAIN_DENOMINATOR)) {
                 // slashing condition is met
-                require(vset.total > min_validators, BAD_TOTAL_VTORS);
+                require(vset.total > max_main_validators, BAD_TOTAL_VTORS);
                 m_banned[victim_pubkey] = true;
                 emit_updated_validator_set(victim_pubkey, victim_index);
             }
@@ -1268,12 +1269,15 @@ contract Elector is IElector {
     }
 
     function emit_updated_validator_set(uint256 victim_pubkey, uint16 victim_index) internal inline {
-        (/*TvmCell cur_vset*/, Common.ValidatorSet vset) = get_current_vset();
-        vset.utime_since = now + 1; // TODO: why after a minute?
-        uint16 min_validators = vset.main;
-        bool loop = false;
-        do {
+        (/*TvmCell cur_vset*/, uint64 total_weight, mapping(uint16 => TvmSlice) vdict) = get_current_vset();
 
+        (TvmCell p16, ) = tvm.rawConfigParam(16);
+        (, , uint16 min_validators) = p16.toSlice().decode(uint16, uint16, uint16);
+        require(victim_index >= min_validators, BAD_TOTAL_VTORS);
+
+        bool loop = false;
+        uint16 index = 0;
+        do {
             // remove all claims of banned validator
             if (victim_index < min_validators) {
                 min_validators -= 1;
@@ -1282,17 +1286,18 @@ contract Elector is IElector {
                 m_reports_workchain = update_reports(victim_pubkey, m_reports_workchain);
             }
 
-            mapping(uint16 => TvmSlice) vdict = emptyMap;
+            mapping(uint16 => TvmSlice) vdict_updated = emptyMap;
             uint64 masterchain_vtors_weight = 0;
             uint64 workchain_vtors_weight = 0;
-            uint64 total_weight = 0;
-            uint16 index = 0;
-            for((uint16 id, TvmSlice entry) : vset.vdict) {
+            total_weight = 0;
+            index = 0;
+            for((uint16 id, TvmSlice entry) : vdict) {
+                tvm.hexdump(id);
                 TvmSlice entryRead = entry;
                 Common.ValidatorAddr vtor = entryRead.decode(Common.ValidatorAddr);
                 require(vtor.tag != 0x53, BAD_CONFIG_PARAM_34);
                 if (!m_banned.exists(vtor.pubkey)) {
-                    vdict[index] = entry;
+                    vdict_updated[index] = entry;
                     total_weight += vtor.weight;
                     if (index < min_validators) {
                         masterchain_vtors_weight += vtor.weight;
@@ -1310,7 +1315,8 @@ contract Elector is IElector {
             mapping(uint256 => mapping(uint8 => Bucket)) reports = m_reports;
             uint128 max_weight = math.muldiv(m_masterchain_vtors_weight,
                 THRESHOLD_MASTERCHAIN_NUMERATOR, THRESHOLD_MASTERCHAIN_DENOMINATOR);
-            for((uint16 id, TvmSlice entry) : vdict) {
+            for((uint16 id, TvmSlice entry) : vdict_updated) {
+                tvm.hexdump(id);
                 Common.ValidatorAddr vtor = entry.decode(Common.ValidatorAddr);
                 require(vtor.tag != 0x53, BAD_CONFIG_PARAM_34);
                 if (index == min_validators) {
@@ -1327,7 +1333,7 @@ contract Elector is IElector {
                             loop = true;
                             victim_pubkey = vtor.pubkey;
                             victim_index = index;
-                            vset.vdict = vdict;
+                            vdict = vdict_updated;
                             break;
                         }
                     }
@@ -1337,14 +1343,18 @@ contract Elector is IElector {
                 }
                 index += 1;
             }
-            vset.vdict        = vdict;
-            vset.total_weight = total_weight;
-            vset.total        = index;
-            vset.main         = math.min(index, min_validators);
+            vdict = vdict_updated;
         } while(loop);
 
+        Common.ValidatorSet vset_updated;
+        vset_updated.utime_since  = now + 60;
+        vset_updated.total_weight = total_weight;
+        vset_updated.total        = index;
+        vset_updated.main         = math.min(index, min_validators);
+        vset_updated.vdict        = vdict;
+
         TvmBuilder b;
-        b.store(vset);
+        b.store(vset_updated);
         TvmCell vset_updated_cell = b.toCell();
 
         optional(PastElection) p = m_past_elections.fetch(m_active_id);
