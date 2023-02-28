@@ -17,27 +17,25 @@ interface IElector {
         uint32 stake_at,
         uint32 max_factor,
         uint256 adnl_addr,
-        uint256 bls_key1,
-        uint128 bls_key2,
         bytes signature
-    ) external functionID(0x4E73744B);
+    ) external functionID(0x4E73744B) internalMsg;
 
     /// @dev Allows getting back validator's stake
-    function recover_stake(uint64 query_id) external functionID(0x47657424);
-    function recover_stake_gracefully(uint64 query_id, uint32 elect_id) external functionID(0x47657425);
+    function recover_stake(uint64 query_id) external functionID(0x47657424) internalMsg;
+    function recover_stake_gracefully(uint64 query_id, uint32 elect_id) external functionID(0x47657425) internalMsg;
 
     /// @dev Allow getting elector info
-    function get_elect_at(uint64 query_id) external functionID(0x47657426);
+    function get_elect_at(uint64 query_id) external functionID(0x47657426) internalMsg;
 
     /// @dev Confirmation from configuration smart contract
-    function config_set_confirmed_ok(uint64 query_id) external functionID(0xee764f4b);
-    function config_set_confirmed_err(uint64 query_id) external functionID(0xee764f6f);
+    function config_set_confirmed_ok(uint64 query_id) external functionID(0xee764f4b) internalMsg;
+    function config_set_confirmed_err(uint64 query_id) external functionID(0xee764f6f) internalMsg;
 
-    function config_slash_confirmed_ok(uint64 query_id) external functionID(0xee764f4c);
-    function config_slash_confirmed_err(uint64 query_id) external functionID(0xee764f70);
+    function config_slash_confirmed_ok(uint64 query_id) external functionID(0xee764f4c) internalMsg;
+    function config_slash_confirmed_err(uint64 query_id) external functionID(0xee764f70) internalMsg;
 
     /// @dev Upgrade code (is accepted only from configuration smart contract)
-    function upgrade_code(uint64 query_id, TvmCell code) external functionID(0x4e436f64);
+    function upgrade_code(uint64 query_id, TvmCell code, TvmCell data) external functionID(0x4e436f64) internalMsg;
 
     struct Complaint {
         uint8 tag; // = 0xbc
@@ -67,9 +65,8 @@ interface IElector {
         uint16 idx,
         uint32 elect_id,
         uint256 chash
-    ) external functionID(0x56744370);
+    ) external functionID(0x56744370) internalMsg;
 
-    function grant() external functionID(0x4772616e);
-    function report(uint256 signature_hi, uint256 signature_lo, uint256 reporter_pubkey, uint256 victim_pubkey, uint8 metric_id) external;
-    function take_change() external;
+    function grant() external functionID(0x4772616e) internalMsg;
+    function take_change() external internalMsg;
 }

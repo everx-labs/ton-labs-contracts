@@ -15,8 +15,9 @@ contract Validator is IValidator {
 
     bool m_defunct;
 
-    constructor() public {
+    constructor(uint256 pubkey) public {
         tvm.accept();
+        tvm.setPubkey(pubkey);
         m_defunct = false;
     }
 
@@ -30,7 +31,7 @@ contract Validator is IValidator {
         address elector = address.makeAddrStd(-1, cfg1.toSlice().loadUnsigned(256));
 
         IElector(elector).process_new_stake{value: value}(
-            query_id, validator_pubkey, stake_at, max_factor, adnl_addr, 0xdeadbeef, 0xcafebabe,
+            query_id, validator_pubkey, stake_at, max_factor, adnl_addr,
             signature);
     }
 
@@ -76,13 +77,13 @@ contract Validator is IValidator {
         complain_answers   = m_complain_answers;
     }
 
-    function recover(uint64 query_id) public pure {
+    function recover(uint64 query_id, uint128 value) public pure {
         (TvmCell cfg1, bool f) = tvm.rawConfigParam(1);
         require(f, 123);
         tvm.accept();
         address elector = address.makeAddrStd(-1, cfg1.toSlice().loadUnsigned(256));
 
-        IElector(elector).recover_stake(query_id);
+        IElector(elector).recover_stake{value: value}(query_id);
     }
 
     uint64 m_refund_query_id;
@@ -206,6 +207,14 @@ contract Validator is IValidator {
         elector.transfer(value);
     }
 
+    function transfer_to_config(TvmCell payload) public pure {
+        (TvmCell cfg0, bool f) = tvm.rawConfigParam(0);
+        require(f, 123);
+        tvm.accept();
+        address config = address.makeAddrStd(-1, cfg0.toSlice().loadUnsigned(256));
+        config.transfer(1 << 30, false, 0, payload);
+    }
+
     function receive_elect_at(uint64 query_id, bool election_open, uint32 elect_at) override
             functionID(0xf8229612) external
     {
@@ -216,4 +225,9 @@ contract Validator is IValidator {
 
     receive() external view {
     }
+
+    function public_key() public view returns (uint256) {
+        return tvm.pubkey();
+    }
+
 }

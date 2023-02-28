@@ -4,13 +4,17 @@
     TON OS is free software: you can redistribute it and/or modify 
     it under the terms of the Apache License 2.0 (http://www.apache.org/licenses/)
 
-    Copyright 2019-2021 (c) TON LABS
+    Copyright 2019-2022 (c) TON LABS
 */
 
-pragma ton-solidity >=0.38.0;
+pragma ton-solidity >=0.66.0;
+pragma AbiHeader expire;
+pragma AbiHeader time;
 import "IConfig.sol";
 import "IElector.sol";
 import "Common.sol";
+
+// pragma upgrade func; // uncomment if you want update
 
 contract Config is IConfig {
 
@@ -26,6 +30,7 @@ contract Config is IConfig {
 
     mapping(uint32 => TvmCell) m_cfg_dict;
 
+    // constructor for tests
     constructor(
         // param 1
         uint256 elector_addr,
@@ -45,13 +50,23 @@ contract Config is IConfig {
         uint32 max_stake_factor,
         // param 34
         uint32 utime_since,
-        uint32 utime_until
+        uint32 utime_until,
+        // param
+        uint256 public_key
     ) public {
+        tvm.setPubkey(public_key);
         {
             TvmBuilder b;
             b.store(elector_addr);
             m_cfg_dict[1] = b.toCell();
         }
+        // {
+        //     TvmBuilder b;
+        //     b.store(uint8(0xC4));
+        //     b.store(uint32(32));
+        //     b.store(uint64(0x2e));
+        //     m_cfg_dict[8] = b.toCell();
+        // }
         {
             TvmBuilder b;
             b.store(uint8(0x1a));
@@ -234,10 +249,6 @@ contract Config is IConfig {
 
     function set_next_validator_set(uint64 query_id, TvmCell vset) override
         functionID(0x4e565354) public {
-        (int8 my_wc, /* uint256 */) = address(this).unpack();
-        if (my_wc != -1) {
-            return;
-        }
         (TvmCell cfg1, bool f) = tvm.rawConfigParam(1);
         if (!f) {
             return;
@@ -245,6 +256,7 @@ contract Config is IConfig {
         uint256 elector_addr = cfg1.toSlice().loadUnsigned(256);
         bool ok = false;
         if (msg.sender.value == elector_addr) {
+            tvm.accept();
             // message from elector smart contract
             // set next validator set
             (uint32 t_since, uint32 t_until) = check_validator_set(vset);
@@ -272,8 +284,9 @@ contract Config is IConfig {
         uint256 elector_addr = cfg1.toSlice().loadUnsigned(256);
         bool ok = false;
         if (msg.sender.value == elector_addr) {
+            tvm.accept();
             // message from elector smart contract
-            // set next validator set
+            // set slashed validator set
             (uint32 t_since, uint32 t_until) = check_validator_set(vset);
             ok = (t_since > now) && (t_until > t_since);
         }
@@ -286,7 +299,27 @@ contract Config is IConfig {
         }
     }
 
-    function change_elector_code(TvmCell code) functionID(0x4e43ef05) public pure {
+    // we accept external corrtly signed messages only
+    modifier requireOwner {
+        require(tvm.pubkey() != 0, 101);
+        require(tvm.pubkey() == msg.pubkey(), 100);
+        _;
+    }
+
+    function set_config_param(uint32 index, TvmCell data) public externalMsg requireOwner {
+        require(data.toSlice().depth() <= 128, 39);
+        tvm.accept();
+        m_cfg_dict[index] = data;
+    }
+
+    function set_public_key(uint256 public_key) public externalMsg requireOwner {
+        tvm.accept();
+        tvm.setPubkey(public_key);
+    }
+
+    function set_elector_code(TvmCell code, TvmCell data) public externalMsg view requireOwner {
+        require(code.depth() <= 128, 39);
+        require(data.depth() <= 128, 39);
         (TvmCell cfg1, bool f) = tvm.rawConfigParam(1);
         if (!f) {
             return;
@@ -295,7 +328,58 @@ contract Config is IConfig {
         uint256 elector_addr = cfg1.toSlice().loadUnsigned(256);
         uint32 query_id = now;
         IElector(address.makeAddrStd(-1, elector_addr))
-            .upgrade_code{value: 1 << 30, flag: 0}(query_id, code);
+            .upgrade_code{value: 1 << 30, flag: 0}(query_id, code, data);
+    }
+
+    function set_code(TvmCell code) override public externalMsg requireOwner {
+        require(code.depth() <= 128, 39);
+        tvm.accept();
+        tvm.setcode(code);
+        tvm.setCurrentCode(code);
+        onCodeUpgrade();
+    }
+
+    // we accept internal message from approved contract only
+    modifier requireOwnerContract {
+        (TvmCell cfg5, bool f) = tvm.rawConfigParam(5);
+        require(f, 501);
+        uint256 addr = cfg5.toSlice().loadUnsigned(256);
+        require(msg.sender == address.makeAddrStd(-1, addr), 502);
+        _;
+    }
+
+    function change_public_key(uint256 public_key) public internalMsg requireOwnerContract {
+        tvm.accept();
+        tvm.setPubkey(public_key);
+    }
+
+    function change_config_param(uint32 index, TvmCell data) public internalMsg requireOwnerContract {
+        require(data.toSlice().depth() <= 128, 39);
+
+        tvm.accept();
+        m_cfg_dict[index] = data;
+    }
+
+    function change_elector_code(TvmCell code, TvmCell data) public internalMsg pure requireOwnerContract {
+        require(code.depth() <= 128, 39);
+        require(data.depth() <= 128, 39);
+        (TvmCell cfg1, bool f) = tvm.rawConfigParam(1);
+        if (!f) {
+            return;
+        }
+        tvm.accept();
+        uint256 elector_addr = cfg1.toSlice().loadUnsigned(256);
+        uint32 query_id = now;
+        IElector(address.makeAddrStd(-1, elector_addr))
+            .upgrade_code{value: 1 << 30, flag: 0}(query_id, code, data);
+    }
+
+    function change_code(TvmCell code) public internalMsg requireOwnerContract {
+        require(code.depth() <= 128, 39);
+        tvm.accept();
+        tvm.setcode(code);
+        tvm.setCurrentCode(code);
+        onCodeUpgrade();
     }
 
     function setcode_confirmation(uint64 query_id, uint32 body) override
@@ -393,6 +477,13 @@ contract Config is IConfig {
     function get_config_36() public view returns (TvmCell) {
         return m_cfg_dict[36];
     }
+    function get_config(uint32 index) public returns (TvmCell) {
+        if (index == 0) {
+            get_config_0();
+        } else {
+            return m_cfg_dict[index];
+        }
+    }
 
     function get_vset(uint32 id) private view returns (__ValidatorSet) {
         optional(TvmCell) c = m_cfg_dict.fetch(id);
@@ -415,9 +506,87 @@ contract Config is IConfig {
         return get_vset(34);
     }
 
+    // Get current slashed validator set in a structured form
+    function get_slashed_vset() public view returns (__ValidatorSet) {
+        return get_vset(35);
+    }
+
     // Get next validator set in a structured form
     function get_next_vset() public view returns (__ValidatorSet) {
         return get_vset(36);
     }
 
+    function public_key() public view returns (uint256) {
+        return tvm.pubkey();
+    }
+
+    // old funC code upgrade
+    function importFuncData() private {
+        tvm.resetStorage();
+        tvm.setReplayProtTime(now);
+        TvmSlice cs = tvm.getData().toSlice();
+        uint256 pubkey;
+        TvmCell cfg_dict_root;
+        uint32 _seqno;
+        (cfg_dict_root, _seqno, pubkey, ) = cs.decode(
+            TvmCell, uint32, uint256, mapping(uint32 => TvmCell)
+        );
+        TvmBuilder b;
+        b.store(true, cfg_dict_root);
+        m_cfg_dict = b.toSlice().decode(mapping(uint32 => TvmCell));
+        tvm.setPubkey(pubkey);
+    }
+
+
+    function onCodeUpgrade() private functionID(2) {
+        uint256 hash = tvm.hash(tvm.code());
+        if (hash == 0xbac24be401b3489f90018d08137c4063f24bfc6def86a61836060d6dbc32e703) {
+            importFuncData();
+        }
+        tvm.exit();
+    }
+
+    // dummy for tests
+    function seqno() public pure returns (uint32) {}
+
+    function upgrade_old_config_code_sign_helper(uint32 msg_seqno, uint32 valid_until, TvmCell code)
+            public pure returns (TvmCell) {
+        TvmBuilder b;
+        b.storeUnsigned(0x4e436f64, 32);
+        b.store(msg_seqno);
+        b.store(valid_until);
+        b.store(code);
+        return b.toCell();
+    }
+
+    function upgrade_old_config_code_message_builder(bytes signature, uint32 msg_seqno, uint32 valid_until, TvmCell code)
+            public pure returns (TvmCell) {
+        (TvmCell cfg0, ) = tvm.rawConfigParam(0);
+        uint256 config_addr = cfg0.toSlice().loadUnsigned(256);
+        address dst = address.makeAddrStd(-1, config_addr);
+
+        TvmBuilder builder;
+        builder.storeUnsigned(2, 2);		// ext_in_msg_info$0 - constant value
+        builder.storeUnsigned(0, 2);		// src:MsgAddress we store addr_none$00
+        // Function store() allows to store variable of arbitrary type in the builder.
+        builder.store(dst);              	// dest:MsgAddressInt
+
+        builder.storeUnsigned(0, 4);      	// import_fee::Grams
+
+        builder.storeUnsigned(0, 1);		// init:(Maybe (Either StateInit ^StateInit)) - we store 0, because we don't attach
+                                            // initial state of a contract.
+
+        builder.storeUnsigned(1, 1);		// body:(Either X ^X) - we store one, because body of the message is stored in the
+                                            // reference of current cell.
+
+        TvmBuilder b;
+        b.store(signature.toSlice());
+        b.storeUnsigned(0x4e436f64, 32);
+        b.store(msg_seqno);
+        b.store(valid_until);
+        b.store(code);
+        builder.storeRef(b);
+
+        return builder.toCell();
+    }
 }

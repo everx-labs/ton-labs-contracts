@@ -4,16 +4,18 @@
     TON OS is free software: you can redistribute it and/or modify 
     it under the terms of the Apache License 2.0 (http://www.apache.org/licenses/)
 
-    Copyright 2019-2021 (c) TON LABS
+    Copyright 2019-2022 (c) TON LABS
 */
 
-pragma ton-solidity >=0.38.0;
+pragma ton-solidity >=0.64.0;
 pragma ignoreIntOverflow;
 pragma AbiHeader time;
 import "IConfig.sol";
 import "IElector.sol";
 import "IValidator.sol";
 import "Common.sol";
+
+// pragma upgrade func; // uncomment if you want update
 
 // Config parameters used in the contract:
 //  0  Configuration smart-contract address
@@ -27,27 +29,26 @@ import "Common.sol";
 
 contract Elector is IElector {
 
-    uint256 constant SLASHER_ADDRESS = 0x1111111111111111111111111111111111111111111111111111111111111111;
     uint256 constant PRECISION = 1e18;
+    uint constant ERROR_ELECT = 123;
+    uint constant ERROR_C4 = 124;
 
     struct Elect {
         uint32 elect_at;
         uint32 elect_close;
-        uint128 min_stake;
-        uint128 total_stake;
+        varUint16 min_stake;
+        varUint16 total_stake;
         mapping(uint256 => Member) members;
         bool failed;
         bool finished;
     }
 
     struct Member {
-        uint128 stake;
+        varUint16 stake;
         uint32 time;
         uint32 max_factor;
         uint256 addr;
         uint256 adnl_addr;
-        uint256 bls_key1;
-        uint128 bls_key2;
     }
 
     struct PastElection {
@@ -55,15 +56,15 @@ contract Elector is IElector {
         uint32 stake_held;
         uint256 vset_hash;
         mapping(uint256 => Frozen) frozen_dict;
-        uint128 total_stake;
-        uint128 bonuses;
+        varUint16 total_stake;
+        varUint16 bonuses;
         mapping(uint256 => ComplaintStatus) complaints;
     }
 
     struct Frozen {
         uint256 addr;
         uint64 weight;
-        uint128 stake;
+        varUint16 stake;
         bool banned;
     }
 
@@ -77,9 +78,9 @@ contract Elector is IElector {
 
     bool m_election_open;
     Elect m_cur_elect;
-    mapping(uint256 => uint128) m_credits;
+    mapping(uint256 => varUint16) m_credits;
     mapping(uint32 => PastElection) m_past_elections;
-    uint128 m_grams;
+    varUint16 m_grams;
     uint32 m_active_id;
     uint256 m_active_hash;
 
@@ -141,14 +142,14 @@ contract Elector is IElector {
     }
 
     function credit_to(uint256 addr, uint128 amount) internal inline {
-        m_credits[addr] += amount;
+        m_credits[addr] += varUint16(amount);
         //emit CreditToEvent(addr, amount);
     }
 
     function process_new_stake(uint64 query_id, uint256 validator_pubkey,
                                uint32 stake_at, uint32 max_factor,
-                               uint256 adnl_addr, uint256 bls_key1, uint128 bls_key2, bytes signature)
-            override public functionID(0x4e73744b) onlyInternalMessage {
+                               uint256 adnl_addr, bytes signature)
+            override public functionID(0x4e73744b) internalMsg {
         (int8 src_wc, uint256 src_addr) = msg.sender.unpack();
         if (!m_election_open || src_wc != -1) {
             // no elections active, or source is not in masterchain
@@ -157,9 +158,7 @@ contract Elector is IElector {
         }
         TvmBuilder data;
         data.store(uint32(0x654c5074), stake_at, max_factor, src_addr, adnl_addr);
-        TvmBuilder sign;
-        sign.store(signature);
-        if (!tvm.checkSign(data.toSlice(), sign.toSlice().loadRefAsSlice(), validator_pubkey)) {
+        if (!tvm.checkSign(data.toSlice(), signature.toSlice(), validator_pubkey)) {
             // incorrect signature, return stake
             return return_stake(query_id, 1);
         }
@@ -190,14 +189,14 @@ contract Elector is IElector {
             // log("merging stakes");
             Member mem = m.get();
             // entry found, merge stakes
-            msg_value += mem.stake;
+            msg_value += uint256(mem.stake);
             found = (src_addr != mem.addr);
         }
         if (found) {
             // can make stakes for a public key from one address only
             return return_stake(query_id, 4);
         }
-        if (msg_value < m_cur_elect.min_stake) {
+        if (msg_value < uint256(m_cur_elect.min_stake)) {
             // stake too small, return it
             return return_stake(query_id, 5);
         }
@@ -210,10 +209,10 @@ contract Elector is IElector {
         tvm.accept();
         // store stake in the dictionary
         m_cur_elect.members[validator_pubkey] =
-            Member(uint128(msg_value), now, max_factor, src_addr, adnl_addr, bls_key1, bls_key2);
+            Member(varUint16(msg_value), now, max_factor, src_addr, adnl_addr);
         m_cur_elect.failed = false;
         m_cur_elect.finished = false;
-        m_cur_elect.total_stake = total_stake;
+        m_cur_elect.total_stake = varUint16(total_stake);
         // return confirmation message
         if (query_id != 0) {
             return send_confirmation(query_id, 0);
@@ -229,11 +228,11 @@ contract Elector is IElector {
         while (f.hasValue()) {
             (uint256 pubkey, Frozen frozen) = f.get();
             if (frozen.banned) {
-                recovered += frozen.stake;
+                recovered += uint128(frozen.stake);
             } else {
                 credit_to(frozen.addr, frozen.stake);
+                total += uint128(frozen.stake);
             }
-            total += frozen.stake;
             f = freeze_dict.next(pubkey);
         }
         require(total == tot_stakes, 59);
@@ -250,13 +249,13 @@ contract Elector is IElector {
         while (f.hasValue()) {
             (uint256 pubkey, Frozen frozen) = f.get();
             if (frozen.banned) {
-                recovered += frozen.stake;
+                recovered += uint128(frozen.stake);
             } else {
-                (uint128 bonus, ) = math.muldivmod(tot_bonuses, frozen.stake, tot_stakes);
+                (uint128 bonus, ) = math.muldivmod(tot_bonuses, uint128(frozen.stake), tot_stakes);
                 returned_bonuses += bonus;
                 credit_to(frozen.addr, frozen.stake + bonus);
+                total += uint128(frozen.stake);
             }
-            total += frozen.stake;
             f = freeze_dict.next(pubkey);
         }
         require((total == tot_stakes) && (returned_bonuses <= tot_bonuses), 59);
@@ -268,7 +267,7 @@ contract Elector is IElector {
         optional(uint256, Frozen) f = frozen_dict.min();
         while (f.hasValue()) {
             (uint256 pubkey, Frozen frozen) = f.get();
-            total += frozen.stake;
+            total += uint128(frozen.stake);
             f = frozen_dict.next(pubkey);
         }
         return total;
@@ -305,35 +304,35 @@ contract Elector is IElector {
         tvm.accept();
         if (!ok) {
             // cancel elections, return stakes
-            m_grams += unfreeze_all(m_cur_elect.elect_at);
+            m_grams += varUint16(unfreeze_all(m_cur_elect.elect_at));
             m_election_open = false;
         }
         // ... do not remove elect until we see this set as the next elected validator set
     }
 
     function config_set_confirmed_ok(uint64 query_id) override public
-            functionID(0xee764f4b) onlyInternalMessage {
+            functionID(0xee764f4b) internalMsg {
         config_set_confirmed(query_id, true);
     }
 
     function config_set_confirmed_err(uint64 query_id) override public
-            functionID(0xee764f6f) onlyInternalMessage {
+            functionID(0xee764f6f) internalMsg {
         config_set_confirmed(query_id, false);
     }
 
     function config_slash_confirmed_ok(uint64 query_id) override public
-            functionID(0xee764f4c) onlyInternalMessage {
+            functionID(0xee764f4c) internalMsg {
     }
 
     function config_slash_confirmed_err(uint64 query_id) override public
-            functionID(0xee764f70) onlyInternalMessage {
+            functionID(0xee764f70) internalMsg {
     }
 
-    function grant() override public functionID(0x4772616e) onlyInternalMessage {
-        m_grams += msg.value;
+    function grant() override public functionID(0x4772616e) internalMsg {
+        m_grams += varUint16(msg.value);
     }
 
-    function take_change() override public onlyInternalMessage {
+    function take_change() override public internalMsg {
     }
 
     function process_simple_transfer() internal {
@@ -348,23 +347,24 @@ contract Elector is IElector {
         optional(PastElection) p = m_past_elections.fetch(m_active_id);
         if (!p.hasValue()) {
             // active validator set not found (?)
-            m_grams += uint128(msg.value);
+            m_grams += varUint16(msg.value);
         } else {
             PastElection past = p.get();
             // credit active validator set bonuses
-            past.bonuses += uint128(msg.value);
+            past.bonuses += varUint16(msg.value);
             m_past_elections[m_active_id] = past;
         }
     }
 
     function recover_stake(uint64 query_id) override public
-            functionID(0x47657424) onlyInternalMessage {
+            functionID(0x47657424) internalMsg {
         (int8 src_wc, uint256 src_addr) = msg.sender.unpack();
         if (src_wc != -1) {
             // not from masterchain, return error
             send_message_back(msg.sender, 0xfffffffe, query_id, 0x47657424, 0, 64);
             return;
         }
+        // need to check banned
         optional(uint128) amount = m_credits.fetch(src_addr);
         if (!amount.hasValue()) {
             // no credit for sender, return error
@@ -377,7 +377,7 @@ contract Elector is IElector {
     }
 
     function recover_stake_gracefully(uint64 query_id, uint32 elect_id) override public
-            functionID(0x47657425) onlyInternalMessage {
+            functionID(0x47657425) internalMsg {
         (int8 src_wc, uint256 src_addr) = msg.sender.unpack();
         if (src_wc != -1) {
             // not from masterchain, return error
@@ -401,7 +401,7 @@ contract Elector is IElector {
     }
 
     function get_elect_at(uint64 query_id) override public
-            functionID(0x47657426) onlyInternalMessage {
+            functionID(0x47657426) internalMsg {
         (int8 src_wc, /*uint256 src_addr*/) = msg.sender.unpack();
         if (src_wc != -1) {
             // not from masterchain, return error
@@ -411,16 +411,53 @@ contract Elector is IElector {
         IValidator(msg.sender).receive_elect_at{value: 0, flag: 64}(query_id, m_election_open, m_cur_elect.elect_at);
     }
 
-    function onCodeUpgrade(uint64 query_id) internal pure {
-        send_message_back(msg.sender, 0xce436f64, query_id, 0x4e436f64, 0, 64);
+    // old funC code upgrade
+    function importFuncData() private {
+        tvm.resetStorage();
+        tvm.setReplayProtTime(now);
+        tvm.setPubkey(0);
+
+        optional(TvmCell) cur_elect;
+        TvmSlice s = tvm.getData().toSlice();
+
+        (cur_elect, m_credits, m_past_elections, m_grams, m_active_id, m_active_hash) = s.decode(
+            optional(TvmCell),
+            mapping(uint256 => varUint16),
+            mapping(uint32 => PastElection),
+            varUint16,
+            uint32,
+            uint256
+        );
+        require(s.empty(), ERROR_C4);
+
+        if (cur_elect.hasValue()) {
+            s = cur_elect.get().toSlice();
+            m_election_open = true;
+            m_cur_elect = s.decode(Elect);
+            require(s.empty(), ERROR_ELECT);
+        } else {
+            m_election_open = false;
+            delete m_cur_elect; // set default value
+        }
     }
 
-    function _upgrade_code(uint64 query_id, TvmCell code) internal pure returns (bool) {
+    function onCodeUpgrade(address s_addr, TvmSlice /*data*/, uint64 query_id) internal functionID(2) {
+        uint256 hash = tvm.hash(tvm.code());
+        if (hash == 0x6217f872c99fafcb870f2c11a362f59339be95095f70d00b9cff2f6dcd69d3dd) {
+            importFuncData();
+        }
+
+        send_message_back(s_addr, 0xce436f64, query_id, 0x4e436f64, 0, 64);
+        tvm.exit();
+    }
+
+    function _upgrade_code(uint64 query_id, TvmCell code, TvmCell data) internal returns (bool) {
         (TvmCell c_addr, bool f) = tvm.rawConfigParam(0);
         if (!f) {
             // no configuration smart contract known
             return false;
         }
+        address s_addr = msg.sender;
         uint256 config_addr = c_addr.toSlice().loadUnsigned(256);
         (int8 src_wc, uint256 src_addr) = msg.sender.unpack();
         if (src_wc != -1 || src_addr != config_addr) {
@@ -430,13 +467,12 @@ contract Elector is IElector {
         tvm.accept();
         tvm.setcode(code);
         tvm.setCurrentCode(code);
-        onCodeUpgrade(query_id);
-        tvm.exit();
+        onCodeUpgrade(s_addr, data.toSlice(), query_id);
     }
 
-    function upgrade_code(uint64 query_id, TvmCell code) override public
-            functionID(0x4e436f64) onlyInternalMessage {
-        bool ok = _upgrade_code(query_id, code);
+    function upgrade_code(uint64 query_id, TvmCell code, TvmCell data) override public
+            functionID(0x4e436f64) internalMsg {
+        bool ok = _upgrade_code(query_id, code, data);
         send_message_back(msg.sender, ok ? 0xce436f64 : 0xffffffff, query_id, 0x4e436f64, 0, 64);
     }
 
@@ -535,9 +571,9 @@ contract Elector is IElector {
             return (frozen, 0, 0);
         }
         Frozen fr = f.get();
-        (uint128 fine_part, ) = math.muldivmod(fr.stake, complaint.suggested_fine_part, 1 << 32);
-        uint128 fine = math.min(fr.stake, complaint.suggested_fine + fine_part);
-        fr.stake -= fine;
+        (uint128 fine_part, ) = math.muldivmod(uint128(fr.stake), complaint.suggested_fine_part, 1 << 32);
+        uint128 fine = math.min(uint128(fr.stake), complaint.suggested_fine + fine_part);
+        fr.stake -= varUint16(fine);
         frozen[complaint.validator_pubkey] = fr;
         uint128 reward = math.min(fine >> 3, complaint.paid * 8);
         credit_to(complaint.reward_addr, reward);
@@ -592,10 +628,9 @@ contract Elector is IElector {
     function proceed_register_vote(uint64 query_id, uint256 signature_hi,
                                    uint256 signature_lo, uint32 sign_tag,
                                    uint16 idx, uint32 elect_id, uint256 chash)
-            override public functionID(0x56744370) onlyInternalMessage {
+            override public functionID(0x56744370) internalMsg {
         require(sign_tag == 0x56744350, 37);
-        (/* TvmCell */, /* uint64 */, mapping(uint16 => TvmSlice) dict) =
-            get_current_vset();
+        (/* TvmCell */, /* uint64 */, mapping(uint16 => TvmSlice) dict) = get_current_vset();
         optional(TvmSlice) vdescr = dict.fetch(idx);
         require(vdescr.hasValue(), 41);
         Common.Validator v = vdescr.get().decode(Common.Validator);
@@ -633,8 +668,8 @@ contract Elector is IElector {
               uint128 fine_collected) =
                 punish(past.frozen_dict, accepted_complaint);
             past.frozen_dict = frozen_dict;
-            m_grams += fine_unalloc;
-            past.total_stake -= fine_collected;
+            m_grams += varUint16(fine_unalloc);
+            past.total_stake -= varUint16(fine_collected);
         }
         m_past_elections[election_id] = past;
         return status;
@@ -649,8 +684,6 @@ contract Elector is IElector {
         uint32 max_f;
         uint256 pubkey;
         uint256 adnl_addr;
-        uint256 bls_key1;
-        uint128 bls_key2;
         optional(List) tail;
     }
 
@@ -686,8 +719,6 @@ contract Elector is IElector {
         uint32 max_f;
         uint256 addr;
         uint256 adnl_addr;
-        uint256 bls_key1;
-        uint128 bls_key2;
     }
 
     function try_elect(uint128 min_stake, uint128 max_stake,
@@ -700,9 +731,9 @@ contract Elector is IElector {
         mapping(Key => Value) sdict;
         mapping(uint256 => Member) members = m_cur_elect.members;
         for ((uint256 pkey, Member _mem) : members) {
-            (uint128 stake, uint32 time, uint32 max_factor, uint256 addr, uint256 adnl_addr, uint256 bls_key1, uint128 bls_key2) = _mem.unpack();
+            (uint128 stake, uint32 time, uint32 max_factor, uint256 addr, uint256 adnl_addr) = _mem.unpack();
             sdict[Key(stake, -int32(time), pkey)] =
-                Value(math.min(max_factor, max_stake_factor), addr, adnl_addr, bls_key1, bls_key2);
+                Value(math.min(max_factor, max_stake_factor), addr, adnl_addr);
             ++n;
         }
         n = math.min(n, max_validators);
@@ -719,8 +750,6 @@ contract Elector is IElector {
                 max_f: value.max_f,
                 pubkey: key.pubkey,
                 adnl_addr: value.adnl_addr,
-                bls_key1: value.bls_key1,
-                bls_key2: value.bls_key2,
                 tail: l
             });
         }
@@ -759,7 +788,7 @@ contract Elector is IElector {
             }
 
             uint128 tot_stake = wholeStakeSum + uint128((uint256(stake) * cutFactSum) >> 16);
-            if (tot_stake > best_stake) {
+            if ((qty == min_validators) || (tot_stake > best_stake)) {
                 best_stake = tot_stake;
                 m = qty;
                 m_stake = stake;
@@ -792,9 +821,9 @@ contract Elector is IElector {
         uint128 tot_weight = 0;
         mapping(uint16 => TvmSlice) vset;
         mapping(uint256 => Frozen) frozen;
-        mapping(uint256 => uint128) credits = m_credits;
+        mapping(uint256 => varUint16) credits = m_credits;
         do {
-            (uint128 stake, uint32 max_f, uint256 pubkey, uint256 adnl_addr, uint256 bls_key1, uint128 bls_key2, optional(List) tail) = l.get().unpack();
+            (uint128 stake, uint32 max_f, uint256 pubkey, uint256 adnl_addr, optional(List) tail) = l.get().unpack();
             l = tail;
             // lookup source address first
             optional(Member) mem = members.fetch(pubkey);
@@ -810,18 +839,18 @@ contract Elector is IElector {
                 TvmBuilder vinfo;
                 if (adnl_addr > 0) {
                     vinfo.store(Common.ValidatorAddr(0x73, 0x8e81278a, pubkey,
-                                                     uint64(weight), adnl_addr, bls_key1, bls_key2));
+                                                     uint64(weight), adnl_addr));
                 } else {
                     vinfo.store(Common.Validator(0x53, 0x8e81278a, pubkey,
                                                  uint64(weight)));
                 }
                 vset[i] = vinfo.toSlice();
-                frozen[pubkey] = Frozen(src_addr, uint64(weight), true_stake, false);
+                frozen[pubkey] = Frozen(src_addr, uint64(weight), varUint16(true_stake), false);
             }
             if (stake > 0) {
                 // non-zero unused part of the stake, credit to the source address
                 // credit_to(src_addr, stake);
-                credits[src_addr] += stake;
+                credits[src_addr] += varUint16(stake);
             }
             i += 1;
         } while (l.hasValue());
@@ -890,7 +919,7 @@ contract Elector is IElector {
         past.stake_held = stake_held;
         past.vset_hash = tvm.hash(vsetCell);
         past.frozen_dict = frozen;
-        past.total_stake = total_stakes;
+        past.total_stake = varUint16(total_stakes);
         m_past_elections[cur_elect_at] = past;
         // reset slasher
         mapping(uint256 => bool) nil1;
@@ -906,7 +935,7 @@ contract Elector is IElector {
         while (v.hasValue()) {
             (uint16 id, TvmSlice entry) = v.get();
             Common.ValidatorAddr vtor = entry.decode(Common.ValidatorAddr);
-            require(vtor.tag == 0x73, BAD_CONFIG_PARAM_34);
+            require(vtor.tag != 0x53, BAD_CONFIG_PARAM_34);
             if (index < main_validators) {
                 masterchain_vtors_weight += vtor.weight;
             } else {
@@ -946,8 +975,8 @@ contract Elector is IElector {
             if (past.vset_hash == cur_hash) {
                 // transfer 1/8 of accumulated everybody's grams to this validator set as bonuses
                 uint128 amount = (m_grams >> 3);
-                m_grams -= amount;
-                past.bonuses += amount;
+                m_grams -= varUint16(amount);
+                past.bonuses += varUint16(amount);
                 m_past_elections[id] = past;
                 // found
                 break;
@@ -996,7 +1025,7 @@ contract Elector is IElector {
             (uint32 id, PastElection past) = p.get();
             if ((past.unfreeze_at <= now) && (id != m_active_id)) {
                 // unfreeze!
-                m_grams += unfreeze_all(id);
+                m_grams += varUint16(unfreeze_all(id));
                 // unfreeze only one at time, exit loop
                 break;
             }
@@ -1040,9 +1069,7 @@ contract Elector is IElector {
         uint32 elect_at = t + elect_begin_before;
         // elect_at~dump();
         uint32 elect_close = elect_at - elect_end_before;
-        mapping(uint256 => Member) nil;
-        Elect n_elect = Elect(elect_at, elect_close, min_stake, 0,
-                              nil, false, false);
+        Elect n_elect = Elect(elect_at, elect_close, varUint16(min_stake), 0, emptyMap, false, false);
         m_cur_elect = n_elect;
         m_election_open = true;
         return true;
@@ -1106,14 +1133,16 @@ contract Elector is IElector {
     uint64 constant THRESHOLD_WORKCHAIN_NUMERATOR   = 1;
     uint64 constant THRESHOLD_WORKCHAIN_DENOMINATOR = 3;
 
-    function report(uint256 signature_hi, uint256 signature_lo, uint256 reporter_pubkey, uint256 victim_pubkey, uint8 metric_id) override public {
-        // ignore reports from already banned reporters
-        require(!m_banned.exists(reporter_pubkey), BAD_BANNED_REPORTER);
+    function require_ok(bool condition, uint errorCode) internal inline {
+        if (!condition) {
+            tvm.commit();
+            revert(errorCode);
+        }
+    }
 
-        // ignore reports about already banned reportees
-        require(!m_banned.exists(victim_pubkey), BAD_BANNED_VICTIM);
-
-        (TvmCell info, ) = tvm.rawConfigParam(34);
+    function report(uint256 signature_hi, uint256 signature_lo, uint256 reporter_pubkey, uint256 victim_pubkey, uint8 metric_id)
+        public externalMsg {
+        (TvmCell info, /* uint64 */, /* Common.ValidatorSet vset */) = get_current_vset();
         Common.ValidatorSet vset = info.toSlice().decode(Common.ValidatorSet);
         require(vset.tag == 0x12, BAD_CONFIG_PARAM_34);
 
@@ -1124,19 +1153,25 @@ contract Elector is IElector {
         signature.store(signature_hi, signature_lo);
         TvmBuilder msg_body;
         msg_body.store(reporter_pubkey, victim_pubkey, metric_id);
-        require(tvm.checkSign(msg_body.toSlice(), signature.toSlice(), reporter_pubkey),
-                BAD_SIGNATURE);
+        require(tvm.checkSign(msg_body.toSlice(), signature.toSlice(), reporter_pubkey), 34);
 
         // accept external message
         tvm.accept();
 
+        // ignore reports from already banned reporters
+        require_ok(!m_banned.exists(reporter_pubkey), BAD_BANNED_REPORTER);
+
+        // ignore reports about already banned reportees
+        require_ok(!m_banned.exists(victim_pubkey), BAD_BANNED_VICTIM);
+
+        // find reporter's descriptor and its index 
         optional(uint16, TvmSlice) v = vset.vdict.min();
         uint64 reporter_weight = 0;
         uint16 reporter_index = 0;
         while (v.hasValue()) {
             (uint16 id, TvmSlice entry) = v.get();
             Common.ValidatorAddr vtor = entry.decode(Common.ValidatorAddr);
-            require(vtor.tag == 0x73, BAD_CONFIG_PARAM_34);
+            require(vtor.tag != 0x53, BAD_CONFIG_PARAM_34);
             if (vtor.pubkey == reporter_pubkey) {
                 reporter_weight = vtor.weight;
                 break;
@@ -1146,16 +1181,19 @@ contract Elector is IElector {
         }
         require(reporter_weight > 0, BAD_REPORTER_WEIGHT);
 
+        // find victim's descriptor
         v = vset.vdict.min();
+        uint16 victim_index = 0;
         bool victim_found = false;
         while (v.hasValue()) {
             (uint16 id, TvmSlice entry) = v.get();
             Common.ValidatorAddr vtor = entry.decode(Common.ValidatorAddr);
-            require(vtor.tag == 0x73, BAD_CONFIG_PARAM_34);
+            require(vtor.tag != 0x53, BAD_CONFIG_PARAM_34);
             if (vtor.pubkey == victim_pubkey) {
                 victim_found = true;
                 break;
             }
+            victim_index += 1;
             v = vset.vdict.next(id);
         }
         require(victim_found, BAD_VICTIM_PUBKEY);
@@ -1167,7 +1205,7 @@ contract Elector is IElector {
             Bucket bucket = m_reports[victim_pubkey][metric_id];
             optional(uint64) exists = bucket.reports.fetch(reporter_pubkey);
             // proceed only if the reporter hasn't yet reported
-            require(!exists.hasValue(), BAD_REPORT_DUPLICATE);
+            require_ok(!exists.hasValue(), BAD_REPORT_DUPLICATE);
 
             bucket.weight += reporter_weight;
             bucket.reports[reporter_pubkey] = reporter_weight;
@@ -1177,14 +1215,15 @@ contract Elector is IElector {
             if (bucket.weight >= math.muldiv(m_masterchain_vtors_weight,
                     THRESHOLD_MASTERCHAIN_NUMERATOR, THRESHOLD_MASTERCHAIN_DENOMINATOR)) {
                 // slashing condition is met
+                require(vset.main > max_main_validators, BAD_TOTAL_VTORS);
                 m_banned[victim_pubkey] = true;
-                emit_updated_validator_set();
+                emit_updated_validator_set(victim_pubkey, victim_index);
             }
         } else {
             Bucket bucket = m_reports_workchain[victim_pubkey][metric_id];
             optional(uint64) exists = bucket.reports.fetch(reporter_pubkey);
             // proceed only if the reporter hasn't yet reported
-            require(!exists.hasValue(), BAD_REPORT_DUPLICATE);
+            require_ok(!exists.hasValue(), BAD_REPORT_DUPLICATE);
 
             bucket.weight += reporter_weight;
             bucket.reports[reporter_pubkey] = reporter_weight;
@@ -1194,8 +1233,9 @@ contract Elector is IElector {
             if (bucket.weight >= math.muldiv(m_workchain_vtors_weight,
                     THRESHOLD_WORKCHAIN_NUMERATOR, THRESHOLD_WORKCHAIN_DENOMINATOR)) {
                 // slashing condition is met
+                require(vset.total > max_main_validators, BAD_TOTAL_VTORS);
                 m_banned[victim_pubkey] = true;
-                emit_updated_validator_set();
+                emit_updated_validator_set(victim_pubkey, victim_index);
             }
         }
     }
@@ -1206,38 +1246,110 @@ contract Elector is IElector {
         return body;
     }
 
-    function emit_updated_validator_set() internal inline {
-        (TvmCell info, ) = tvm.rawConfigParam(34);
-        Common.ValidatorSet vset = info.toSlice().decode(Common.ValidatorSet);
-        require(vset.tag == 0x12, BAD_CONFIG_PARAM_34);
-
-        mapping(uint16 => TvmSlice) vdict_updated;
-        uint64 total_weight = 0;
-        optional(uint16, TvmSlice) v = vset.vdict.min();
-        uint16 index = 0;
-        while (v.hasValue()) {
-            (uint16 id, TvmSlice entry) = v.get();
-            Common.ValidatorAddr vtor = entry.decode(Common.ValidatorAddr);
-            require(vtor.tag == 0x73, BAD_CONFIG_PARAM_34);
-            if (!m_banned.exists(vtor.pubkey)) {
-                (, TvmSlice s) = v.get();
-                vdict_updated[index] = s;
-                total_weight += vtor.weight;
-                index += 1;
+    function update_reports(uint256 victim_pubkey, mapping(uint256 => mapping(uint8 => Bucket)) reports) internal pure
+        returns (mapping(uint256 => mapping(uint8 => Bucket))) {
+        mapping(uint256 => mapping(uint8 => Bucket)) new_reports = reports;
+        for ((uint256 key, mapping(uint8 => Bucket) buckets) : reports) {
+            for((uint8 id, Bucket bucket) : buckets) {
+                for((uint256 public_key, uint64 weight) : bucket.reports) {
+                    if (victim_pubkey == public_key) {
+                        bucket.weight -= weight;
+                        delete bucket.reports[victim_pubkey];
+                        mapping(uint8 => Bucket) new_buckets = buckets;
+                        new_buckets[id] = bucket;
+                        new_reports[key] = new_buckets;
+                        break;
+                    }
+                }
             }
-            v = vset.vdict.next(id);
         }
+        return new_reports;
+    }
+
+    function emit_updated_validator_set(uint256 victim_pubkey, uint16 victim_index) internal inline {
+        (/*TvmCell cur_vset*/, uint64 total_weight, mapping(uint16 => TvmSlice) vdict) = get_current_vset();
 
         (TvmCell p16, ) = tvm.rawConfigParam(16);
         (, , uint16 min_validators) = p16.toSlice().decode(uint16, uint16, uint16);
-        require(index >= min_validators, BAD_TOTAL_VTORS);
+        require(victim_index >= min_validators, BAD_TOTAL_VTORS);
 
-        Common.ValidatorSet vset_updated = vset;
+        bool loop = false;
+        uint16 index = 0;
+        do {
+            // remove all claims of banned validator
+            if (victim_index < min_validators) {
+                min_validators -= 1;
+                m_reports = update_reports(victim_pubkey, m_reports);
+            } else {
+                m_reports_workchain = update_reports(victim_pubkey, m_reports_workchain);
+            }
+
+            mapping(uint16 => TvmSlice) vdict_updated = emptyMap;
+            uint64 masterchain_vtors_weight = 0;
+            uint64 workchain_vtors_weight = 0;
+            total_weight = 0;
+            index = 0;
+            for((uint16 id, TvmSlice entry) : vdict) {
+                tvm.hexdump(id);
+                TvmSlice entryRead = entry;
+                Common.ValidatorAddr vtor = entryRead.decode(Common.ValidatorAddr);
+                require(vtor.tag != 0x53, BAD_CONFIG_PARAM_34);
+                if (!m_banned.exists(vtor.pubkey)) {
+                    vdict_updated[index] = entry;
+                    total_weight += vtor.weight;
+                    if (index < min_validators) {
+                        masterchain_vtors_weight += vtor.weight;
+                    } else {
+                        workchain_vtors_weight += vtor.weight;
+                    }
+                    index += 1;
+                }
+            }
+            require(index >= min_validators, BAD_TOTAL_VTORS);
+            m_masterchain_vtors_weight = masterchain_vtors_weight;
+            m_workchain_vtors_weight = workchain_vtors_weight;
+
+            index = 0;
+            mapping(uint256 => mapping(uint8 => Bucket)) reports = m_reports;
+            uint128 max_weight = math.muldiv(m_masterchain_vtors_weight,
+                THRESHOLD_MASTERCHAIN_NUMERATOR, THRESHOLD_MASTERCHAIN_DENOMINATOR);
+            for((uint16 id, TvmSlice entry) : vdict_updated) {
+                tvm.hexdump(id);
+                Common.ValidatorAddr vtor = entry.decode(Common.ValidatorAddr);
+                require(vtor.tag != 0x53, BAD_CONFIG_PARAM_34);
+                if (index == min_validators) {
+                    max_weight = math.muldiv(m_workchain_vtors_weight,
+                        THRESHOLD_WORKCHAIN_NUMERATOR, THRESHOLD_WORKCHAIN_DENOMINATOR);
+                    reports = m_reports_workchain;
+                }
+                optional(mapping(uint8 => Bucket)) buckets = reports[vtor.pubkey];
+                if (buckets.hasValue()) {
+                    for((, Bucket bucket) : buckets.get()) {
+                        // this validator becomes slashed
+                        if (bucket.weight >= max_weight) {
+                            m_banned[vtor.pubkey] = true;
+                            loop = true;
+                            victim_pubkey = vtor.pubkey;
+                            victim_index = index;
+                            vdict = vdict_updated;
+                            break;
+                        }
+                    }
+                }
+                if (loop) {
+                    continue;
+                }
+                index += 1;
+            }
+            vdict = vdict_updated;
+        } while(loop);
+
+        Common.ValidatorSet vset_updated;
         vset_updated.utime_since  = now + 60;
         vset_updated.total_weight = total_weight;
         vset_updated.total        = index;
-        vset_updated.main         = math.min(index, vset.main);
-        vset_updated.vdict        = vdict_updated;
+        vset_updated.main         = math.min(index, min_validators);
+        vset_updated.vdict        = vdict;
 
         TvmBuilder b;
         b.store(vset_updated);
@@ -1250,6 +1362,14 @@ contract Elector is IElector {
         uint256 active_hash = tvm.hash(vset_updated_cell);
         m_active_hash = active_hash;
         past.vset_hash = active_hash;
+        optional(Frozen) f = past.frozen_dict.fetch(victim_pubkey);
+        if (f.hasValue()) {
+            Frozen frozen = f.get();
+            frozen.banned = true;
+            past.frozen_dict[victim_pubkey] = frozen;
+            past.bonuses += frozen.stake;
+            past.total_stake -= frozen.stake;
+        }
         m_past_elections[m_active_id] = past;
 
         (TvmCell cfg0, ) = tvm.rawConfigParam(0);
@@ -1262,7 +1382,7 @@ contract Elector is IElector {
         returns (
             bool election_open,
             Elect cur_elect,
-            mapping(uint256 => uint128) credits,
+            mapping(uint256 => varUint16) credits,
             mapping(uint32 => PastElection) past_elections,
             uint128 grams,
             uint32 active_id,
@@ -1308,7 +1428,7 @@ contract Elector is IElector {
         if (id == tvm.functionId(IValidator.receive_stake_back)) {
             (int8 src_wc, uint256 src_addr) = msg.sender.unpack();
             require(src_wc == -1, 223);
-            m_credits[src_addr] = msg.value;
+            m_credits[src_addr] = varUint16(msg.value);
         }
     }
 
@@ -1338,10 +1458,5 @@ contract Elector is IElector {
         } else if ((op & (1 << 31)) == 0) {
             send_message_back(msg.sender, 0xffffffff, query_id, op, 0, 64);
         }
-    }
-
-    modifier onlyInternalMessage() {
-        require(msg.sender != address(0), 222);
-        _;
     }
 }

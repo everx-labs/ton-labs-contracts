@@ -17,6 +17,8 @@ interface IConfig {
     function set_slashed_validator_set(uint64 query_id, TvmCell vset)
         functionID(0x4e565355) external;
 
+    function set_code(TvmCell code) external externalMsg;
+
     function setcode_confirmation(uint64 query_id, uint32 body)
         functionID(0xce436f64) external;
 
