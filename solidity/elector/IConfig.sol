@@ -7,7 +7,7 @@
     Copyright 2019-2023 (c) EverX
 */
 
-pragma ton-solidity >=0.38.0;
+pragma ton-solidity ^ 0.67.0;
 
 interface IConfig {
   
@@ -17,9 +17,16 @@ interface IConfig {
     function set_slashed_validator_set(uint64 query_id, TvmCell vset)
         functionID(0x4e565355) external;
 
-    function upgrade_code(TvmCell code) external externalMsg;
+    function set_code(TvmCell code) external externalMsg;
 
     function setcode_confirmation(uint64 query_id, uint32 body)
         functionID(0xce436f64) external;
 
+    function change_public_key(uint256 public_key) external internalMsg;
+
+    function change_config_param(uint32 index, TvmCell data) external internalMsg;
+
+    function change_elector_code(TvmCell code, TvmCell data) external internalMsg;
+
+    function change_code(TvmCell code) external internalMsg;
 }

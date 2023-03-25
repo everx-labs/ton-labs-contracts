@@ -7,15 +7,13 @@
     Copyright 2019-2023 (c) EverX
 */
 
-pragma ton-solidity >=0.64.0;
+pragma ton-solidity ^ 0.67.0;
 pragma ignoreIntOverflow;
 pragma AbiHeader time;
 import "IConfig.sol";
 import "IElector.sol";
 import "IValidator.sol";
 import "Common.sol";
-
-// pragma upgrade func; // uncomment if you want update
 
 // Config parameters used in the contract:
 //  0  Configuration smart-contract address
@@ -29,6 +27,8 @@ import "Common.sol";
 
 contract Elector is IElector {
 
+    uint32 constant VERSION_MAJOR = 0;
+    uint32 constant VERSION_MINOR = 1;
     uint256 constant PRECISION = 1e18;
     uint constant ERROR_ELECT = 123;
     uint constant ERROR_C4 = 124;
@@ -84,21 +84,9 @@ contract Elector is IElector {
     uint32 m_active_id;
     uint256 m_active_hash;
 
-    constructor() public {
+    constructor() {
+        tvm.setPubkey(0);
         m_election_open = false;
-    }
-
-    function get_complaint_prices() internal pure returns (uint128, uint128, uint128) {
-        (TvmCell info, bool f) = tvm.rawConfigParam(13);
-        if (!f)
-            return (1 << 36, 1, 512);
-        TvmSlice s = info.toSlice();
-        uint8 tag = s.loadUnsigned(8);
-        require(tag == 0x1a, 9);
-        uint128 deposit = s.loadTons();
-        uint128 bit = s.loadTons();
-        uint128 cell = s.loadTons();
-        return (deposit, bit, cell);
     }
 
     function get_validator_conf() internal pure inline returns (uint32, uint32, uint32, uint32) {
@@ -108,16 +96,9 @@ contract Elector is IElector {
     }
 
     function get_current_vset() internal pure returns (TvmCell, uint64, mapping(uint16 => TvmSlice)) {
-        TvmCell info;
-        bool f;
-        (info, f) = tvm.rawConfigParam(35);
-        if (!f) {
-            (info, f) = tvm.rawConfigParam(34);
-        }
-        require(f, BAD_CONFIG_PARAM_34);
-
+        (TvmCell info, /* bool */) = tvm.rawConfigParam(34);
         Common.ValidatorSet vset = info.toSlice().decode(Common.ValidatorSet);
-        require(vset.tag == 0x12, BAD_CONFIG_PARAM_34);
+        require(vset.tag == 0x12, 40);
         return (info, vset.total_weight, vset.vdict);
     }
 
@@ -216,7 +197,7 @@ contract Elector is IElector {
         tvm.accept();
         // store stake in the dictionary
         m_cur_elect.members[validator_pubkey] =
-            Member(varUint16(msg_value), now, max_factor, src_addr, adnl_addr);
+            Member(varUint16(msg_value), block.timestamp, max_factor, src_addr, adnl_addr);
         m_cur_elect.failed = false;
         m_cur_elect.finished = false;
         m_cur_elect.total_stake = varUint16(total_stake);
@@ -418,266 +399,8 @@ contract Elector is IElector {
         IValidator(msg.sender).receive_elect_at{value: 0, flag: 64}(query_id, m_election_open, m_cur_elect.elect_at);
     }
 
-    function onCodeUpgrade(address s_addr, TvmSlice /*data*/, uint64 query_id) internal functionID(2) {
-        require(tvm.hash(tvm.code()) == 0xcb6eb312df8187a61e386563f4643c14cad2b98360ce0d9e78da49467188a66f, 550);
-        {
-            tvm.resetStorage();
-            tvm.setReplayProtTime(now);
-            tvm.setPubkey(0);
-
-            optional(TvmCell) cur_elect;
-            TvmSlice s = tvm.getData().toSlice();
-
-            (cur_elect, m_credits, m_past_elections, m_grams, m_active_id, m_active_hash) = s.decode(
-                optional(TvmCell),
-                mapping(uint256 => varUint16),
-                mapping(uint32 => PastElection),
-                varUint16,
-                uint32,
-                uint256
-            );
-            require(s.empty(), ERROR_C4);
-
-            if (cur_elect.hasValue()) {
-                s = cur_elect.get().toSlice();
-                m_election_open = true;
-                m_cur_elect = s.decode(Elect);
-                require(s.empty(), ERROR_ELECT);
-            } else {
-                m_election_open = false;
-                delete m_cur_elect; // set default value
-            }
-
-        }
-        send_message_back(s_addr, 0xce436f64, query_id, 0x4e436f64, 0, 64);
-        tvm.exit();
-    }
-
-    function _upgrade_code(uint64 query_id, TvmCell code, TvmCell data) internal returns (bool) {
-        (TvmCell c_addr, bool f) = tvm.rawConfigParam(0);
-        if (!f) {
-            // no configuration smart contract known
-            return false;
-        }
-        address s_addr = msg.sender;
-        uint256 config_addr = c_addr.toSlice().loadUnsigned(256);
-        (int8 src_wc, uint256 src_addr) = msg.sender.unpack();
-        if (src_wc != -1 || src_addr != config_addr) {
-            // not from configuration smart contract, return error
-            return false;
-        }
-        tvm.accept();
-        tvm.setcode(code);
-        tvm.setCurrentCode(code);
-        onCodeUpgrade(s_addr, data.toSlice(), query_id);
-    }
-
-    function upgrade_code(uint64 query_id, TvmCell code, TvmCell data) override public
-            functionID(0x4e436f64) internalMsg {
-        bool ok = _upgrade_code(query_id, code, data);
-        send_message_back(msg.sender, ok ? 0xce436f64 : 0xffffffff, query_id, 0x4e436f64, 0, 64);
-    }
-
-    function register_complaint(uint64 query_id, uint32 election_id, Complaint complaint) internal {
-        int256 price = _register_complaint(election_id, complaint);
-        uint8 mode = 64;
-        int256 ans_tag = -price;
-        if (price >= 0) {
-            // ok, debit price
-            tvm.rawReserve(uint256(price), 4);
-            ans_tag = 0;
-            mode = 128;
-        }
-        send_message_back(msg.sender, uint32(ans_tag) + 0xf2676350, query_id, 0x52674370, 0, mode);
-    }
-
-    function _register_complaint(uint32 election_id, Complaint complaint) internal
-            returns (int256) {
-        (int8 src_wc, uint256 src_addr) = msg.sender.unpack();
-        if (src_wc != -1) {
-            // not from masterchain, return error
-            return -1;
-        }
-        if (msg.data.depth() >= 128) {
-            // invalid complaint
-            return -3;
-        }
-        optional(PastElection) p = m_past_elections.fetch(election_id);
-        if (!p.hasValue()) {
-            // election not found
-            return -2;
-        }
-        PastElection past = p.get();
-        uint32 expire_in = past.unfreeze_at - now; // FIXME? overflow exception
-        if (expire_in <= 0) {
-            // already expired
-            return -4;
-        }
-        require(complaint.tag == 0xbc, 9);
-        uint32 created_at = now;
-        // compute complaint storage/creation price
-        (uint128 deposit, uint128 bit, uint128 cell) = get_complaint_prices();
-        (uint128 bits, uint128 refs) = complaint.description.toSlice().size();
-        uint128 pps = (bits + 1024) * bit + (refs + 2) * cell;
-        uint128 paid = pps * expire_in + deposit;
-        if (msg.value < paid + (1 << 30)) {
-            // not enough money
-            return -5;
-        }
-        complaint.created_at = created_at;
-        complaint.reward_addr = src_addr;
-        complaint.paid = paid;
-        optional(Frozen) f = past.frozen_dict.fetch(complaint.validator_pubkey);
-        if (!f.hasValue()) {
-            // no such validator, cannot complain
-            return -6;
-        }
-        Frozen frozen = f.get();
-        uint128 validator_stake = frozen.stake;
-        (uint128 fine_part, ) =
-            math.muldivmod(validator_stake, complaint.suggested_fine_part, 1 << 32);
-        uint128 fine = complaint.suggested_fine + fine_part;
-        if (fine > validator_stake) {
-            // validator's stake is less than suggested fine
-            return -7;
-        }
-        if (fine <= paid) {
-            // fine is less than the money paid for creating complaint
-            return -8;
-        }
-        TvmBuilder b;
-        b.store(complaint);
-        TvmCell cpl = b.toCell();
-        // create complaint status
-        ComplaintStatus cstatus;
-        cstatus.tag = 0x2d;
-        cstatus.complaint = cpl;
-        cstatus.vset_id = 0;
-        cstatus.weight_remaining = 0;
-        // save complaint status into complaints
-        uint256 cpl_id = tvm.hash(cpl);
-        if (!past.complaints.add(cpl_id, cstatus)) {
-            // complaint already exists
-            return -9;
-        }
-        m_past_elections[election_id] = past;
-        return int256(paid);
-    }
-
-    function punish(mapping(uint256 => Frozen) frozen, TvmCell _complaint) internal
-            returns (mapping(uint256 => Frozen), uint128, uint128) {
-        Complaint complaint = _complaint.toSlice().decode(Complaint);
-        optional(Frozen) f = frozen.fetch(complaint.validator_pubkey);
-        if (!f.hasValue()) {
-            // no validator to punish
-            return (frozen, 0, 0);
-        }
-        Frozen fr = f.get();
-        (uint128 fine_part, ) = math.muldivmod(uint128(fr.stake), complaint.suggested_fine_part, 1 << 32);
-        uint128 fine = math.min(uint128(fr.stake), complaint.suggested_fine + fine_part);
-        fr.stake -= varUint16(fine);
-        frozen[complaint.validator_pubkey] = fr;
-        uint128 reward = math.min(fine >> 3, complaint.paid * 8);
-        credit_to(complaint.reward_addr, reward);
-        return (frozen, fine - reward, fine);
-    }
-
-    function register_vote(mapping(uint256 => ComplaintStatus) complaints,
-                           uint256 chash, uint16 idx, int64 weight) internal pure
-            returns (mapping(uint256 => ComplaintStatus),
-                     TvmCell /* Complaint */, int32) {
-        TvmCell nil;
-        optional(ComplaintStatus) c = complaints.fetch(chash);
-        if (!c.hasValue()) {
-            // complaint not found
-            return (complaints, nil, -1);
-        }
-        ComplaintStatus cstatus = c.get();
-        (TvmCell cur_vset, uint64 total_weight, /* mapping(uint16 => TvmCell) */) = get_current_vset();
-        uint256 cur_vset_id = tvm.hash(cur_vset);
-        bool vset_old = (cstatus.vset_id != cur_vset_id);
-        if ((cstatus.weight_remaining < 0) && vset_old) {
-            // previous validator set already collected 2/3 votes, skip new votes
-            return (complaints, nil, -3);
-        }
-        if (vset_old) {
-            // complaint votes belong to a previous validator set, reset voting
-            cstatus.vset_id = cur_vset_id;
-            mapping(uint16 => uint32) voters;
-            cstatus.voters = voters;
-            (uint64 part, ) = math.muldivmod(total_weight, 2, 3);
-            cstatus.weight_remaining = int64(part);
-        }
-        if (cstatus.voters.exists(idx)) {
-            // already voted for this proposal, ignore vote
-            return (complaints, nil, 0);
-        }
-        // register vote
-        cstatus.voters[idx] = now;
-        int64 old_wr = cstatus.weight_remaining;
-        cstatus.weight_remaining -= weight;
-        old_wr ^= cstatus.weight_remaining;
-        // save voters and weight_remaining
-        complaints[chash] = cstatus;
-        if (old_wr >= 0) {
-            // not enough votes or already accepted
-            return (complaints, nil, 1);
-        }
-        // complaint wins, prepare punishment
-        return (complaints, cstatus.complaint, 2);
-    }
-
-    function proceed_register_vote(uint64 query_id, uint256 signature_hi,
-                                   uint256 signature_lo, uint32 sign_tag,
-                                   uint16 idx, uint32 elect_id, uint256 chash)
-            override public functionID(0x56744370) internalMsg {
-        require(sign_tag == 0x56744350, 37);
-        (/* TvmCell */, /* uint64 */, mapping(uint16 => TvmSlice) dict) = get_current_vset();
-        optional(TvmSlice) vdescr = dict.fetch(idx);
-        require(vdescr.hasValue(), 41);
-        Common.Validator v = vdescr.get().decode(Common.Validator);
-        require((v.tag & 0xdf) == 0x53, 41);
-        require(v.ed25519_pubkey == 0x8e81278a, 41);
-
-        TvmBuilder signature;
-        signature.store(signature_hi, signature_lo);
-        TvmBuilder msg_body;
-        msg_body.store(sign_tag, idx, elect_id, chash);
-        require(tvm.checkSign(msg_body.toSlice(), signature.toSlice(), v.pubkey), 34);
-
-        int32 res = _proceed_register_vote(elect_id, chash, idx, int64(v.weight));
-        send_message_back(msg.sender, uint32(res) + 0xd6745240, query_id, 0x56744370, 0, 64);
-    }
-
-    function _proceed_register_vote(uint32 election_id, uint256 chash,
-                                    uint16 idx, int64 weight) internal
-            returns (int32) {
-        optional(PastElection) p = m_past_elections.fetch(election_id);
-        if (!p.hasValue()) {
-            // election not found
-            return -2;
-        }
-        PastElection past = p.get();
-        (mapping(uint256 => ComplaintStatus) complaints, TvmCell accepted_complaint, int32 status) =
-            register_vote(past.complaints, chash, idx, weight);
-        past.complaints = complaints;
-        if (status <= 0) {
-            return status;
-        }
-        if (status == 2) {
-            (mapping(uint256 => Frozen) frozen_dict,
-              uint128 fine_unalloc,
-              uint128 fine_collected) =
-                punish(past.frozen_dict, accepted_complaint);
-            past.frozen_dict = frozen_dict;
-            m_grams += varUint16(fine_unalloc);
-            past.total_stake -= varUint16(fine_collected);
-        }
-        m_past_elections[election_id] = past;
-        return status;
-    }
-
-    function postpone_elections() inline internal pure returns (bool) {
+    function postpone_elections(uint16 result) inline internal pure returns (bool) {
+        tvm.hexdump(result);
         return false;
     }
 
@@ -789,9 +512,9 @@ contract Elector is IElector {
                 cutFactSum += sf.max_f;
             }
 
-            uint128 tot_stake = wholeStakeSum + uint128((uint256(stake) * cutFactSum) >> 16);
-            if ((qty == min_validators) || (tot_stake > best_stake)) {
-                best_stake = tot_stake;
+            uint128 sum_stake = wholeStakeSum + uint128((uint256(stake) * cutFactSum) >> 16);
+            if ((qty == min_validators) || (sum_stake > best_stake)) {
+                best_stake = sum_stake;
                 m = qty;
                 m_stake = stake;
             }
@@ -863,24 +586,24 @@ contract Elector is IElector {
 
     function conduct_elections() internal returns (bool) {
         Elect cur_elect = m_cur_elect;
-        if (now < cur_elect.elect_close) {
+        if (block.timestamp < cur_elect.elect_close) {
             // elections not finished yet
             return false;
         }
         (/* TvmCell */, bool f) = tvm.rawConfigParam(0);
         if (!f) {
             // no configuration smart contract to send result to
-            return postpone_elections();
+            return postpone_elections(1);
         }
         (uint128 min_stake, uint128 max_stake, uint128 min_total_stake,
           uint32 max_stake_factor, /* bool */) = tvm.configParam(17);
         if (cur_elect.total_stake < min_total_stake) {
             // insufficient total stake, postpone elections
-            return postpone_elections();
+            return postpone_elections(2);
         }
         if (cur_elect.failed) {
             // do not retry failed elections until new stakes arrive
-            return postpone_elections();
+            return postpone_elections(3);
         }
         if (cur_elect.finished) {
             // elections finished
@@ -895,14 +618,14 @@ contract Elector is IElector {
         m_cur_elect = cur_elect;
         if (cnt == 0) {
             // elections failed, set elect_failed to true
-            return postpone_elections();
+            return postpone_elections(4);
         }
         uint32 cur_elect_at = cur_elect.elect_at;
         // serialize a query to the configuration smart contract
         // to install the computed validator set as the next validator set
         (uint32 elect_for, /* uint32 */, uint32 elect_end_before, uint32 stake_held) =
             get_validator_conf();
-        uint32 start = math.max(now + elect_end_before - 60, cur_elect_at);
+        uint32 start = math.max(block.timestamp + elect_end_before - 60, cur_elect_at);
         (TvmCell cfg16, /* bool */) = tvm.rawConfigParam(16);
         (/* uint16 */, uint16 main_validators) = cfg16.toSlice().decode(uint16, uint16);
 
@@ -961,12 +684,12 @@ contract Elector is IElector {
         }
         if (m_active_id != 0) {
             // active_id becomes inactive
-            optional(PastElection) p = m_past_elections.fetch(m_active_id);
-            if (p.hasValue()) {
-                PastElection past = p.get();
+            optional(PastElection) p_opt = m_past_elections.fetch(m_active_id);
+            if (p_opt.hasValue()) {
+                PastElection past = p_opt.get();
                 // adjust unfreeze time of this validator set
                 require(past.vset_hash == m_active_hash, 57);
-                past.unfreeze_at = now + past.stake_held;
+                past.unfreeze_at = block.timestamp + past.stake_held;
                 m_past_elections[m_active_id] = past;
             }
         }
@@ -1025,7 +748,7 @@ contract Elector is IElector {
         optional(uint32, PastElection) p = m_past_elections.min();
         while (p.hasValue()) {
             (uint32 id, PastElection past) = p.get();
-            if ((past.unfreeze_at <= now) && (id != m_active_id)) {
+            if ((past.unfreeze_at <= block.timestamp) && (id != m_active_id)) {
                 // unfreeze!
                 m_grams += varUint16(unfreeze_all(id));
                 // unfreeze only one at time, exit loop
@@ -1054,7 +777,7 @@ contract Elector is IElector {
         }
         (/* uint32 */, uint32 elect_begin_before, uint32 elect_end_before, /* uint32 */) = get_validator_conf();
         (/* uint8 */ /* uint32 */, uint32 cur_valid_until) = cur_vset.toSlice().decode(uint40, uint32);
-        uint32 t = now;
+        uint32 t = block.timestamp;
         uint32 t0 = cur_valid_until - elect_begin_before;
         if (t < t0) {
             // too early for the next elections
@@ -1149,7 +872,7 @@ contract Elector is IElector {
         require(vset.tag == 0x12, BAD_CONFIG_PARAM_34);
 
         // ignore reports outside of the vset's active time interval
-        require(vset.utime_since < now && now < vset.utime_until, BAD_REPORT_TIME);
+        require(vset.utime_since < block.timestamp && block.timestamp < vset.utime_until, BAD_REPORT_TIME);
 
         TvmBuilder signature;
         signature.store(signature_hi, signature_lo);
@@ -1201,9 +924,8 @@ contract Elector is IElector {
         require(victim_found, BAD_VICTIM_PUBKEY);
 
         (TvmCell cfg16, ) = tvm.rawConfigParam(16);
-        ( , uint16 max_main_validators) = cfg16.toSlice().decode(uint16, uint16);
-
-        if (reporter_index < max_main_validators) {
+        ( , , uint16 min_validators) = cfg16.toSlice().decode(uint16, uint16, uint16);
+        if (reporter_index < vset.main) {
             Bucket bucket = m_reports[victim_pubkey][metric_id];
             optional(uint64) exists = bucket.reports.fetch(reporter_pubkey);
             // proceed only if the reporter hasn't yet reported
@@ -1217,7 +939,7 @@ contract Elector is IElector {
             if (bucket.weight >= math.muldiv(m_masterchain_vtors_weight,
                     THRESHOLD_MASTERCHAIN_NUMERATOR, THRESHOLD_MASTERCHAIN_DENOMINATOR)) {
                 // slashing condition is met
-                require(vset.main > max_main_validators, BAD_TOTAL_VTORS);
+                require(vset.main > min_validators, BAD_TOTAL_VTORS);
                 m_banned[victim_pubkey] = true;
                 emit_updated_validator_set(victim_pubkey, victim_index);
             }
@@ -1229,23 +951,17 @@ contract Elector is IElector {
 
             bucket.weight += reporter_weight;
             bucket.reports[reporter_pubkey] = reporter_weight;
-            m_reports[victim_pubkey][metric_id] = bucket;
+            m_reports_workchain[victim_pubkey][metric_id] = bucket;
             tvm.commit();
 
             if (bucket.weight >= math.muldiv(m_workchain_vtors_weight,
                     THRESHOLD_WORKCHAIN_NUMERATOR, THRESHOLD_WORKCHAIN_DENOMINATOR)) {
                 // slashing condition is met
-                require(vset.total > max_main_validators, BAD_TOTAL_VTORS);
+                require(vset.total > min_validators, BAD_TOTAL_VTORS);
                 m_banned[victim_pubkey] = true;
                 emit_updated_validator_set(victim_pubkey, victim_index);
             }
         }
-    }
-
-    function afterSignatureCheck(TvmSlice body, TvmCell) private inline pure returns (TvmSlice) {
-        body.decode(uint64);
-        // no replay protection
-        return body;
     }
 
     function update_reports(uint256 victim_pubkey, mapping(uint256 => mapping(uint8 => Bucket)) reports) internal pure
@@ -1269,7 +985,8 @@ contract Elector is IElector {
     }
 
     function emit_updated_validator_set(uint256 victim_pubkey, uint16 victim_index) internal inline {
-        (/*TvmCell cur_vset*/, uint64 total_weight, mapping(uint16 => TvmSlice) vdict) = get_current_vset();
+        (TvmCell info, uint64 total_weight, mapping(uint16 => TvmSlice) vdict) = get_current_vset();
+        Common.ValidatorSet vset = info.toSlice().decode(Common.ValidatorSet);
 
         (TvmCell p16, ) = tvm.rawConfigParam(16);
         (, , uint16 min_validators) = p16.toSlice().decode(uint16, uint16, uint16);
@@ -1347,7 +1064,9 @@ contract Elector is IElector {
         } while(loop);
 
         Common.ValidatorSet vset_updated;
-        vset_updated.utime_since  = now + 60;
+        vset_updated.tag          = 0x12;
+        vset_updated.utime_since  = block.timestamp + 1;
+        vset_updated.utime_until  = vset.utime_until;
         vset_updated.total_weight = total_weight;
         vset_updated.total        = index;
         vset_updated.main         = math.min(index, min_validators);
@@ -1412,11 +1131,14 @@ contract Elector is IElector {
         return m_reports_workchain[victim_pubkey];
     }
 
-    // Get methods TODO remove
-
     // returns active election id or 0
     function active_election_id() public view returns (uint32) {
         return m_election_open ? m_cur_elect.elect_at : 0;
+    }
+
+    // returns version of elector (major, minor)
+    function get_version() public pure returns (uint32, uint32) {
+        return (VERSION_MAJOR, VERSION_MINOR);
     }
 
     // computes the return stake
@@ -1440,25 +1162,40 @@ contract Elector is IElector {
         process_simple_transfer();
     }
 
-    fallback() external {
+    fallback() external pure {
         TvmSlice s = msg.data;
         uint32 op = s.loadUnsigned(32);
         uint64 query_id = s.loadUnsigned(64);
-        if (op == 0x52674370) { // register_complaint
-            uint32 election_id            = s.loadUnsigned(32);
-            Complaint complaint;
-            complaint.tag                 = s.loadUnsigned(8);
-            complaint.validator_pubkey    = s.loadUnsigned(256);
-            complaint.description         = s.loadRef();
-            complaint.created_at          = s.loadUnsigned(32);
-            complaint.severity            = s.loadUnsigned(8);
-            complaint.reward_addr         = s.loadUnsigned(256);
-            complaint.paid                = s.loadTons();
-            complaint.suggested_fine      = s.loadTons();
-            complaint.suggested_fine_part = s.loadUnsigned(32);
-            register_complaint(query_id, election_id, complaint);
-        } else if ((op & (1 << 31)) == 0) {
-            send_message_back(msg.sender, 0xffffffff, query_id, op, 0, 64);
+        send_message_back(msg.sender, 0xffffffff, query_id, op, 0, 64);
+    }
+
+    function onCodeUpgrade(address s_addr, TvmSlice /*data*/, uint64 query_id) internal pure functionID(2) {
+        send_message_back(s_addr, 0xce436f64, query_id, 0x4e436f64, 0, 64);
+        tvm.exit();
+    }
+
+    function _upgrade_code(uint64 query_id, TvmCell code, TvmCell data) internal pure returns (bool) {
+        (TvmCell c_addr, bool f) = tvm.rawConfigParam(0);
+        if (!f) {
+            // no configuration smart contract known
+            return false;
         }
+        address s_addr = msg.sender;
+        uint256 config_addr = c_addr.toSlice().loadUnsigned(256);
+        (int8 src_wc, uint256 src_addr) = msg.sender.unpack();
+        if (src_wc != -1 || src_addr != config_addr) {
+            // not from configuration smart contract, return error
+            return false;
+        }
+        tvm.accept();
+        tvm.setcode(code);
+        tvm.setCurrentCode(code);
+        onCodeUpgrade(s_addr, data.toSlice(), query_id);
+    }
+
+    function upgrade_code(uint64 query_id, TvmCell code, TvmCell data) override public
+            functionID(0x4e436f64) internalMsg {
+        bool ok = _upgrade_code(query_id, code, data);
+        send_message_back(msg.sender, ok ? 0xce436f64 : 0xffffffff, query_id, 0x4e436f64, 0, 64);
     }
 }

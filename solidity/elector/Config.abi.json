@@ -4,28 +4,6 @@
 	"header": ["time", "expire"],
 	"functions": [
 		{
-			"name": "constructor",
-			"inputs": [
-				{"name":"elector_addr","type":"uint256"},
-				{"name":"elect_for","type":"uint32"},
-				{"name":"elect_begin_before","type":"uint32"},
-				{"name":"elect_end_before","type":"uint32"},
-				{"name":"stake_held","type":"uint32"},
-				{"name":"max_validators","type":"uint16"},
-				{"name":"main_validators","type":"uint16"},
-				{"name":"min_validators","type":"uint16"},
-				{"name":"min_stake","type":"uint128"},
-				{"name":"max_stake","type":"uint128"},
-				{"name":"min_total_stake","type":"uint128"},
-				{"name":"max_stake_factor","type":"uint32"},
-				{"name":"utime_since","type":"uint32"},
-				{"name":"utime_until","type":"uint32"},
-				{"name":"public_key","type":"uint256"}
-			],
-			"outputs": [
-			]
-		},
-		{
 			"name": "set_next_validator_set",
 			"id": "0x4E565354",
 			"inputs": [
@@ -57,7 +35,7 @@
 		{
 			"name": "set_public_key",
 			"inputs": [
-				{"name":"public_key","type":"uint256"}
+				{"name":"pubkey","type":"uint256"}
 			],
 			"outputs": [
 			]
@@ -82,7 +60,7 @@
 		{
 			"name": "change_public_key",
 			"inputs": [
-				{"name":"public_key","type":"uint256"}
+				{"name":"pubkey","type":"uint256"}
 			],
 			"outputs": [
 			]
@@ -131,87 +109,7 @@
 			]
 		},
 		{
-			"name": "get_config_0",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"value0","type":"cell"}
-			]
-		},
-		{
-			"name": "get_config_1",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"value0","type":"cell"}
-			]
-		},
-		{
-			"name": "get_config_13",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"value0","type":"cell"}
-			]
-		},
-		{
-			"name": "get_config_15",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"value0","type":"cell"}
-			]
-		},
-		{
-			"name": "get_config_16",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"value0","type":"cell"}
-			]
-		},
-		{
-			"name": "get_config_17",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"value0","type":"cell"}
-			]
-		},
-		{
-			"name": "get_config_32",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"value0","type":"cell"}
-			]
-		},
-		{
-			"name": "get_config_34",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"value0","type":"cell"}
-			]
-		},
-		{
-			"name": "get_config_35",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"value0","type":"cell"}
-			]
-		},
-		{
-			"name": "get_config_36",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"value0","type":"cell"}
-			]
-		},
-		{
-			"name": "get_config",
+			"name": "get_config_param",
 			"inputs": [
 				{"name":"index","type":"uint32"}
 			],
@@ -260,19 +158,19 @@
 			]
 		},
 		{
-			"name": "upgrade_code",
+			"name": "get_version",
 			"inputs": [
-				{"name":"code","type":"cell"}
 			],
 			"outputs": [
+				{"name":"value0","type":"uint32"},
+				{"name":"value1","type":"uint32"}
 			]
 		},
 		{
-			"name": "seqno",
+			"name": "constructor",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"value0","type":"uint32"}
 			]
 		}
 	],

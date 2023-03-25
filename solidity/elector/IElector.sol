@@ -7,7 +7,7 @@
     Copyright 2019-2023 (c) EverX
 */
 
-pragma ton-solidity >=0.38.0;
+pragma ton-solidity ^ 0.67.0;
 
 interface IElector {
     /// @dev Allows validator to become validator candidate
@@ -36,36 +36,6 @@ interface IElector {
 
     /// @dev Upgrade code (is accepted only from configuration smart contract)
     function upgrade_code(uint64 query_id, TvmCell code, TvmCell data) external functionID(0x4e436f64) internalMsg;
-
-    struct Complaint {
-        uint8 tag; // = 0xbc
-        uint256 validator_pubkey;
-        TvmCell description;
-        uint32 created_at;
-        uint8 severity;
-        uint256 reward_addr;
-        uint128 paid;           // TODO varuint16 for funC compatibility
-        uint128 suggested_fine; // TODO
-        uint32 suggested_fine_part;
-    }
-
-    /// @dev Register new complaint
-    //function register_complaint(
-    //    uint64 query_id,
-    //    uint32 election_id,
-    //    Complaint complaint
-    //) external functionID(0x52674370);
-
-    /// @dev Vote for a complaint
-    function proceed_register_vote(
-        uint64 query_id,
-        uint256 signature_hi,
-        uint256 signature_lo,
-        uint32 sign_tag,
-        uint16 idx,
-        uint32 elect_id,
-        uint256 chash
-    ) external functionID(0x56744370) internalMsg;
 
     function grant() external functionID(0x4772616e) internalMsg;
     function take_change() external internalMsg;
