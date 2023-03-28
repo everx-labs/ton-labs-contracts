@@ -7,7 +7,7 @@
     Copyright 2019-2023 (c) EverX
 */
 
-pragma ton-solidity ^ 0.67.0;
+pragma ton-solidity ^ 0.66.0;
 
 interface IConfig {
   
@@ -26,7 +26,7 @@ interface IConfig {
 
     function change_config_param(uint32 index, TvmCell data) external internalMsg;
 
-    function change_elector_code(TvmCell code, TvmCell data) external internalMsg;
+    function change_elector_code(TvmCell code, TvmCell data) external internalMsg pure;
 
-    function change_code(TvmCell code) external internalMsg;
+    function change_code(TvmCell code) external internalMsg pure;
 }

@@ -7,7 +7,7 @@
     Copyright 2019-2023 (c) EverX
 */
 
-pragma ton-solidity ^ 0.67.0;
+pragma ton-solidity ^ 0.66.0;
 pragma ignoreIntOverflow;
 pragma AbiHeader time;
 import "IConfig.sol";
@@ -84,7 +84,7 @@ contract Elector is IElector {
     uint32 m_active_id;
     uint256 m_active_hash;
 
-    constructor() {
+    constructor() public {
         tvm.setPubkey(0);
         m_election_open = false;
     }
@@ -96,7 +96,12 @@ contract Elector is IElector {
     }
 
     function get_current_vset() internal pure returns (TvmCell, uint64, mapping(uint16 => TvmSlice)) {
-        (TvmCell info, /* bool */) = tvm.rawConfigParam(34);
+        TvmCell info;
+        bool f;
+        (info, f) = tvm.rawConfigParam(35);
+        if (!f) {
+            (info, /* bool */) = tvm.rawConfigParam(34);
+        }
         Common.ValidatorSet vset = info.toSlice().decode(Common.ValidatorSet);
         require(vset.tag == 0x12, 40);
         return (info, vset.total_weight, vset.vdict);
@@ -197,7 +202,7 @@ contract Elector is IElector {
         tvm.accept();
         // store stake in the dictionary
         m_cur_elect.members[validator_pubkey] =
-            Member(varUint16(msg_value), block.timestamp, max_factor, src_addr, adnl_addr);
+            Member(varUint16(msg_value), now, max_factor, src_addr, adnl_addr);
         m_cur_elect.failed = false;
         m_cur_elect.finished = false;
         m_cur_elect.total_stake = varUint16(total_stake);
@@ -586,7 +591,7 @@ contract Elector is IElector {
 
     function conduct_elections() internal returns (bool) {
         Elect cur_elect = m_cur_elect;
-        if (block.timestamp < cur_elect.elect_close) {
+        if (now < cur_elect.elect_close) {
             // elections not finished yet
             return false;
         }
@@ -625,13 +630,13 @@ contract Elector is IElector {
         // to install the computed validator set as the next validator set
         (uint32 elect_for, /* uint32 */, uint32 elect_end_before, uint32 stake_held) =
             get_validator_conf();
-        uint32 start = math.max(block.timestamp + elect_end_before - 60, cur_elect_at);
+        uint32 start = math.max(now + elect_end_before - 60, cur_elect_at);
         (TvmCell cfg16, /* bool */) = tvm.rawConfigParam(16);
-        (/* uint16 */, uint16 main_validators) = cfg16.toSlice().decode(uint16, uint16);
+        (/* uint16 */, uint16 max_main_validators) = cfg16.toSlice().decode(uint16, uint16);
 
         // Common.ValidatorSet vset;
         TvmBuilder b;
-        b.store(uint8(0x12), start, start + elect_for, cnt, math.min(cnt, main_validators),
+        b.store(uint8(0x12), start, start + elect_for, cnt, math.min(cnt, max_main_validators),
                 total_weight, vdict);
         TvmCell vsetCell = b.toCell();
 
@@ -661,7 +666,7 @@ contract Elector is IElector {
             (uint16 id, TvmSlice entry) = v.get();
             Common.ValidatorAddr vtor = entry.decode(Common.ValidatorAddr);
             require(vtor.tag != 0x53, BAD_CONFIG_PARAM_34);
-            if (index < main_validators) {
+            if (index < max_main_validators) {
                 masterchain_vtors_weight += vtor.weight;
             } else {
                 workchain_vtors_weight += vtor.weight;
@@ -689,7 +694,7 @@ contract Elector is IElector {
                 PastElection past = p_opt.get();
                 // adjust unfreeze time of this validator set
                 require(past.vset_hash == m_active_hash, 57);
-                past.unfreeze_at = block.timestamp + past.stake_held;
+                past.unfreeze_at = now + past.stake_held;
                 m_past_elections[m_active_id] = past;
             }
         }
@@ -748,7 +753,7 @@ contract Elector is IElector {
         optional(uint32, PastElection) p = m_past_elections.min();
         while (p.hasValue()) {
             (uint32 id, PastElection past) = p.get();
-            if ((past.unfreeze_at <= block.timestamp) && (id != m_active_id)) {
+            if ((past.unfreeze_at <= now) && (id != m_active_id)) {
                 // unfreeze!
                 m_grams += varUint16(unfreeze_all(id));
                 // unfreeze only one at time, exit loop
@@ -777,7 +782,7 @@ contract Elector is IElector {
         }
         (/* uint32 */, uint32 elect_begin_before, uint32 elect_end_before, /* uint32 */) = get_validator_conf();
         (/* uint8 */ /* uint32 */, uint32 cur_valid_until) = cur_vset.toSlice().decode(uint40, uint32);
-        uint32 t = block.timestamp;
+        uint32 t = now;
         uint32 t0 = cur_valid_until - elect_begin_before;
         if (t < t0) {
             // too early for the next elections
@@ -872,7 +877,7 @@ contract Elector is IElector {
         require(vset.tag == 0x12, BAD_CONFIG_PARAM_34);
 
         // ignore reports outside of the vset's active time interval
-        require(vset.utime_since < block.timestamp && block.timestamp < vset.utime_until, BAD_REPORT_TIME);
+        require(vset.utime_since < now && now < vset.utime_until, BAD_REPORT_TIME);
 
         TvmBuilder signature;
         signature.store(signature_hi, signature_lo);
@@ -990,7 +995,7 @@ contract Elector is IElector {
 
         (TvmCell p16, ) = tvm.rawConfigParam(16);
         (, , uint16 min_validators) = p16.toSlice().decode(uint16, uint16, uint16);
-        require(victim_index >= min_validators, BAD_TOTAL_VTORS);
+        require(vset.total > min_validators, BAD_TOTAL_VTORS);
 
         bool loop = false;
         uint16 index = 0;
@@ -1008,15 +1013,14 @@ contract Elector is IElector {
             uint64 workchain_vtors_weight = 0;
             total_weight = 0;
             index = 0;
-            for((uint16 id, TvmSlice entry) : vdict) {
-                tvm.hexdump(id);
+            for((, TvmSlice entry) : vdict) {
                 TvmSlice entryRead = entry;
                 Common.ValidatorAddr vtor = entryRead.decode(Common.ValidatorAddr);
                 require(vtor.tag != 0x53, BAD_CONFIG_PARAM_34);
                 if (!m_banned.exists(vtor.pubkey)) {
                     vdict_updated[index] = entry;
                     total_weight += vtor.weight;
-                    if (index < min_validators) {
+                    if (index < vset.main) {
                         masterchain_vtors_weight += vtor.weight;
                     } else {
                         workchain_vtors_weight += vtor.weight;
@@ -1032,8 +1036,7 @@ contract Elector is IElector {
             mapping(uint256 => mapping(uint8 => Bucket)) reports = m_reports;
             uint128 max_weight = math.muldiv(m_masterchain_vtors_weight,
                 THRESHOLD_MASTERCHAIN_NUMERATOR, THRESHOLD_MASTERCHAIN_DENOMINATOR);
-            for((uint16 id, TvmSlice entry) : vdict_updated) {
-                tvm.hexdump(id);
+            for((, TvmSlice entry) : vdict_updated) {
                 Common.ValidatorAddr vtor = entry.decode(Common.ValidatorAddr);
                 require(vtor.tag != 0x53, BAD_CONFIG_PARAM_34);
                 if (index == min_validators) {
@@ -1065,11 +1068,11 @@ contract Elector is IElector {
 
         Common.ValidatorSet vset_updated;
         vset_updated.tag          = 0x12;
-        vset_updated.utime_since  = block.timestamp + 1;
+        vset_updated.utime_since  = now + 60; // allow 1 minute to receive slashed set in config
         vset_updated.utime_until  = vset.utime_until;
         vset_updated.total_weight = total_weight;
         vset_updated.total        = index;
-        vset_updated.main         = math.min(index, min_validators);
+        vset_updated.main         = math.min(index, vset.main);
         vset_updated.vdict        = vdict;
 
         TvmBuilder b;

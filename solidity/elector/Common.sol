@@ -7,7 +7,7 @@
     Copyright 2019-2023 (c) EverX
 */
 
-pragma ton-solidity ^ 0.67.0;
+pragma ton-solidity ^ 0.66.0;
 
 library Common {
 

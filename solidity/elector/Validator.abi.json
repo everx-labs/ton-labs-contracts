@@ -1,0 +1,219 @@
+{
+	"ABI version": 2,
+	"version": "2.3",
+	"header": ["time"],
+	"functions": [
+		{
+			"name": "constructor",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "stake",
+			"inputs": [
+				{"name":"query_id","type":"uint64"},
+				{"name":"validator_pubkey","type":"uint256"},
+				{"name":"stake_at","type":"uint32"},
+				{"name":"max_factor","type":"uint32"},
+				{"name":"adnl_addr","type":"uint256"},
+				{"name":"value","type":"uint128"},
+				{"name":"signature","type":"bytes"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "stake_sign_helper",
+			"inputs": [
+				{"name":"stake_at","type":"uint32"},
+				{"name":"max_factor","type":"uint32"},
+				{"name":"adnl_addr","type":"uint256"}
+			],
+			"outputs": [
+				{"name":"value0","type":"cell"}
+			]
+		},
+		{
+			"name": "return_stake",
+			"id": "0xEE6F454C",
+			"inputs": [
+				{"name":"query_id","type":"uint64"},
+				{"name":"body","type":"uint32"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "confirmation",
+			"id": "0xF374484C",
+			"inputs": [
+				{"name":"query_id","type":"uint64"},
+				{"name":"body","type":"uint32"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "get",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"confirmed_query_id","type":"uint64"},
+				{"name":"confirmed_body","type":"uint32"},
+				{"name":"returned_query_id","type":"uint64"},
+				{"name":"returned_body","type":"uint32"},
+				{"name":"refund_query_id","type":"uint64"},
+				{"name":"error_query_id","type":"uint64"},
+				{"name":"error_body","type":"uint32"},
+				{"name":"complain_answers","type":"map(uint64,int8)"}
+			]
+		},
+		{
+			"name": "recover",
+			"inputs": [
+				{"name":"query_id","type":"uint64"},
+				{"name":"value","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "toggle_defunct",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "receive_stake_back",
+			"id": "0xF96F7324",
+			"inputs": [
+				{"name":"query_id","type":"uint64"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "error",
+			"inputs": [
+				{"name":"query_id","type":"uint64"},
+				{"name":"body","type":"uint32"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "complain",
+			"inputs": [
+				{"name":"query_id","type":"uint64"},
+				{"name":"election_id","type":"uint32"},
+				{"name":"validator_pubkey","type":"uint256"},
+				{"name":"value","type":"uint128"},
+				{"name":"suggested_fine","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "vote_sign_helper",
+			"inputs": [
+				{"name":"idx","type":"uint16"},
+				{"name":"elect_id","type":"uint32"},
+				{"name":"chash","type":"uint256"}
+			],
+			"outputs": [
+				{"name":"value0","type":"cell"}
+			]
+		},
+		{
+			"name": "report_sign_helper",
+			"inputs": [
+				{"name":"reporter_pubkey","type":"uint256"},
+				{"name":"victim_pubkey","type":"uint256"},
+				{"name":"metric_id","type":"uint8"}
+			],
+			"outputs": [
+				{"name":"value0","type":"cell"}
+			]
+		},
+		{
+			"name": "transfer",
+			"inputs": [
+				{"name":"value","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "transfer_to_config",
+			"inputs": [
+				{"name":"payload","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "receive_elect_at",
+			"id": "0xF8229612",
+			"inputs": [
+				{"name":"query_id","type":"uint64"},
+				{"name":"election_open","type":"bool"},
+				{"name":"elect_at","type":"uint32"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "public_key",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"value0","type":"uint256"}
+			]
+		},
+		{
+			"name": "upgrade_old_config_code_sign_helper",
+			"inputs": [
+				{"name":"msg_seqno","type":"uint32"},
+				{"name":"valid_until","type":"uint32"},
+				{"name":"code","type":"cell"}
+			],
+			"outputs": [
+				{"name":"value0","type":"cell"}
+			]
+		},
+		{
+			"name": "upgrade_old_config_code_message_builder",
+			"inputs": [
+				{"name":"config_addr","type":"uint256"},
+				{"name":"signature","type":"bytes"},
+				{"name":"msg_seqno","type":"uint32"},
+				{"name":"valid_until","type":"uint32"},
+				{"name":"code","type":"cell"}
+			],
+			"outputs": [
+				{"name":"value0","type":"cell"}
+			]
+		}
+	],
+	"data": [
+	],
+	"events": [
+	],
+	"fields": [
+		{"name":"_pubkey","type":"uint256"},
+		{"name":"_timestamp","type":"uint64"},
+		{"name":"_constructorFlag","type":"bool"},
+		{"name":"m_defunct","type":"bool"},
+		{"name":"m_returned_query_id","type":"uint64"},
+		{"name":"m_returned_body","type":"uint32"},
+		{"name":"m_confirmed_query_id","type":"uint64"},
+		{"name":"m_confirmed_body","type":"uint32"},
+		{"name":"m_refund_query_id","type":"uint64"},
+		{"name":"m_error_query_id","type":"uint64"},
+		{"name":"m_error_body","type":"uint32"},
+		{"name":"m_complain_answers","type":"map(uint64,int8)"}
+	]
+}

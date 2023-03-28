@@ -7,7 +7,7 @@
     Copyright 2019-2023 (c) EverX
 */
 
-pragma ton-solidity ^ 0.67.0;
+pragma ton-solidity ^ 0.66.0;
 pragma AbiHeader expire;
 pragma AbiHeader time;
 import "IConfig.sol";
@@ -31,123 +31,8 @@ contract Config is IConfig {
 
     mapping(uint32 => TvmCell) m_cfg_dict;
 
-/*
-    bit#_ _:(## 1) = Bit;
-
-    hm_edge#_ {n:#} {X:Type} {l:#} {m:#} label:(HmLabel ~l n)
-              {n = (~m) + l} node:(HashmapNode m X) = Hashmap n X;
-
-    hmn_leaf#_ {X:Type} value:X = HashmapNode 0 X;
-    hmn_fork#_ {n:#} {X:Type} left:^(Hashmap n X)
-               right:^(Hashmap n X) = HashmapNode (n + 1) X;
-
-    hml_short$0 {m:#} {n:#} len:(Unary ~n)
-                s:(n * Bit) = HmLabel ~n m;
-    hml_long$10 {m:#} n:(#<= m) s:(n * Bit) = HmLabel ~n m;
-    hml_same$11 {m:#} v:Bit n:(#<= m) = HmLabel ~n m;
-
-    unary_zero$0 = Unary ~0;
-    unary_succ$1 {n:#} x:(Unary ~n) = Unary ~(n + 1);
-
-    hme_empty$0 {X:Type} = HashmapE n X;
-    hme_root$1 {X:Type} root:^(Hashmap n X) = HashmapE n X;
-*/
-
-    function ubitsize(uint16 n) internal pure returns (uint16) {
-        uint16 size = 0;
-        while (n > 0) {
-            n /= 2;
-            size += 1;
-        }
-        return size;
-    }
-
-    function check_node(TvmSlice slice, uint16 n) internal pure returns (TvmSlice) {
-        if (n == 0) {
-            uint8 tag = slice.loadUnsigned(8);
-            require(tag == 0x73, 195);
-            uint16 remaining = 616 - 8; // sizeof(Common.ValidatorAddr) - sizeof(tag)
-            slice.loadSlice(remaining);
-        } else {
-            TvmCell left = slice.loadRef();
-            TvmCell right = slice.loadRef();
-            check_hashmap(left, n - 1);
-            check_hashmap(right, n - 1);
-        }
-        return slice;
-    }
-
-    function check_hashmap(TvmCell root, uint16 n) internal pure {
-        TvmSlice slice = root.toSlice();
-        (TvmSlice slice_prime, uint16 l) = check_label(slice, n);
-        slice = slice_prime;
-        slice = check_node(slice, n - l);
-        require(slice.bits() == 0, 193);
-        require(slice.refs() == 0, 194);
-    }
-
-    function check_label(TvmSlice slice, uint16 m) internal pure returns (TvmSlice, uint16) {
-        uint16 n = 0;
-        uint8 first_bit = slice.loadUnsigned(1);
-        if (first_bit == 0) {
-            while (slice.loadUnsigned(1) == 1) {
-                n += 1;
-            }
-            slice.loadUnsigned(n);
-        } else {
-            uint8 second_bit = slice.loadUnsigned(1);
-            if (second_bit == 0) {
-                n = slice.loadUnsigned(ubitsize(m));
-                slice.loadUnsigned(n);
-            } else {
-                slice.loadUnsigned(1);
-                n = slice.loadUnsigned(ubitsize(m));
-            }
-        }
-        return (slice, n);
-    }
-
-    function check_dict_u16_slice616(TvmSlice slice) internal pure returns (TvmSlice) {
-        uint8 first_bit = slice.loadUnsigned(1);
-        if (first_bit == 1) {
-            TvmCell root = slice.loadRef();
-            check_hashmap(root, 16);
-        }
-        return slice;
-    }
-
-    function check_validator_set_tlb(TvmCell vset) internal pure {
-        TvmSlice slice = vset.toSlice();
-        uint8 tag = slice.loadUnsigned(8);
-        require(tag == 0x12, 199);
-        slice.loadUnsigned(32);
-        slice.loadUnsigned(32);
-        slice.loadUnsigned(16);
-        slice.loadUnsigned(16);
-        slice.loadUnsigned(64);
-        slice = check_dict_u16_slice616(slice);
-        require(slice.bits() == 0, 191);
-        require(slice.refs() == 0, 192);
-    }
-
     function check_validator_set(TvmCell vset) internal pure returns (uint32, uint32) {
-        check_validator_set_tlb(vset);
         Common.ValidatorSet v = vset.toSlice().decode(Common.ValidatorSet);
-        require(v.tag == 0x12, 9);
-        require(v.main > 0, 9);
-        require(v.total >= v.main, 9);
-
-        uint16 index = v.total;
-        optional(uint16, TvmSlice) e = v.vdict.max();
-        while (e.hasValue()) {
-            index -= 1;
-            (uint16 id, TvmSlice entry) = e.get();
-            require(id == index, 111);
-            Common.ValidatorAddr vtor = entry.decode(Common.ValidatorAddr);
-            require(vtor.tag == 0x73, 9);
-            e = v.vdict.prev(id);
-        }
-
         return (v.utime_since, v.utime_until);
     }
 
@@ -180,7 +65,7 @@ contract Config is IConfig {
             // message from elector smart contract
             // set next validator set
             (uint32 t_since, uint32 t_until) = check_validator_set(vset);
-            ok = (t_since > block.timestamp) && (t_until > t_since);
+            ok = (t_since > now) && (t_until > t_since);
         }
         if (ok) {
             m_cfg_dict[36] = vset;
@@ -208,7 +93,7 @@ contract Config is IConfig {
             // message from elector smart contract
             // set slashed validator set
             (uint32 t_since, uint32 t_until) = check_validator_set(vset);
-            ok = (t_since > block.timestamp) && (t_until > t_since);
+            ok = (t_since > now) && (t_until > t_since);
         }
         if (ok) {
             m_cfg_dict[35] = vset;
@@ -246,7 +131,7 @@ contract Config is IConfig {
         }
         tvm.accept();
         uint256 elector_addr = cfg1.toSlice().loadUnsigned(256);
-        uint32 query_id = block.timestamp;
+        uint32 query_id = now;
         IElector(address.makeAddrStd(-1, elector_addr))
             .upgrade_code{value: 1 << 30, flag: 0}(query_id, code, data);
     }
@@ -267,19 +152,19 @@ contract Config is IConfig {
         _;
     }
 
-    function change_public_key(uint256 pubkey) public internalMsg requireOwnerContract {
+    function change_public_key(uint256 pubkey) public internalMsg override requireOwnerContract {
         tvm.accept();
         tvm.setPubkey(pubkey);
     }
 
-    function change_config_param(uint32 index, TvmCell data) public internalMsg requireOwnerContract {
+    function change_config_param(uint32 index, TvmCell data) public internalMsg override requireOwnerContract {
         require(data.toSlice().depth() <= 128, 39);
 
         tvm.accept();
         m_cfg_dict[index] = data;
     }
 
-    function change_elector_code(TvmCell code, TvmCell data) public internalMsg pure requireOwnerContract {
+    function change_elector_code(TvmCell code, TvmCell data) public internalMsg pure override requireOwnerContract {
         require(code.depth() <= 128, 39);
         require(data.depth() <= 128, 39);
         (TvmCell cfg1, bool f) = tvm.rawConfigParam(1);
@@ -288,12 +173,12 @@ contract Config is IConfig {
         }
         tvm.accept();
         uint256 elector_addr = cfg1.toSlice().loadUnsigned(256);
-        uint32 query_id = block.timestamp;
+        uint32 query_id = now;
         IElector(address.makeAddrStd(-1, elector_addr))
             .upgrade_code{value: 1 << 30, flag: 0}(query_id, code, data);
     }
 
-    function change_code(TvmCell code) public internalMsg pure requireOwnerContract {
+    function change_code(TvmCell code) public internalMsg override pure requireOwnerContract {
         require(code.depth() <= 128, 39);
         tvm.setcode(code);
         tvm.setCurrentCode(code);
@@ -318,7 +203,7 @@ contract Config is IConfig {
             TvmSlice ds = next_vset.toSlice();
             if (ds.bits() >= 40) {
                 (uint8 tag, uint32 since) = ds.decode(uint8, uint32);
-                if ((since <= block.timestamp) && (tag == 0x12)) {
+                if ((since <= now) && (tag == 0x12)) {
                     // next validator set becomes active!
                     optional(TvmCell) cur_vset = m_cfg_dict.getSet(34, next_vset);
                     m_cfg_dict.getSet(32, cur_vset.get());
@@ -334,7 +219,7 @@ contract Config is IConfig {
                 TvmSlice ds = slashed_vset.toSlice();
                 if (ds.bits() >= 40) {
                     (uint8 tag, uint32 since) = ds.decode(uint8, uint32);
-                    if ((since <= block.timestamp) && (tag == 0x12)) {
+                    if ((since <= now) && (tag == 0x12)) {
                         m_cfg_dict.getSet(34, slashed_vset);
                         delete m_cfg_dict[35];
                         updated = true;
@@ -358,7 +243,7 @@ contract Config is IConfig {
         tvm.accept();
         TvmCell c = m_cfg_dict[34];
         Common.ValidatorSet vset = c.toSlice().decode(Common.ValidatorSet);
-        vset.utime_until = block.timestamp;
+        vset.utime_until = now;
         TvmBuilder b;
         b.store(vset);
         m_cfg_dict[34] = b.toCell();
