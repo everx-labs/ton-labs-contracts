@@ -4,6 +4,13 @@
 	"header": ["time", "expire"],
 	"functions": [
 		{
+			"name": "constructor",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "set_next_validator_set",
 			"id": "0x4E565354",
 			"inputs": [
@@ -164,13 +171,6 @@
 			"outputs": [
 				{"name":"value0","type":"uint32"},
 				{"name":"value1","type":"uint32"}
-			]
-		},
-		{
-			"name": "constructor",
-			"inputs": [
-			],
-			"outputs": [
 			]
 		}
 	],

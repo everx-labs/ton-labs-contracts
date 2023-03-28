@@ -31,6 +31,122 @@ contract Config is IConfig {
 
     mapping(uint32 => TvmCell) m_cfg_dict;
 
+    // constructor for testing purposes
+    constructor() public {
+        {
+            TvmBuilder b;
+            b.storeUnsigned(0x5555555555555555555555555555555555555555555555555555555555555555, 256);
+            m_cfg_dict[0] = b.toCell();
+        }
+        {
+            TvmBuilder b;
+            b.storeUnsigned(0x3333333333333333333333333333333333333333333333333333333333333333, 256);
+            m_cfg_dict[1] = b.toCell();
+        }
+        {
+            TvmBuilder b;
+            b.store(uint8(0x1a));
+            b.storeTons(1 << 30);
+            b.storeTons(1);
+            b.storeTons(512);
+            m_cfg_dict[13] = b.toCell();
+        }
+        {
+            uint32 elect_for          = 6000;
+            uint32 elect_begin_before = 3600;
+            uint32 elect_end_before   = 1800;
+            uint32 stake_held         = 32768;
+            TvmBuilder b;
+            b.store(elect_for, elect_begin_before, elect_end_before, stake_held);
+            m_cfg_dict[15] = b.toCell();
+        }
+        {
+            uint16 max_validators  = 7;
+            uint16 main_validators = 100;
+            uint16 min_validators  = 3;
+            TvmBuilder b;
+            b.store(max_validators, main_validators, min_validators);
+            m_cfg_dict[16] = b.toCell();
+        }
+        {
+            uint128 min_stake = 2_000_000_000;
+            uint128 max_stake = 50_000_000_000;
+            uint128 min_total_stake = 10_000_000_000;
+            uint32 max_stake_factor = 3 << 16;
+            TvmBuilder b;
+            b.storeTons(min_stake);
+            b.storeTons(max_stake);
+            b.storeTons(min_total_stake);
+            b.store(max_stake_factor);
+            m_cfg_dict[17] = b.toCell();
+        }
+        {
+            mapping(uint32 => TvmSlice) storage_dict = emptyMap;
+            {
+                TvmBuilder b;
+                b.storeUnsigned(0xCC, 8);
+                b.storeUnsigned(0, 32); // utime_since
+                b.storeUnsigned(0, 64); // bit_price_ps
+                b.storeUnsigned(0, 64); // cell_price_ps
+                b.storeUnsigned(0, 64); // mc_bit_price_ps
+                b.storeUnsigned(0, 64); // mc_cell_price_ps
+                storage_dict[0] = b.toSlice();
+            }
+            {
+                TvmBuilder b;
+                b.store(storage_dict);
+                m_cfg_dict[18] = b.toSlice().loadRef();
+            }
+        }
+        {
+            TvmBuilder b;
+            b.storeUnsigned(0xD1, 8);
+            b.storeUnsigned(0, 64);
+            b.storeUnsigned(0, 64);
+            b.storeUnsigned(0xDE, 8);
+            b.storeUnsigned(0, 64); // gas_price
+            b.storeUnsigned(0xFFFFFFFFFF, 64); // gas_limit
+            b.storeUnsigned(0xFFFFFFFFFF, 64); // special_gas_limit
+            b.storeUnsigned(0xFFFFFF, 64); // gas_credit
+            b.storeUnsigned(0xFFFFFFFFFFFFFFFF, 64);
+            b.storeUnsigned(0, 64);
+            b.storeUnsigned(0, 64);
+            m_cfg_dict[20] = b.toCell();
+            m_cfg_dict[21] = b.toCell();
+        }
+        {
+            TvmBuilder b;
+            b.storeUnsigned(0xEA, 8);
+            b.storeUnsigned(0, 64); // lump_price
+            b.storeUnsigned(0, 64); // bit_price
+            b.storeUnsigned(0, 64); // cell_price
+            b.storeUnsigned(0, 32); // ihr_price_factor
+            b.storeUnsigned(0, 16); // first_frac
+            b.storeUnsigned(0, 16); // next_frac
+            m_cfg_dict[24] = b.toCell();
+            m_cfg_dict[25] = b.toCell();
+        }
+        {
+            TvmBuilder b;
+            b.store(false);
+            m_cfg_dict[31] = b.toCell();
+        }
+        {
+            Common.ValidatorSet vset;
+            vset.tag          = 0x12;
+            vset.utime_since  = 0;
+            vset.utime_until  = 6000;
+            vset.total        = 0;
+            vset.main         = 0;
+            vset.total_weight = 0;
+            vset.vdict        = emptyMap;
+
+            TvmBuilder b;
+            b.store(vset);
+            m_cfg_dict[34] = b.toCell();
+        }
+    }
+
     function check_validator_set(TvmCell vset) internal pure returns (uint32, uint32) {
         Common.ValidatorSet v = vset.toSlice().decode(Common.ValidatorSet);
         return (v.utime_since, v.utime_until);
