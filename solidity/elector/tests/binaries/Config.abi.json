@@ -1,0 +1,187 @@
+{
+	"ABI version": 2,
+	"version": "2.3",
+	"header": ["time", "expire"],
+	"functions": [
+		{
+			"name": "constructor",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "set_next_validator_set",
+			"id": "0x4E565354",
+			"inputs": [
+				{"name":"query_id","type":"uint64"},
+				{"name":"vset","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "set_slashed_validator_set",
+			"id": "0x4E565355",
+			"inputs": [
+				{"name":"query_id","type":"uint64"},
+				{"name":"vset","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "set_config_param",
+			"inputs": [
+				{"name":"index","type":"uint32"},
+				{"name":"data","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "set_public_key",
+			"inputs": [
+				{"name":"pubkey","type":"uint256"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "set_elector_code",
+			"inputs": [
+				{"name":"code","type":"cell"},
+				{"name":"data","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "set_code",
+			"inputs": [
+				{"name":"code","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "change_public_key",
+			"inputs": [
+				{"name":"pubkey","type":"uint256"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "change_config_param",
+			"inputs": [
+				{"name":"index","type":"uint32"},
+				{"name":"data","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "change_elector_code",
+			"inputs": [
+				{"name":"code","type":"cell"},
+				{"name":"data","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "change_code",
+			"inputs": [
+				{"name":"code","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setcode_confirmation",
+			"id": "0xCE436F64",
+			"inputs": [
+				{"name":"query_id","type":"uint64"},
+				{"name":"body","type":"uint32"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "reset_utime_until",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "get_config_param",
+			"inputs": [
+				{"name":"index","type":"uint32"}
+			],
+			"outputs": [
+				{"name":"value0","type":"cell"}
+			]
+		},
+		{
+			"name": "get_previous_vset",
+			"inputs": [
+			],
+			"outputs": [
+				{"components":[{"name":"tag","type":"uint8"},{"name":"utime_since","type":"uint32"},{"name":"utime_until","type":"uint32"},{"name":"total","type":"uint16"},{"name":"main","type":"uint16"},{"name":"total_weight","type":"uint64"},{"components":[{"name":"tag","type":"uint8"},{"name":"ed25519_pubkey","type":"uint32"},{"name":"pubkey","type":"uint256"},{"name":"weight","type":"uint64"},{"name":"adnl_addr","type":"uint256"}],"name":"vdict","type":"map(uint16,tuple)"}],"name":"value0","type":"tuple"}
+			]
+		},
+		{
+			"name": "get_current_vset",
+			"inputs": [
+			],
+			"outputs": [
+				{"components":[{"name":"tag","type":"uint8"},{"name":"utime_since","type":"uint32"},{"name":"utime_until","type":"uint32"},{"name":"total","type":"uint16"},{"name":"main","type":"uint16"},{"name":"total_weight","type":"uint64"},{"components":[{"name":"tag","type":"uint8"},{"name":"ed25519_pubkey","type":"uint32"},{"name":"pubkey","type":"uint256"},{"name":"weight","type":"uint64"},{"name":"adnl_addr","type":"uint256"}],"name":"vdict","type":"map(uint16,tuple)"}],"name":"value0","type":"tuple"}
+			]
+		},
+		{
+			"name": "get_slashed_vset",
+			"inputs": [
+			],
+			"outputs": [
+				{"components":[{"name":"tag","type":"uint8"},{"name":"utime_since","type":"uint32"},{"name":"utime_until","type":"uint32"},{"name":"total","type":"uint16"},{"name":"main","type":"uint16"},{"name":"total_weight","type":"uint64"},{"components":[{"name":"tag","type":"uint8"},{"name":"ed25519_pubkey","type":"uint32"},{"name":"pubkey","type":"uint256"},{"name":"weight","type":"uint64"},{"name":"adnl_addr","type":"uint256"}],"name":"vdict","type":"map(uint16,tuple)"}],"name":"value0","type":"tuple"}
+			]
+		},
+		{
+			"name": "get_next_vset",
+			"inputs": [
+			],
+			"outputs": [
+				{"components":[{"name":"tag","type":"uint8"},{"name":"utime_since","type":"uint32"},{"name":"utime_until","type":"uint32"},{"name":"total","type":"uint16"},{"name":"main","type":"uint16"},{"name":"total_weight","type":"uint64"},{"components":[{"name":"tag","type":"uint8"},{"name":"ed25519_pubkey","type":"uint32"},{"name":"pubkey","type":"uint256"},{"name":"weight","type":"uint64"},{"name":"adnl_addr","type":"uint256"}],"name":"vdict","type":"map(uint16,tuple)"}],"name":"value0","type":"tuple"}
+			]
+		},
+		{
+			"name": "public_key",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"value0","type":"uint256"}
+			]
+		},
+		{
+			"name": "get_version",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"value0","type":"uint32"},
+				{"name":"value1","type":"uint32"}
+			]
+		}
+	],
+	"data": [
+	],
+	"events": [
+	],
+	"fields": [
+		{"name":"_pubkey","type":"uint256"},
+		{"name":"_timestamp","type":"uint64"},
+		{"name":"_constructorFlag","type":"bool"},
+		{"name":"m_cfg_dict","type":"map(uint32,cell)"}
+	]
+}

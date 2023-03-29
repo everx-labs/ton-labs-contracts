@@ -1,0 +1,2245 @@
+.version sol 0.66.0
+
+.macro constructor
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7_with_init_storage$
+}
+GETGLOB 6
+THROWIF 51
+ENDS
+.loc Config.sol, 37
+PUSHINT 38597363079105398474523661669562635951089994888546854679819194669304376546645
+NEWC
+STU 256
+.loc Config.sol, 39
+ENDC
+PUSHINT 0
+GETGLOB 10
+PUSHINT 32
+DICTUSETREF
+SETGLOB 10
+.loc Config.sol, 42
+PUSHINT 23158417847463239084714197001737581570653996933128112807891516801582625927987
+NEWC
+STU 256
+.loc Config.sol, 44
+ENDC
+PUSHINT 1
+GETGLOB 10
+PUSHINT 32
+DICTUSETREF
+SETGLOB 10
+.loc Config.sol, 48
+NEWC
+STSLICECONST x1a
+.loc Config.sol, 49
+PUSHPOW2 30
+STGRAMS
+.loc Config.sol, 50
+PUSHINT 1
+STGRAMS
+.loc Config.sol, 51
+PUSHPOW2 9
+STGRAMS
+.loc Config.sol, 52
+ENDC
+PUSHINT 13
+GETGLOB 10
+PUSHINT 32
+DICTUSETREF
+SETGLOB 10
+.loc Config.sol, 60
+PUSHREF {
+	.blob x0000177000000e100000070800008000
+}
+.loc Config.sol, 61
+PUSHINT 15
+GETGLOB 10
+PUSHINT 32
+DICTUSETREF
+SETGLOB 10
+.loc Config.sol, 68
+PUSHREF {
+	.blob x000700640003
+}
+.loc Config.sol, 69
+PUSHINT 16
+GETGLOB 10
+PUSHINT 32
+DICTUSETREF
+SETGLOB 10
+.loc Config.sol, 76
+NEWC
+.loc Config.sol, 77
+PUSHINT 2000000000
+STGRAMS
+.loc Config.sol, 78
+PUSHINT 50000000000
+STGRAMS
+.loc Config.sol, 79
+PUSHINT 10000000000
+STGRAMS
+.loc Config.sol, 80
+STSLICECONST x00030000
+.loc Config.sol, 81
+ENDC
+PUSHINT 17
+GETGLOB 10
+PUSHINT 32
+DICTUSETREF
+SETGLOB 10
+.loc Config.sol, 86
+PUSHREF {
+	.blob xcc000000000000000000000000000000000000000000000000000000000000000000000000
+}
+.loc Config.sol, 93
+CTOS
+PUSHINT 0
+NEWDICT
+PUSHINT 32
+DICTUSET
+.loc Config.sol, 97
+NEWC
+STDICT
+.loc Config.sol, 98
+ENDC
+CTOS
+PLDREF
+PUSHINT 18
+GETGLOB 10
+PUSHINT 32
+DICTUSETREF
+SETGLOB 10
+.loc Config.sol, 102
+PUSHSLICE xd100000000000000000000000000000000de0000000000000000000000ffffffffff000000ffffffffff0000000000ffffffffffffffffffffff00000000000000000000000000000000
+NEWC
+STSLICE
+.loc Config.sol, 114
+DUP
+ENDC
+PUSHINT 20
+GETGLOB 10
+PUSHINT 32
+DICTUSETREF
+SETGLOB 10
+.loc Config.sol, 115
+ENDC
+PUSHINT 21
+GETGLOB 10
+PUSHINT 32
+DICTUSETREF
+SETGLOB 10
+.loc Config.sol, 118
+PUSHSLICE xea0000000000000000000000000000000000000000000000000000000000000000
+NEWC
+STSLICE
+.loc Config.sol, 126
+DUP
+ENDC
+PUSHINT 24
+GETGLOB 10
+PUSHINT 32
+DICTUSETREF
+SETGLOB 10
+.loc Config.sol, 127
+ENDC
+PUSHINT 25
+GETGLOB 10
+PUSHINT 32
+DICTUSETREF
+SETGLOB 10
+.loc Config.sol, 130
+NEWC
+.loc Config.sol, 131
+STSLICECONST 0
+.loc Config.sol, 132
+ENDC
+PUSHINT 31
+GETGLOB 10
+PUSHINT 32
+DICTUSETREF
+SETGLOB 10
+.loc Config.sol, 135
+PUSHINT 0
+BLKPUSH 5, 0
+NEWDICT
+TUPLE 7
+.loc Config.sol, 136
+PUSHINT 18
+SETINDEX 0
+.loc Config.sol, 137
+PUSHINT 0
+SETINDEX 1
+.loc Config.sol, 138
+PUSHINT 6000
+SETINDEX 2
+.loc Config.sol, 139
+PUSHINT 0
+SETINDEX 3
+.loc Config.sol, 140
+PUSHINT 0
+SETINDEX 4
+.loc Config.sol, 141
+PUSHINT 0
+SETINDEX 5
+.loc Config.sol, 142
+NEWDICT
+SETINDEX 6
+.loc Config.sol, 145
+NEWC
+SWAP
+UNTUPLE 7
+REVERSE 8, 0
+STU 8
+STU 32
+STU 32
+STU 16
+STU 16
+STU 64
+STDICT
+.loc Config.sol, 146
+ENDC
+PUSHINT 34
+GETGLOB 10
+PUSHINT 32
+DICTUSETREF
+SETGLOB 10
+.loc Config.sol, 0
+CALLREF {
+	CALL $c7_to_c4$
+}
+THROW 0
+
+.globl	check_validator_set_12139cfb_internal
+.type	check_validator_set_12139cfb_internal, @function
+CALL $check_validator_set_12139cfb_internal_macro$
+
+.macro check_validator_set_12139cfb_internal_macro
+.loc Config.sol, 151
+CTOS
+LDU 8
+LDU 32
+LDU 32
+LDU 16
+LDU 16
+LDU 64
+PLDDICT
+TUPLE 7
+.loc Config.sol, 152
+DUP
+SECOND
+SWAP
+THIRD
+.loc Config.sol, 0
+
+.globl	send_confirmation_c685eda7_internal
+.type	send_confirmation_c685eda7_internal, @function
+CALL $send_confirmation_c685eda7_internal_macro$
+
+.macro send_confirmation_c685eda7_internal_macro
+.loc Config.sol, 156
+GETGLOB 9
+NEWC
+STSLICECONST x62_
+STSLICE
+PUSHINT 4000730955
+STUR 143
+STU 64
+ENDC
+PUSHINT 64
+SENDRAWMSG
+.loc Config.sol, 0
+
+.globl	send_error_38827eac_internal
+.type	send_error_38827eac_internal, @function
+CALL $send_error_38827eac_internal_macro$
+
+.macro send_error_38827eac_internal_macro
+.loc Config.sol, 160
+GETGLOB 9
+NEWC
+STSLICECONST x62_
+STSLICE
+PUSHINT 4000730991
+STUR 143
+STU 64
+ENDC
+PUSHINT 64
+SENDRAWMSG
+.loc Config.sol, 0
+
+.globl	send_slash_confirmation_fa0055d5_internal
+.type	send_slash_confirmation_fa0055d5_internal, @function
+CALL $send_slash_confirmation_fa0055d5_internal_macro$
+
+.macro send_slash_confirmation_fa0055d5_internal_macro
+.loc Config.sol, 164
+GETGLOB 9
+NEWC
+STSLICECONST x62_
+STSLICE
+PUSHINT 4000730956
+STUR 143
+STU 64
+ENDC
+PUSHINT 64
+SENDRAWMSG
+.loc Config.sol, 0
+
+.globl	send_slash_error_8c89b69d_internal
+.type	send_slash_error_8c89b69d_internal, @function
+CALL $send_slash_error_8c89b69d_internal_macro$
+
+.macro send_slash_error_8c89b69d_internal_macro
+.loc Config.sol, 168
+GETGLOB 9
+NEWC
+STSLICECONST x62_
+STSLICE
+PUSHINT 4000730992
+STUR 143
+STU 64
+ENDC
+PUSHINT 64
+SENDRAWMSG
+.loc Config.sol, 0
+
+.macro set_next_validator_set
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+.loc Config.sol, 171
+LDU 64
+LDREF
+ENDS
+.loc Config.sol, 0
+CALLREF {
+	CALL $set_next_validator_set_6d13b750_internal_macro$
+}
+CALLREF {
+	CALL $c7_to_c4$
+}
+THROW 0
+
+.globl	set_next_validator_set_6d13b750_internal
+.type	set_next_validator_set_6d13b750_internal, @function
+CALL $set_next_validator_set_6d13b750_internal_macro$
+
+.macro set_next_validator_set_6d13b750_internal_macro
+.loc Config.sol, 173
+PUSHINT 1
+CONFIGPARAM
+DUP
+PUSHCONT {
+	PUSHREF {
+	}
+	SWAP
+}
+IFNOT
+.loc Config.sol, 174
+PUSHCONT {
+	.loc Config.sol, 175
+	BLKDROP 3
+	.loc Config.sol, 0
+}
+IFNOTJMP
+.loc Config.sol, 177
+CTOS
+PLDU 256
+.loc Config.sol, 178
+FALSE
+.loc Config.sol, 179
+GETGLOB 9
+PARSEMSGADDR
+INDEX 3
+PLDU 256
+ROT
+EQUAL
+PUSHCONT {
+	.loc Config.sol, 180
+	ACCEPT
+	.loc Config.sol, 183
+	OVER
+	CALLREF {
+		CALL $check_validator_set_12139cfb_internal_macro$
+	}
+	.loc Config.sol, 184
+	OVER
+	NOW
+	GREATER
+	XCHG S2
+	GREATER
+	AND
+	NIP
+	.loc Config.sol, 0
+}
+IF
+.loc Config.sol, 186
+PUSHCONT {
+	.loc Config.sol, 187
+	DUP
+	PUSHINT 36
+	GETGLOB 10
+	PUSHINT 32
+	DICTUSETREF
+	SETGLOB 10
+	.loc Config.sol, 189
+	OVER
+	CALLREF {
+		CALL $send_confirmation_c685eda7_internal_macro$
+	}
+}
+PUSHCONT {
+	.loc Config.sol, 191
+	OVER
+	CALLREF {
+		CALL $send_error_38827eac_internal_macro$
+	}
+}
+IFELSE
+.loc Config.sol, 0
+DROP2
+
+.macro set_slashed_validator_set
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+.loc Config.sol, 195
+LDU 64
+LDREF
+ENDS
+.loc Config.sol, 0
+CALLREF {
+	CALL $set_slashed_validator_set_a5518e9f_internal_macro$
+}
+CALLREF {
+	CALL $c7_to_c4$
+}
+THROW 0
+
+.globl	set_slashed_validator_set_a5518e9f_internal
+.type	set_slashed_validator_set_a5518e9f_internal, @function
+CALL $set_slashed_validator_set_a5518e9f_internal_macro$
+
+.macro set_slashed_validator_set_a5518e9f_internal_macro
+.loc Config.sol, 197
+MYADDR
+REWRITESTDADDR
+DROP
+.loc Config.sol, 198
+NEQINT -1
+PUSHCONT {
+	.loc Config.sol, 199
+	DROP2
+	.loc Config.sol, 0
+}
+IFJMP
+.loc Config.sol, 201
+PUSHINT 1
+CONFIGPARAM
+DUP
+PUSHCONT {
+	PUSHREF {
+	}
+	SWAP
+}
+IFNOT
+.loc Config.sol, 202
+PUSHCONT {
+	.loc Config.sol, 203
+	BLKDROP 3
+	.loc Config.sol, 0
+}
+IFNOTJMP
+.loc Config.sol, 205
+CTOS
+PLDU 256
+.loc Config.sol, 206
+FALSE
+.loc Config.sol, 207
+GETGLOB 9
+PARSEMSGADDR
+INDEX 3
+PLDU 256
+ROT
+EQUAL
+PUSHCONT {
+	.loc Config.sol, 208
+	ACCEPT
+	.loc Config.sol, 211
+	OVER
+	CALLREF {
+		CALL $check_validator_set_12139cfb_internal_macro$
+	}
+	.loc Config.sol, 212
+	OVER
+	NOW
+	GREATER
+	XCHG S2
+	GREATER
+	AND
+	NIP
+	.loc Config.sol, 0
+}
+IF
+.loc Config.sol, 214
+PUSHCONT {
+	.loc Config.sol, 215
+	DUP
+	PUSHINT 35
+	GETGLOB 10
+	PUSHINT 32
+	DICTUSETREF
+	SETGLOB 10
+	.loc Config.sol, 217
+	OVER
+	CALLREF {
+		CALL $send_slash_confirmation_fa0055d5_internal_macro$
+	}
+}
+PUSHCONT {
+	.loc Config.sol, 219
+	OVER
+	CALLREF {
+		CALL $send_slash_error_8c89b69d_internal_macro$
+	}
+}
+IFELSE
+.loc Config.sol, 0
+DROP2
+
+.macro set_config_param
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+.loc Config.sol, 230
+LDU 32
+LDREF
+ENDS
+.loc Config.sol, 0
+CALLREF {
+	CALL $set_config_param_3fee4a7e_internal_macro$
+}
+CALLREF {
+	CALL $c7_to_c4$
+}
+THROW 0
+
+.globl	set_config_param_3fee4a7e_internal
+.type	set_config_param_3fee4a7e_internal, @function
+CALL $set_config_param_3fee4a7e_internal_macro$
+
+.macro set_config_param_3fee4a7e_internal_macro
+.loc Config.sol, 230
+DEPTH
+ADDCONST -5
+PICK
+EQINT -1
+THROWIFNOT 71
+.loc Config.sol, 225
+GETGLOB 2
+THROWIFNOT 101
+.loc Config.sol, 226
+GETGLOB 2
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
+EQUAL
+THROWIFNOT 100
+.loc Config.sol, 231
+DUP
+CTOS
+SDEPTH
+PUSHPOW2 7
+LEQ
+THROWIFNOT 39
+.loc Config.sol, 232
+ACCEPT
+.loc Config.sol, 233
+SWAP
+GETGLOB 10
+PUSHINT 32
+DICTUSETREF
+SETGLOB 10
+.loc Config.sol, 0
+
+.macro set_public_key
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+.loc Config.sol, 236
+LDU 256
+ENDS
+.loc Config.sol, 0
+CALLREF {
+	CALL $set_public_key_9a40058e_internal_macro$
+}
+CALLREF {
+	CALL $c7_to_c4$
+}
+THROW 0
+
+.globl	set_public_key_9a40058e_internal
+.type	set_public_key_9a40058e_internal, @function
+CALL $set_public_key_9a40058e_internal_macro$
+
+.macro set_public_key_9a40058e_internal_macro
+.loc Config.sol, 236
+DEPTH
+ADDCONST -5
+PICK
+EQINT -1
+THROWIFNOT 71
+.loc Config.sol, 225
+GETGLOB 2
+THROWIFNOT 101
+.loc Config.sol, 226
+GETGLOB 2
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
+EQUAL
+THROWIFNOT 100
+.loc Config.sol, 237
+ACCEPT
+.loc Config.sol, 238
+SETGLOB 2
+.loc Config.sol, 0
+
+.macro set_elector_code
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+.loc Config.sol, 241
+LDREF
+LDREF
+ENDS
+.loc Config.sol, 0
+CALLREF {
+	CALL $set_elector_code_1cfe5815_internal_macro$
+}
+IFREF {
+	CALL $c7_to_c4$
+}
+THROW 0
+
+.globl	set_elector_code_1cfe5815_internal
+.type	set_elector_code_1cfe5815_internal, @function
+CALL $set_elector_code_1cfe5815_internal_macro$
+
+.macro set_elector_code_1cfe5815_internal_macro
+.loc Config.sol, 241
+DEPTH
+ADDCONST -5
+PICK
+EQINT -1
+THROWIFNOT 71
+.loc Config.sol, 225
+GETGLOB 2
+THROWIFNOT 101
+.loc Config.sol, 226
+GETGLOB 2
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
+EQUAL
+THROWIFNOT 100
+.loc Config.sol, 227
+PUSHCONT {
+	.loc Config.sol, 242
+	OVER
+	CDEPTH
+	PUSHPOW2 7
+	LEQ
+	THROWIFNOT 39
+	.loc Config.sol, 243
+	DUP
+	CDEPTH
+	PUSHPOW2 7
+	LEQ
+	THROWIFNOT 39
+	.loc Config.sol, 244
+	PUSHINT 1
+	CONFIGPARAM
+	DUP
+	PUSHCONT {
+		PUSHREF {
+		}
+		SWAP
+	}
+	IFNOT
+	.loc Config.sol, 245
+	PUSHCONT {
+		.loc Config.sol, 246
+		BLKDROP 3
+		.loc Config.sol, 0
+	}
+	IFNOTJMP
+	.loc Config.sol, 248
+	ACCEPT
+	.loc Config.sol, 249
+	CTOS
+	PLDU 256
+	.loc Config.sol, 251
+	XCHG S2
+	NOW
+	ROLL 3
+	PUSHINT -1
+	NEWC
+	STSLICECONST x9_
+	STI 8
+	STU 256
+	ENDC
+	CTOS
+	NEWC
+	STSLICECONST x62_
+	STSLICE
+	PUSHINT 12720910251328179000044872783962527403085238167105380
+	STUR 175
+	STU 64
+	STREF
+	STREF
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+	.loc Config.sol, 241
+}
+CALLX
+.loc Config.sol, 0
+
+.macro set_code
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+.loc Config.sol, 255
+LDREF
+ENDS
+.loc Config.sol, 0
+CALLREF {
+	CALL $set_code_58f563b9_internal_macro$
+}
+CALLREF {
+	CALL $c7_to_c4$
+}
+THROW 0
+
+.globl	set_code_58f563b9_internal
+.type	set_code_58f563b9_internal, @function
+CALL $set_code_58f563b9_internal_macro$
+
+.macro set_code_58f563b9_internal_macro
+.loc Config.sol, 255
+DEPTH
+ADDCONST -5
+PICK
+EQINT -1
+THROWIFNOT 71
+.loc Config.sol, 225
+GETGLOB 2
+THROWIFNOT 101
+.loc Config.sol, 226
+GETGLOB 2
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
+EQUAL
+THROWIFNOT 100
+.loc Config.sol, 256
+DUP
+CDEPTH
+PUSHPOW2 7
+LEQ
+THROWIFNOT 39
+.loc Config.sol, 257
+DUP
+SETCODE
+.loc Config.sol, 258
+CTOS
+DUP
+PUSHSLICE x8adb35
+SDEQ
+PUSHCONT {
+	PLDREFIDX 1
+	CTOS
+}
+IF
+PLDREF
+CTOS
+BLESS
+POP C3
+.loc Config.sol, 259
+PUSHINT $onCodeUpgrade_fb00cc5e_internal$
+PUSH C3
+EXECUTE
+.loc Config.sol, 0
+
+.macro change_public_key
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+.loc Config.sol, 271
+LDU 256
+ENDS
+.loc Config.sol, 0
+CALLREF {
+	CALL $change_public_key_fb0b1247_internal_macro$
+}
+CALLREF {
+	CALL $c7_to_c4$
+}
+THROW 0
+
+.globl	change_public_key_fb0b1247_internal
+.type	change_public_key_fb0b1247_internal, @function
+CALL $change_public_key_fb0b1247_internal_macro$
+
+.macro change_public_key_fb0b1247_internal_macro
+.loc Config.sol, 271
+DEPTH
+ADDCONST -5
+PICK
+THROWIF 72
+.loc Config.sol, 264
+PUSHINT 5
+CONFIGPARAM
+DUP
+PUSHCONT {
+	PUSHREF {
+	}
+	SWAP
+}
+IFNOT
+.loc Config.sol, 265
+THROWIFNOT 501
+.loc Config.sol, 266
+CTOS
+PLDU 256
+.loc Config.sol, 267
+GETGLOB 9
+SWAP
+PUSHINT -1
+NEWC
+STSLICECONST x9_
+STI 8
+STU 256
+ENDC
+CTOS
+SDEQ
+THROWIFNOT 502
+.loc Config.sol, 272
+ACCEPT
+.loc Config.sol, 273
+SETGLOB 2
+.loc Config.sol, 0
+
+.macro change_config_param
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+.loc Config.sol, 276
+LDU 32
+LDREF
+ENDS
+.loc Config.sol, 0
+CALLREF {
+	CALL $change_config_param_93cd5189_internal_macro$
+}
+CALLREF {
+	CALL $c7_to_c4$
+}
+THROW 0
+
+.globl	change_config_param_93cd5189_internal
+.type	change_config_param_93cd5189_internal, @function
+CALL $change_config_param_93cd5189_internal_macro$
+
+.macro change_config_param_93cd5189_internal_macro
+.loc Config.sol, 276
+DEPTH
+ADDCONST -5
+PICK
+THROWIF 72
+.loc Config.sol, 264
+PUSHINT 5
+CONFIGPARAM
+DUP
+PUSHCONT {
+	PUSHREF {
+	}
+	SWAP
+}
+IFNOT
+.loc Config.sol, 265
+THROWIFNOT 501
+.loc Config.sol, 266
+CTOS
+PLDU 256
+.loc Config.sol, 267
+GETGLOB 9
+SWAP
+PUSHINT -1
+NEWC
+STSLICECONST x9_
+STI 8
+STU 256
+ENDC
+CTOS
+SDEQ
+THROWIFNOT 502
+.loc Config.sol, 277
+DUP
+CTOS
+SDEPTH
+PUSHPOW2 7
+LEQ
+THROWIFNOT 39
+.loc Config.sol, 279
+ACCEPT
+.loc Config.sol, 280
+SWAP
+GETGLOB 10
+PUSHINT 32
+DICTUSETREF
+SETGLOB 10
+.loc Config.sol, 0
+
+.macro change_elector_code
+DROP
+GETGLOB 6
+THROWIFNOT 76
+.loc Config.sol, 283
+LDREF
+LDREF
+ENDS
+.loc Config.sol, 0
+CALLREF {
+	CALL $change_elector_code_1fedc37d_internal_macro$
+}
+IFREF {
+	CALL $c7_to_c4$
+}
+THROW 0
+
+.globl	change_elector_code_1fedc37d_internal
+.type	change_elector_code_1fedc37d_internal, @function
+CALL $change_elector_code_1fedc37d_internal_macro$
+
+.macro change_elector_code_1fedc37d_internal_macro
+.loc Config.sol, 283
+DEPTH
+ADDCONST -5
+PICK
+THROWIF 72
+.loc Config.sol, 264
+PUSHINT 5
+CONFIGPARAM
+DUP
+PUSHCONT {
+	PUSHREF {
+	}
+	SWAP
+}
+IFNOT
+.loc Config.sol, 265
+DUP
+THROWIFNOT 501
+.loc Config.sol, 266
+OVER
+CTOS
+PLDU 256
+.loc Config.sol, 267
+GETGLOB 9
+OVER
+PUSHINT -1
+NEWC
+STSLICECONST x9_
+STI 8
+STU 256
+ENDC
+CTOS
+SDEQ
+THROWIFNOT 502
+.loc Config.sol, 268
+BLKSWAP 2, 3
+PUSHCONT {
+	.loc Config.sol, 284
+	OVER
+	CDEPTH
+	PUSHPOW2 7
+	LEQ
+	THROWIFNOT 39
+	.loc Config.sol, 285
+	DUP
+	CDEPTH
+	PUSHPOW2 7
+	LEQ
+	THROWIFNOT 39
+	.loc Config.sol, 286
+	PUSHINT 1
+	CONFIGPARAM
+	DUP
+	PUSHCONT {
+		PUSHREF {
+		}
+		SWAP
+	}
+	IFNOT
+	.loc Config.sol, 287
+	PUSHCONT {
+		.loc Config.sol, 288
+		BLKDROP 3
+		.loc Config.sol, 0
+	}
+	IFNOTJMP
+	.loc Config.sol, 290
+	ACCEPT
+	.loc Config.sol, 291
+	CTOS
+	PLDU 256
+	.loc Config.sol, 293
+	XCHG S2
+	NOW
+	ROLL 3
+	PUSHINT -1
+	NEWC
+	STSLICECONST x9_
+	STI 8
+	STU 256
+	ENDC
+	CTOS
+	NEWC
+	STSLICECONST x62_
+	STSLICE
+	PUSHINT 12720910251328179000044872783962527403085238167105380
+	STUR 175
+	STU 64
+	STREF
+	STREF
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+	.loc Config.sol, 283
+}
+CALLX
+.loc Config.sol, 0
+BLKDROP 3
+
+.macro change_code
+DROP
+GETGLOB 6
+THROWIFNOT 76
+.loc Config.sol, 297
+LDREF
+ENDS
+.loc Config.sol, 0
+CALLREF {
+	CALL $change_code_d64b93d8_internal_macro$
+}
+IFREF {
+	CALL $c7_to_c4$
+}
+THROW 0
+
+.globl	change_code_d64b93d8_internal
+.type	change_code_d64b93d8_internal, @function
+CALL $change_code_d64b93d8_internal_macro$
+
+.macro change_code_d64b93d8_internal_macro
+.loc Config.sol, 297
+DEPTH
+ADDCONST -5
+PICK
+THROWIF 72
+.loc Config.sol, 264
+PUSHINT 5
+CONFIGPARAM
+DUP
+PUSHCONT {
+	PUSHREF {
+	}
+	SWAP
+}
+IFNOT
+.loc Config.sol, 265
+THROWIFNOT 501
+.loc Config.sol, 266
+CTOS
+PLDU 256
+.loc Config.sol, 267
+GETGLOB 9
+SWAP
+PUSHINT -1
+NEWC
+STSLICECONST x9_
+STI 8
+STU 256
+ENDC
+CTOS
+SDEQ
+THROWIFNOT 502
+.loc Config.sol, 298
+DUP
+CDEPTH
+PUSHPOW2 7
+LEQ
+THROWIFNOT 39
+.loc Config.sol, 299
+DUP
+SETCODE
+.loc Config.sol, 300
+CTOS
+DUP
+PUSHSLICE x8adb35
+SDEQ
+PUSHCONT {
+	PLDREFIDX 1
+	CTOS
+}
+IF
+PLDREF
+CTOS
+BLESS
+POP C3
+.loc Config.sol, 301
+PUSHINT $onCodeUpgrade_fb00cc5e_internal$
+PUSH C3
+EXECUTE
+.loc Config.sol, 0
+
+.internal-alias onCodeUpgrade_fb00cc5e_internal, 2
+.internal onCodeUpgrade_fb00cc5e_internal
+.loc Config.sol, 305
+ACCEPT
+.loc Config.sol, 306
+GETGLOB 2
+ISNULL
+IFNOTREF {
+	CALL $c7_to_c4$
+}
+THROW 0
+.loc Config.sol, 0
+
+.macro setcode_confirmation
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+.loc Config.sol, 309
+LDU 64
+LDU 32
+ENDS
+.loc Config.sol, 0
+CALLREF {
+	CALL $setcode_confirmation_29be02bf_internal_macro$
+}
+CALLREF {
+	CALL $c7_to_c4$
+}
+THROW 0
+
+.globl	setcode_confirmation_29be02bf_internal
+.type	setcode_confirmation_29be02bf_internal, @function
+CALL $setcode_confirmation_29be02bf_internal_macro$
+
+.macro setcode_confirmation_29be02bf_internal_macro
+.loc Config.sol, 309
+DROP2
+.loc Config.sol, 0
+
+.internal-alias :onTickTock, -2
+.internal :onTickTock
+PUSHINT -2
+CALLREF {
+	CALL $c4_to_c7$
+}
+PUSHREFSLICE {
+	.blob x8000000000000000000000000000000000000000000000000000000000000000001_
+}
+SETGLOB 9
+.loc Config.sol, 314
+PUSHINT 36
+GETGLOB 10
+PUSHINT 32
+DICTUGETREF
+NULLSWAPIFNOT
+DROP
+.loc Config.sol, 315
+FALSE
+.loc Config.sol, 316
+OVER
+ISNULL
+PUSHCONT {
+	.loc Config.sol, 318
+	PUSH2 S1, S1
+	ISNULL
+	THROWIF 63
+	.loc Config.sol, 319
+	DUP
+	CTOS
+	.loc Config.sol, 320
+	DUP
+	SBITS
+	GTINT 39
+	PUSHCONT {
+		.loc Config.sol, 321
+		DUP
+		LDU 8
+		LDU 32
+		POP S3
+		.loc Config.sol, 322
+		NOW
+		LEQ
+		SWAP
+		EQINT 18
+		AND
+		PUSHCONT {
+			.loc Config.sol, 324
+			OVER
+			PUSHINT 34
+			GETGLOB 10
+			PUSHINT 32
+			DICTUSETGETREF
+			NULLSWAPIFNOT
+			DROP
+			SWAP
+			SETGLOB 10
+			.loc Config.sol, 325
+			DUP
+			ISNULL
+			THROWIF 63
+			PUSHINT 32
+			GETGLOB 10
+			PUSHINT 32
+			DICTUSETGETREF
+			NULLSWAPIFNOT
+			DROP2
+			DUP
+			SETGLOB 10
+			.loc Config.sol, 326
+			PUSHINT 36
+			SWAP
+			PUSHINT 32
+			DICTUDEL
+			DROP
+			SETGLOB 10
+			.loc Config.sol, 327
+			TRUE
+			POP S3
+			.loc Config.sol, 0
+		}
+		IF
+		.loc Config.sol, 0
+	}
+	IF
+	.loc Config.sol, 0
+	DROP2
+}
+IFNOT
+.loc Config.sol, 331
+DUP
+PUSHCONT {
+	.loc Config.sol, 332
+	PUSHINT 35
+	GETGLOB 10
+	PUSHINT 32
+	DICTUGETREF
+	NULLSWAPIFNOT
+	DROP
+	POP S2
+	.loc Config.sol, 333
+	OVER
+	ISNULL
+	PUSHCONT {
+		.loc Config.sol, 334
+		PUSH2 S1, S1
+		ISNULL
+		THROWIF 63
+		.loc Config.sol, 335
+		DUP
+		CTOS
+		.loc Config.sol, 336
+		DUP
+		SBITS
+		GTINT 39
+		PUSHCONT {
+			.loc Config.sol, 337
+			DUP
+			LDU 8
+			LDU 32
+			POP S3
+			.loc Config.sol, 338
+			NOW
+			LEQ
+			SWAP
+			EQINT 18
+			AND
+			PUSHCONT {
+				.loc Config.sol, 339
+				OVER
+				PUSHINT 34
+				GETGLOB 10
+				PUSHINT 32
+				DICTUSETGETREF
+				NULLSWAPIFNOT
+				DROP2
+				DUP
+				SETGLOB 10
+				.loc Config.sol, 340
+				PUSHINT 35
+				SWAP
+				PUSHINT 32
+				DICTUDEL
+				DROP
+				SETGLOB 10
+				.loc Config.sol, 341
+				TRUE
+				POP S3
+				.loc Config.sol, 0
+			}
+			IF
+			.loc Config.sol, 0
+		}
+		IF
+		.loc Config.sol, 0
+		DROP2
+	}
+	IFNOT
+	.loc Config.sol, 0
+}
+IFNOT
+.loc Config.sol, 346
+DROP2
+.loc Config.sol, 0
+CALLREF {
+	CALL $c7_to_c4$
+}
+
+.macro on_bounce_macro
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+.loc Config.sol, 0
+CALLREF {
+	CALL $c7_to_c4$
+}
+
+.macro receive_macro
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+.loc Config.sol, 0
+CALLREF {
+	CALL $c7_to_c4$
+}
+
+.macro reset_utime_until
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+.loc Config.sol, 358
+ENDS
+.loc Config.sol, 0
+CALLREF {
+	CALL $reset_utime_until_9a1f42b7_internal_macro$
+}
+CALLREF {
+	CALL $c7_to_c4$
+}
+THROW 0
+
+.globl	reset_utime_until_9a1f42b7_internal
+.type	reset_utime_until_9a1f42b7_internal, @function
+CALL $reset_utime_until_9a1f42b7_internal_macro$
+
+.macro reset_utime_until_9a1f42b7_internal_macro
+.loc Config.sol, 359
+ACCEPT
+.loc Config.sol, 360
+PUSHINT 34
+GETGLOB 10
+PUSHINT 32
+DICTUGETREF
+PUSHCONT {
+	PUSHREF {
+	}
+}
+IFNOT
+.loc Config.sol, 361
+CTOS
+LDU 8
+LDU 32
+LDU 32
+LDU 16
+LDU 16
+LDU 64
+PLDDICT
+TUPLE 7
+.loc Config.sol, 362
+NOW
+SETINDEX 2
+.loc Config.sol, 364
+NEWC
+SWAP
+UNTUPLE 7
+REVERSE 8, 0
+STU 8
+STU 32
+STU 32
+STU 16
+STU 16
+STU 64
+STDICT
+.loc Config.sol, 365
+ENDC
+PUSHINT 34
+GETGLOB 10
+PUSHINT 32
+DICTUSETREF
+DUP
+SETGLOB 10
+.loc Config.sol, 367
+PUSHINT 36
+SWAP
+PUSHINT 32
+DICTUDEL
+DROP
+SETGLOB 10
+.loc Config.sol, 0
+
+.macro get_config_param
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+.loc Config.sol, 370
+LDU 32
+ENDS
+.loc Config.sol, 0
+CALLREF {
+	CALL $get_config_param_3a15ecb2_internal_macro$
+}
+OVER
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 2818634259
+	STUR 130
+	STREF
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	DROP
+}
+IFELSE
+IFREF {
+	CALL $c7_to_c4$
+}
+THROW 0
+
+.globl	get_config_param_3a15ecb2_internal
+.type	get_config_param_3a15ecb2_internal, @function
+CALL $get_config_param_3a15ecb2_internal_macro$
+
+.macro get_config_param_3a15ecb2_internal_macro
+.loc Config.sol, 371
+GETGLOB 10
+PUSHINT 32
+DICTUGETREF
+PUSHCONT {
+	PUSHREF {
+	}
+}
+IFNOT
+.loc Config.sol, 0
+
+.globl	get_vset_760f0638_internal
+.type	get_vset_760f0638_internal, @function
+CALL $get_vset_760f0638_internal_macro$
+
+.macro get_vset_760f0638_internal_macro
+.loc Config.sol, 375
+GETGLOB 10
+PUSHINT 32
+DICTUGETREF
+NULLSWAPIFNOT
+DROP
+.loc Config.sol, 376
+DUP
+ISNULL
+PUSHCONT {
+	.loc Config.sol, 380
+	PUSHINT 0
+	BLKPUSH 5, 0
+	NEWDICT
+	TUPLE 7
+	.loc Config.sol, 381
+	NIP
+	.loc Config.sol, 0
+}
+PUSHCONT {
+	.loc Config.sol, 377
+	DUP
+	ISNULL
+	THROWIF 63
+	CTOS
+	LDU 8
+	LDU 32
+	LDU 32
+	LDU 16
+	LDU 16
+	LDU 64
+	PLDDICT
+	TUPLE 7
+	.loc Config.sol, 0
+}
+IFELSE
+.loc Config.sol, 0
+
+.macro get_previous_vset
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+.loc Config.sol, 386
+ENDS
+.loc Config.sol, 0
+CALLREF {
+	CALL $get_previous_vset_f1622ec1_internal_macro$
+}
+OVER
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 3542890445
+	STUR 130
+	SWAP
+	UNTUPLE 7
+	REVERSE 8, 0
+	STU 8
+	STU 32
+	STU 32
+	STU 16
+	STU 16
+	STU 64
+	STDICT
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	DROP
+}
+IFELSE
+IFREF {
+	CALL $c7_to_c4$
+}
+THROW 0
+
+.globl	get_previous_vset_f1622ec1_internal
+.type	get_previous_vset_f1622ec1_internal, @function
+CALL $get_previous_vset_f1622ec1_internal_macro$
+
+.macro get_previous_vset_f1622ec1_internal_macro
+.loc Config.sol, 387
+PUSHINT 32
+CALLREF {
+	CALL $get_vset_760f0638_internal_macro$
+}
+.loc Config.sol, 0
+
+.macro get_current_vset
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+.loc Config.sol, 391
+ENDS
+.loc Config.sol, 0
+CALLREF {
+	CALL $get_current_vset_cb181528_internal_macro$
+}
+OVER
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 3293275240
+	STUR 130
+	SWAP
+	UNTUPLE 7
+	REVERSE 8, 0
+	STU 8
+	STU 32
+	STU 32
+	STU 16
+	STU 16
+	STU 64
+	STDICT
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	DROP
+}
+IFELSE
+IFREF {
+	CALL $c7_to_c4$
+}
+THROW 0
+
+.globl	get_current_vset_cb181528_internal
+.type	get_current_vset_cb181528_internal, @function
+CALL $get_current_vset_cb181528_internal_macro$
+
+.macro get_current_vset_cb181528_internal_macro
+.loc Config.sol, 392
+PUSHINT 34
+CALLREF {
+	CALL $get_vset_760f0638_internal_macro$
+}
+.loc Config.sol, 0
+
+.macro get_slashed_vset
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+.loc Config.sol, 396
+ENDS
+.loc Config.sol, 0
+CALLREF {
+	CALL $get_slashed_vset_315d8d4c_internal_macro$
+}
+OVER
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 3490980630
+	STUR 130
+	SWAP
+	UNTUPLE 7
+	REVERSE 8, 0
+	STU 8
+	STU 32
+	STU 32
+	STU 16
+	STU 16
+	STU 64
+	STDICT
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	DROP
+}
+IFELSE
+IFREF {
+	CALL $c7_to_c4$
+}
+THROW 0
+
+.globl	get_slashed_vset_315d8d4c_internal
+.type	get_slashed_vset_315d8d4c_internal, @function
+CALL $get_slashed_vset_315d8d4c_internal_macro$
+
+.macro get_slashed_vset_315d8d4c_internal_macro
+.loc Config.sol, 397
+PUSHINT 35
+CALLREF {
+	CALL $get_vset_760f0638_internal_macro$
+}
+.loc Config.sol, 0
+
+.macro get_next_vset
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+.loc Config.sol, 401
+ENDS
+.loc Config.sol, 0
+CALLREF {
+	CALL $get_next_vset_ecc48779_internal_macro$
+}
+OVER
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 3479704964
+	STUR 130
+	SWAP
+	UNTUPLE 7
+	REVERSE 8, 0
+	STU 8
+	STU 32
+	STU 32
+	STU 16
+	STU 16
+	STU 64
+	STDICT
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	DROP
+}
+IFELSE
+IFREF {
+	CALL $c7_to_c4$
+}
+THROW 0
+
+.globl	get_next_vset_ecc48779_internal
+.type	get_next_vset_ecc48779_internal, @function
+CALL $get_next_vset_ecc48779_internal_macro$
+
+.macro get_next_vset_ecc48779_internal_macro
+.loc Config.sol, 402
+PUSHINT 36
+CALLREF {
+	CALL $get_vset_760f0638_internal_macro$
+}
+.loc Config.sol, 0
+
+.macro public_key
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+.loc Config.sol, 405
+ENDS
+.loc Config.sol, 0
+CALLREF {
+	CALL $public_key_e0e349c4_internal_macro$
+}
+OVER
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 2787666104
+	STUR 130
+	STU 256
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	DROP
+}
+IFELSE
+IFREF {
+	CALL $c7_to_c4$
+}
+THROW 0
+
+.globl	public_key_e0e349c4_internal
+.type	public_key_e0e349c4_internal, @function
+CALL $public_key_e0e349c4_internal_macro$
+
+.macro public_key_e0e349c4_internal_macro
+.loc Config.sol, 406
+GETGLOB 2
+.loc Config.sol, 0
+
+.macro get_version
+DROP
+GETGLOB 6
+THROWIFNOT 76
+.loc Config.sol, 410
+ENDS
+.loc Config.sol, 0
+CALLREF {
+	CALL $get_version_90179465_internal_macro$
+}
+PUSH S2
+PUSHCONT {
+	PUSH S4
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 98
+	STZEROES
+	REVERSE 2, 1
+	STSLICECONST xabc534f5
+	STU 32
+	STU 32
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	DROP2
+}
+IFELSE
+IFREF {
+	CALL $c7_to_c4$
+}
+THROW 0
+
+.globl	get_version_90179465_internal
+.type	get_version_90179465_internal, @function
+CALL $get_version_90179465_internal_macro$
+
+.macro get_version_90179465_internal_macro
+.loc Config.sol, 411
+PUSHINT 0
+PUSHINT 1
+.loc Config.sol, 0
+
+.macro c4_to_c7
+PUSHROOT
+CTOS
+LDU 256 ; pubkey c4
+LDU 64 ; pubkey timestamp c4
+LDU 1 ; ctor flag
+NIP
+LDDICT
+ENDS
+SETGLOB 10
+SETGLOB 3
+SETGLOB 2
+
+.macro c4_to_c7_with_init_storage
+PUSHROOT
+CTOS
+SBITS
+GTINT 1
+PUSHCONT {
+	PUSHINT 0
+	PUSHROOT
+	CTOS
+	PLDDICT ; D
+	NEWDICT
+	SETGLOB 10
+	PUSHINT 64
+	DICTUGET
+	THROWIFNOT 61
+	PLDU 256
+	SETGLOB 2
+	PUSHINT 0 ; timestamp
+	SETGLOB 3
+}
+IFREFELSE {
+	CALL $c4_to_c7$
+}
+
+.macro c7_to_c4
+GETGLOB 10
+GETGLOB 3
+GETGLOB 2
+NEWC
+STU 256
+STU 64
+STONE
+STDICT
+ENDC
+POPROOT
+
+.macro upd_only_time_in_c4
+PUSHROOT
+CTOS
+LDU 256
+LDU 64
+NIP
+GETGLOB 3
+ROT
+NEWC
+STU 256
+STU 64
+STSLICE
+ENDC
+POPROOT
+
+.internal-alias :main_internal, 0
+.internal :main_internal
+PUSHROOT
+CTOS
+SBITS
+NEQINT 1
+SETGLOB 6
+PUSH S2
+CTOS
+LDU 4 ; bounced tail
+LDMSGADDR ; bounced src tail
+DROP
+SETGLOB 9
+MODPOW2 1
+IFRET
+OVER
+SEMPTY ; isEmpty
+IFJMPREF {
+	GETGLOB 6
+	THROWIFNOT 76
+}
+OVER
+LDUQ 32  ; [funcId] body' ok
+THROWIFNOT 60
+OVER
+IFNOTJMPREF {
+	GETGLOB 6
+	THROWIFNOT 76
+}
+SWAP
+CALLREF {
+	CALL $public_function_selector$
+}
+THROW 60
+
+.internal-alias :main_external, -1
+.internal :main_external
+PUSHROOT
+CTOS
+SBITS
+NEQINT 1
+SETGLOB 6
+PUSHREFSLICE {
+	.blob x8000000000000000000000000000000000000000000000000000000000000000001_
+}
+SETGLOB 9
+OVER
+CALLREF {
+	CALL $c4_to_c7_with_init_storage$
+}
+LDU 1 ; haveSign msgSlice
+SWAP
+PUSHCONT {
+	PUSHPOW2 9
+	LDSLICEX
+	DUP
+	MYADDR
+	NEWC
+	STSLICE
+	STSLICE
+	ENDC
+	HASHCU
+	ROT
+	GETGLOB 2
+	DUP
+	SETGLOB 5
+	CHKSIGNU
+	THROWIFNOT 40
+}
+IF
+LDU 64 ; timestamp msgSlice
+SWAP
+CALL $replay_protection_macro$
+LDU 32 ; expireAt msgSlice
+SWAP
+NOW ; msgSlice expireAt now
+GREATER ; msgSlice expireAt>now
+THROWIFNOT 57
+LDU 32 ; funcId body
+SWAP
+CALLREF {
+	CALL $public_function_selector$
+}
+THROW 60
+
+.macro public_function_selector
+DUP
+PUSHINT 1417055094
+LEQ
+IFJMPREF {
+	DUP
+	PUSHINT 640182456
+	LEQ
+	IFJMPREF {
+		DUP
+		PUSHINT 199478837
+		EQUAL
+		IFJMPREF {
+			CALL $set_config_param$
+		}
+		DUP
+		PUSHINT 343208049
+		EQUAL
+		IFJMPREF {
+			CALL $change_public_key$
+		}
+		DUP
+		PUSHINT 497854421
+		EQUAL
+		IFJMPREF {
+			CALL $set_elector_code$
+		}
+		DUP
+		PUSHINT 640182456
+		EQUAL
+		IFJMPREF {
+			CALL $public_key$
+		}
+	}
+	DUP
+	PUSHINT 867749250
+	LEQ
+	IFJMPREF {
+		DUP
+		PUSHINT 642730042
+		EQUAL
+		IFJMPREF {
+			CALL $change_code$
+		}
+		DUP
+		PUSHINT 671150611
+		EQUAL
+		IFJMPREF {
+			CALL $get_config_param$
+		}
+		DUP
+		PUSHINT 734344437
+		EQUAL
+		IFJMPREF {
+			CALL $get_version$
+		}
+		DUP
+		PUSHINT 867749250
+		EQUAL
+		IFJMPREF {
+			CALL $set_public_key$
+		}
+	}
+	DUP
+	PUSHINT 1332221316
+	LEQ
+	IFJMPREF {
+		DUP
+		PUSHINT 1145791592
+		EQUAL
+		IFJMPREF {
+			CALL $get_current_vset$
+		}
+		DUP
+		PUSHINT 1314280276
+		EQUAL
+		IFJMPREF {
+			CALL $set_next_validator_set$
+		}
+		DUP
+		PUSHINT 1314280277
+		EQUAL
+		IFJMPREF {
+			CALL $set_slashed_validator_set$
+		}
+		DUP
+		PUSHINT 1332221316
+		EQUAL
+		IFJMPREF {
+			CALL $get_next_vset$
+		}
+	}
+	DUP
+	PUSHINT 1417055094
+	LEQ
+	IFJMPREF {
+		DUP
+		PUSHINT 1343496982
+		EQUAL
+		IFJMPREF {
+			CALL $get_slashed_vset$
+		}
+		DUP
+		PUSHINT 1382967282
+		EQUAL
+		IFJMPREF {
+			CALL $set_code$
+		}
+		DUP
+		PUSHINT 1395406797
+		EQUAL
+		IFJMPREF {
+			CALL $get_previous_vset$
+		}
+		DUP
+		PUSHINT 1417055094
+		EQUAL
+		IFJMPREF {
+			CALL $change_config_param$
+		}
+	}
+}
+DUP
+PUSHINT 3460525924
+LEQ
+IFJMPREF {
+	DUP
+	PUSHINT 1555611009
+	EQUAL
+	IFJMPREF {
+		CALL $reset_utime_until$
+	}
+	DUP
+	PUSHINT 1632324731
+	EQUAL
+	IFJMPREF {
+		CALL $change_elector_code$
+	}
+	DUP
+	PUSHINT 1756716863
+	EQUAL
+	IFJMPREF {
+		CALL $constructor$
+	}
+	DUP
+	PUSHINT 3460525924
+	EQUAL
+	IFJMPREF {
+		CALL $setcode_confirmation$
+	}
+}
+
