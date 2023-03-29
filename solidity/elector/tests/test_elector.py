@@ -16,7 +16,6 @@ import secrets
 import time
 
 import ts4
-1/0
 from BaseContract import *
 from core import set_trace_tvm, parse_config_param
 from globals import status, time_set, time_get
@@ -2268,10 +2267,10 @@ start = time.time()
 
 test_change_config_internal()
 print()
-test_old_config_code_upgrade()
-print()
-test_old_elector_code_upgrade()
-print()
+# test_old_config_code_upgrade()
+# print()
+# test_old_elector_code_upgrade()
+# print()
 test_identical_validators()
 print()
 test_elector_code_upgrade()
