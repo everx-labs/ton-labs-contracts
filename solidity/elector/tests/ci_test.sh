@@ -15,19 +15,12 @@ do
         echo
         echo "Process file $src.sol ..."
         sold $src.sol
-        # dbg=$src.debug.json
-        # map=$(jq -e '.map' $dbg)
-        # if "$map" != "null"
-        # then
-        #     echo $map > $dbg
-        # fi
-
-        # if jq -e '.map' $dbg > /dev/null
-        # then
-        #     jq '.map | . +' $dbg > temp.json
-        #     mv temp.json $dbg
-        # fi
-        echo "Done $src.sol"
+        dbg=$src.debug.json
+        if jq -e '.map' $dbg > /dev/null
+        then
+            jq '.map' $dbg > temp.json
+            mv temp.json $dbg
+        fi
     fi
 done
 cd ..

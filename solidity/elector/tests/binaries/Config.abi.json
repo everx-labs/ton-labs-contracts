@@ -172,6 +172,14 @@
 				{"name":"value0","type":"uint32"},
 				{"name":"value1","type":"uint32"}
 			]
+		},
+		{
+			"name": "seqno",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"value0","type":"uint32"}
+			]
 		}
 	],
 	"data": [

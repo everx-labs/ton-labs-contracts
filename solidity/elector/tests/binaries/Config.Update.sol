@@ -411,4 +411,6 @@ contract Config is IConfig {
     function get_version() public pure returns (uint32, uint32) {
         return (VERSION_MAJOR, VERSION_MINOR);
     }
+
+    function seqno() public pure returns (uint32) { return 0xFFFFFFFF; }
 }

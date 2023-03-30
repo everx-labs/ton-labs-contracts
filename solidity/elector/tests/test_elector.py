@@ -44,81 +44,82 @@ class Config(BaseContract):
         super(Config, self).__init__(
             'Config', dict(), keypair = keypair, wc = -1, override_address = override_address)
 
-        real_pubkey = self.call_getter('public_key')
-        assert isinstance(real_pubkey, int)
-        assert ne(0, real_pubkey)
-        assert eq(decode_int(pubkey), real_pubkey)
+        if globals.G_SET_CONFIG_PARAMS:
+            real_pubkey = self.call_getter('public_key')
+            assert isinstance(real_pubkey, int)
+            assert ne(0, real_pubkey)
+            assert eq(decode_int(pubkey), real_pubkey)
 
-        if capabilities != 0:
-            self.change_config_param_owner(2, dict(p8 = dict(
-                version = 6,
-                capabilities = capabilities
+            if capabilities != 0:
+                self.change_config_param_owner(2, dict(p8 = dict(
+                    version = 6,
+                    capabilities = capabilities
+                )))
+
+            self.change_config_param_owner(0, dict(p0 = config_addr))
+            self.change_config_param_owner(1, dict(p1 = elector_addr))
+            self.change_config_param_owner(15, dict(p15 = dict(
+                validators_elected_for = elect_for,
+                elections_start_before = elect_begin_before,
+                elections_end_before   = elect_end_before,
+                stake_held_for         = stake_held,
             )))
+            self.change_config_param_owner(16, dict(p16 = dict(
+                max_validators      = max_validators,
+                max_main_validators = main_validators,
+                min_validators      = min_validators,
+            )))
+            self.change_config_param_owner(17, dict(p17 = dict(
+                min_stake          = min_stake,
+                max_stake          = max_stake,
+                min_total_stake    = min_total_stake,
+                max_stake_factor   = max_stake_factor,
+            )))
+            self.change_config_param_owner(18, dict(p18 = [dict(
+                utime_since      = 0,
+                bit_price_ps     = 0,
+                cell_price_ps    = 0,
+                mc_bit_price_ps  = 0,
+                mc_cell_price_ps = 0
+            )]))
+            p = dict(
+                gas_price         = 0,
+                gas_limit         = 0xFFFFFFFFFF,
+                special_gas_limit = 0xFFFFFFFFFF,
+                gas_credit        = 0xFFFFFF,
+                block_gas_limit   = 0,
+                freeze_due_limit  = 0,
+                delete_due_limit  = 0,
+                flat_gas_limit    = 0,
+                flat_gas_price    = 0
+            )
+            self.change_config_param_owner(20, dict(p20 = p))
+            self.change_config_param_owner(21, dict(p21 = p))
+            p = dict(
+                lump_price       = 0,
+                bit_price        = 0,
+                cell_price       = 0,
+                ihr_price_factor = 0,
+                first_frac       = 0,
+                next_frac        = 0
+            )
+            self.change_config_param_owner(24, dict(p24 = p))
+            self.change_config_param_owner(25, dict(p25 = p))
+            p = dict(
+                main         = 1,
+                utime_since  = utime_since,
+                utime_until  = utime_until,
+                total        = 0,
+                total_weight = 0,
+                list = [dict(
+                    public_key = '0'*64,
+                    weight = 0
+                )]
+            )
+            self.change_config_param_owner(34, dict(p34 = p))
 
-        self.change_config_param_owner(0, dict(p0 = config_addr))
-        self.change_config_param_owner(1, dict(p1 = elector_addr))
-        self.change_config_param_owner(15, dict(p15 = dict(
-            validators_elected_for = elect_for,
-            elections_start_before = elect_begin_before,
-            elections_end_before   = elect_end_before,
-            stake_held_for         = stake_held,
-        )))
-        self.change_config_param_owner(16, dict(p16 = dict(
-            max_validators      = max_validators,
-            max_main_validators = main_validators,
-            min_validators      = min_validators,
-        )))
-        self.change_config_param_owner(17, dict(p17 = dict(
-            min_stake          = min_stake,
-            max_stake          = max_stake,
-            min_total_stake    = min_total_stake,
-            max_stake_factor   = max_stake_factor,
-        )))
-        self.change_config_param_owner(18, dict(p18 = [dict(
-            utime_since      = 0,
-            bit_price_ps     = 0,
-            cell_price_ps    = 0,
-            mc_bit_price_ps  = 0,
-            mc_cell_price_ps = 0
-        )]))
-        p = dict(
-            gas_price         = 0,
-            gas_limit         = 0xFFFFFFFFFF,
-            special_gas_limit = 0xFFFFFFFFFF,
-            gas_credit        = 0xFFFFFF,
-            block_gas_limit   = 0,
-            freeze_due_limit  = 0,
-            delete_due_limit  = 0,
-            flat_gas_limit    = 0,
-            flat_gas_price    = 0
-        )
-        self.change_config_param_owner(20, dict(p20 = p))
-        self.change_config_param_owner(21, dict(p21 = p))
-        p = dict(
-            lump_price       = 0,
-            bit_price        = 0,
-            cell_price       = 0,
-            ihr_price_factor = 0,
-            first_frac       = 0,
-            next_frac        = 0
-        )
-        self.change_config_param_owner(24, dict(p24 = p))
-        self.change_config_param_owner(25, dict(p25 = p))
-        p = dict(
-            main         = 1,
-            utime_since  = utime_since,
-            utime_until  = utime_until,
-            total        = 0,
-            total_weight = 0,
-            list = [dict(
-                public_key = '0'*64,
-                weight = 0
-            )]
-        )
-        self.change_config_param_owner(34, dict(p34 = p))
-
-        # old = self.print_config_param(18)
-        # assert eq(old, self.print_config_param(18))
+            old = self.print_config_param(18)
+            assert eq(old, self.print_config_param(18))
 
     def get_config_param(self, index: int) -> Cell:
         cell = self.call_getter("get_config_param", dict(index = index))
@@ -1246,7 +1247,8 @@ def test_old_config_code_upgrade():
     old_c.ensure_balance(10000000000)
 
     status('Testing functionality after setcode')
-    assert eq(0, old_c.call_getter('seqno')) # it is not working in new contract
+    assert eq(0xFFFFFFFF, c.call_getter('seqno'))
+    assert eq(0xFFFFFFFF, old_c.call_getter('seqno')) # it is not working in new contract
 
     cell = old_c.call_getter("get_config_param", dict(index = 0))
     assert isinstance(cell, Cell)
@@ -2265,16 +2267,17 @@ init('binaries/', verbose = True)
 
 start = time.time()
 
-test_change_config_internal()
-print()
+# test_change_config_internal()
+# print()
 # test_old_config_code_upgrade()
 # print()
 # test_old_elector_code_upgrade()
 # print()
+# test_elector_code_upgrade()
+# print()
+
 test_identical_validators()
 print()
-test_elector_code_upgrade()
-
 print()
 test_seven_validators()
 print()

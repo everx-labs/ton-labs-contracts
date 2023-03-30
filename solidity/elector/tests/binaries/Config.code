@@ -1942,6 +1942,52 @@ PUSHINT 0
 PUSHINT 1
 .loc Config.sol, 0
 
+.macro seqno
+DROP
+GETGLOB 6
+THROWIFNOT 76
+.loc Config.sol, 414
+ENDS
+.loc Config.sol, 0
+CALLREF {
+	CALL $seqno_c53c1726_internal_macro$
+}
+OVER
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 3818186769
+	STUR 130
+	STU 32
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	DROP
+}
+IFELSE
+IFREF {
+	CALL $c7_to_c4$
+}
+THROW 0
+
+.globl	seqno_c53c1726_internal
+.type	seqno_c53c1726_internal, @function
+CALL $seqno_c53c1726_internal_macro$
+
+.macro seqno_c53c1726_internal_macro
+.loc Config.sol, 414
+PUSHPOW2DEC 32
+.loc Config.sol, 0
+
 .macro c4_to_c7
 PUSHROOT
 CTOS
@@ -2218,22 +2264,33 @@ PUSHINT 3460525924
 LEQ
 IFJMPREF {
 	DUP
-	PUSHINT 1555611009
-	EQUAL
-	IFJMPREF {
-		CALL $reset_utime_until$
-	}
-	DUP
-	PUSHINT 1632324731
-	EQUAL
-	IFJMPREF {
-		CALL $change_elector_code$
-	}
-	DUP
 	PUSHINT 1756716863
-	EQUAL
+	LEQ
 	IFJMPREF {
-		CALL $constructor$
+		DUP
+		PUSHINT 1555611009
+		EQUAL
+		IFJMPREF {
+			CALL $reset_utime_until$
+		}
+		DUP
+		PUSHINT 1632324731
+		EQUAL
+		IFJMPREF {
+			CALL $change_elector_code$
+		}
+		DUP
+		PUSHINT 1670703121
+		EQUAL
+		IFJMPREF {
+			CALL $seqno$
+		}
+		DUP
+		PUSHINT 1756716863
+		EQUAL
+		IFJMPREF {
+			CALL $constructor$
+		}
 	}
 	DUP
 	PUSHINT 3460525924
