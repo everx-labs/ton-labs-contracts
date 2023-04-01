@@ -658,21 +658,17 @@ contract Elector is IElector {
         m_reports = nil2;
         m_reports_workchain = nil2;
 
-        optional(uint16, TvmSlice) v = vdict.min();
         uint64 masterchain_vtors_weight = 0;
         uint64 workchain_vtors_weight = 0;
         uint16 index = 0;
-        while (v.hasValue()) {
-            (uint16 id, TvmSlice entry) = v.get();
-            Common.ValidatorAddr vtor = entry.decode(Common.ValidatorAddr);
-            require(vtor.tag != 0x53, BAD_CONFIG_PARAM_34);
+        for((, TvmSlice entry) : vdict) {
+            (,, uint64 weight) = decode_validator(entry);
             if (index < max_main_validators) {
-                masterchain_vtors_weight += vtor.weight;
+                masterchain_vtors_weight += weight;
             } else {
-                workchain_vtors_weight += vtor.weight;
+                workchain_vtors_weight += weight;
             }
             index += 1;
-            v = vdict.next(id);
         }
         m_masterchain_vtors_weight = masterchain_vtors_weight;
         m_workchain_vtors_weight = workchain_vtors_weight;
@@ -870,6 +866,14 @@ contract Elector is IElector {
         }
     }
 
+    function decode_validator(TvmSlice entry) internal inline pure returns (uint8, uint256, uint64) {
+        uint8 tag = entry.decode(uint8);
+        require(tag == 0x53 || tag == 0x73, BAD_CONFIG_PARAM_34);
+        (uint32 ed25519_pubkey, uint256 pubkey, uint64 weight) = entry.decode(uint32, uint256, uint64);
+        require(ed25519_pubkey == 0x8e81278a, BAD_CONFIG_PARAM_34);
+        return (tag, pubkey, weight);
+    }
+
     function report(uint256 signature_hi, uint256 signature_lo, uint256 reporter_pubkey, uint256 victim_pubkey, uint8 metric_id)
         public externalMsg {
         (TvmCell info, /* uint64 */, /* Common.ValidatorSet vset */) = get_current_vset();
@@ -895,36 +899,28 @@ contract Elector is IElector {
         require_ok(!m_banned.exists(victim_pubkey), BAD_BANNED_VICTIM);
 
         // find reporter's descriptor and its index 
-        optional(uint16, TvmSlice) v = vset.vdict.min();
         uint64 reporter_weight = 0;
         uint16 reporter_index = 0;
-        while (v.hasValue()) {
-            (uint16 id, TvmSlice entry) = v.get();
-            Common.ValidatorAddr vtor = entry.decode(Common.ValidatorAddr);
-            require(vtor.tag != 0x53, BAD_CONFIG_PARAM_34);
-            if (vtor.pubkey == reporter_pubkey) {
-                reporter_weight = vtor.weight;
+        for((, TvmSlice entry) : vset.vdict) {
+            (, uint256 pubkey, uint64 weight) = decode_validator(entry);
+            if (pubkey == reporter_pubkey) {
+                reporter_weight = weight;
                 break;
             }
             reporter_index += 1;
-            v = vset.vdict.next(id);
         }
         require(reporter_weight > 0, BAD_REPORTER_WEIGHT);
 
         // find victim's descriptor
-        v = vset.vdict.min();
         uint16 victim_index = 0;
         bool victim_found = false;
-        while (v.hasValue()) {
-            (uint16 id, TvmSlice entry) = v.get();
-            Common.ValidatorAddr vtor = entry.decode(Common.ValidatorAddr);
-            require(vtor.tag != 0x53, BAD_CONFIG_PARAM_34);
-            if (vtor.pubkey == victim_pubkey) {
+        for((, TvmSlice entry) : vset.vdict) {
+            (, uint256 pubkey,) = decode_validator(entry);
+            if (pubkey == victim_pubkey) {
                 victim_found = true;
                 break;
             }
             victim_index += 1;
-            v = vset.vdict.next(id);
         }
         require(victim_found, BAD_VICTIM_PUBKEY);
 
@@ -1015,15 +1011,14 @@ contract Elector is IElector {
             index = 0;
             for((, TvmSlice entry) : vdict) {
                 TvmSlice entryRead = entry;
-                Common.ValidatorAddr vtor = entryRead.decode(Common.ValidatorAddr);
-                require(vtor.tag != 0x53, BAD_CONFIG_PARAM_34);
-                if (!m_banned.exists(vtor.pubkey)) {
+                (, uint256 pubkey, uint64 weight) = decode_validator(entryRead);
+                if (!m_banned.exists(pubkey)) {
                     vdict_updated[index] = entry;
-                    total_weight += vtor.weight;
+                    total_weight += weight;
                     if (index < vset.main) {
-                        masterchain_vtors_weight += vtor.weight;
+                        masterchain_vtors_weight += weight;
                     } else {
-                        workchain_vtors_weight += vtor.weight;
+                        workchain_vtors_weight += weight;
                     }
                     index += 1;
                 }
