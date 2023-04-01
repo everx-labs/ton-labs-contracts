@@ -1,5 +1,11 @@
 #!/bin/sh
 set -e
+
+# echo install linux components
+# apt-get update && apt-get install -y python3 python3-pip jq
+
+echo install python modules
+pip install -r requirements.txt
 echo "Recompile contracts..."
 sold --version
 rm -rf rebuild
