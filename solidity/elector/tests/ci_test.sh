@@ -1,37 +1,36 @@
 #!/bin/sh
 set -e
+
+# echo install linux components
+# apt-get update && apt-get install -y python3 python3-pip jq
+
+echo install python modules
+pip install -r requirements.txt
 echo "Recompile contracts..."
-/o/projects/broxus/elector/sold --version
+sold --version
 rm -rf rebuild
 mkdir rebuild
-cp ../*tsol rebuild/
-sed '/pragma ton-solidity/a pragma upgrade func;' rebuild/Config.tsol > rebuild/Config.Update.tsol
-sed '/pragma ton-solidity/a pragma upgrade func;' rebuild/Elector.tsol > rebuild/Elector.Update.tsol
+cp ../*sol rebuild/
+sed '/pragma ton-solidity/a pragma upgrade func;' rebuild/Config.sol > rebuild/Config.Update.sol
+sed '/pragma ton-solidity/a pragma upgrade func;' rebuild/Elector.sol > rebuild/Elector.Update.sol
 cd rebuild
-for src in $(ls [!I]*.tsol | sed -E 's/\.tsol//g')
+for src in $(ls [!I]*.sol | sed -E 's/\.sol//g')
 do
     if [ "$src" != "Common" ]
     then
         echo
-        echo "Process file $src.tsol ..."
-        /o/projects/broxus/elector/sold $src.tsol
-        # dbg=$src.debug.json
-        # map=$(jq -e '.map' $dbg)
-        # if "$map" != "null"
-        # then
-        #     echo $map > $dbg
-        # fi
-
-        # if jq -e '.map' $dbg > /dev/null
-        # then
-        #     jq '.map | . +' $dbg > temp.json
-        #     mv temp.json $dbg
-        # fi
-        echo "Done $src.tsol"
+        echo "Process file $src.sol ..."
+        sold $src.sol
+        dbg=$src.debug.json
+        if jq -e '.map' $dbg > /dev/null
+        then
+            jq '.map' $dbg > temp.json
+            mv temp.json $dbg
+        fi
     fi
 done
 cd ..
 mv rebuild/* binaries/
 rm -rf rebuild
 echo "Run tests..."
-python test_elector.py
+python3 test_elector.py
