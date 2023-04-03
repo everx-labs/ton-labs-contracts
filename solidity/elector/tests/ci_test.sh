@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 echo "Recompile contracts..."
-sold --version
+/o/projects/broxus/elector/sold --version
 rm -rf rebuild
 mkdir rebuild
 cp ../*sol rebuild/
@@ -14,7 +14,7 @@ do
     then
         echo
         echo "Process file $src.sol ..."
-        sold $src.sol
+        /o/projects/broxus/elector/sold $src.sol
         # dbg=$src.debug.json
         # map=$(jq -e '.map' $dbg)
         # if "$map" != "null"
@@ -34,4 +34,4 @@ cd ..
 mv rebuild/* binaries/
 rm -rf rebuild
 echo "Run tests..."
-python3 test_elector.py
+python test_elector.py

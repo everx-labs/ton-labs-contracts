@@ -8,11 +8,12 @@
 */
 
 pragma ton-solidity ^ 0.66.0;
+pragma upgrade func;
 pragma AbiHeader expire;
 pragma AbiHeader time;
-import "IConfig.sol";
-import "IElector.sol";
-import "Common.sol";
+import "IConfig.tsol";
+import "IElector.tsol";
+import "Common.tsol";
 
 contract Config is IConfig {
 

@@ -46,6 +46,7 @@ class Config(BaseContract):
 
         real_pubkey = self.call_getter('public_key')
         assert isinstance(real_pubkey, int)
+
         assert ne(0, real_pubkey)
         assert eq(decode_int(pubkey), real_pubkey)
 
@@ -147,7 +148,7 @@ class Config(BaseContract):
             return self.get_current_vset()
         else:
             return vset
-    
+
     def get_current_vset(self) -> dict:
         vset = self.call_getter_raw('get_current_vset')['value0']
         assert isinstance(vset, dict)
@@ -1208,7 +1209,7 @@ def test_old_config_code_upgrade():
     globals.reset()
     showtime = 86400
     time_set(showtime)
-    
+
     status('Loading old config contract')
     private_key = "18ba321b20fd6df7e317623b7109bc0c30717d783a2ad54407dc116ff614cfcfd189e68c5465891838ef026302f97e28127a8bf72f6bf494991fe8c12e466180"
     old_c = BaseContract('Config.FunC', address = Address("-1:00" + "5" * 62))
@@ -2126,7 +2127,7 @@ def test_change_config_internal():
 
     # alien contract
     w1 = Validator()
-    
+
     c.print_config_param(5)
     c.print_config_param(8)
     c.print_config_param(17)
@@ -2214,13 +2215,13 @@ def test_change_config_internal():
         pubkey = 0
     ), w1.private_key, 40)
     assert eq(int(w.validator_pubkey, 16), c.call_getter('public_key'))
-    
+
     status('try to clear public key of config without signature')
     c.call_method('set_public_key', dict(
         pubkey = 0
     ), None, 100)
     assert eq(int(w.validator_pubkey, 16), c.call_getter('public_key'))
-    
+
     status('clear public key of config')
     c.call_method_signed('set_public_key', dict(
         pubkey = 0

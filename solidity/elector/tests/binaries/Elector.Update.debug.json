@@ -5253,31 +5253,31 @@
     "476b280d6c4d4e76bdfa5caa11396fde06b575338273729d5f77823116f7cd6f": {
       "0": {
         "filename": "Elector.Update.sol",
-        "line": 180
+        "line": 560
       },
       "16": {
         "filename": "Elector.Update.sol",
-        "line": 180
+        "line": 560
       },
       "32": {
         "filename": "Elector.Update.sol",
-        "line": 180
+        "line": 560
       },
       "48": {
         "filename": "Elector.Update.sol",
-        "line": 180
+        "line": 560
       },
       "64": {
         "filename": "Elector.Update.sol",
-        "line": 180
+        "line": 560
       },
       "80": {
         "filename": "Elector.Update.sol",
-        "line": 180
+        "line": 560
       },
       "88": {
         "filename": "Elector.Update.sol",
-        "line": 180
+        "line": 560
       }
     },
     "4938abed910332d069e7f5fdcac13d4898adc6cedafcfb2fc9c12e4e24d9c939": {
@@ -5308,52 +5308,6 @@
       "96": {
         "filename": "./Elector.Update.code",
         "line": 5768
-      }
-    },
-    "4a422877b845942f8dd45f5fd7784e3df4d1d5f4d0225aa61909551315a71e45": {
-      "38": {
-        "filename": "Elector.Update.sol",
-        "line": 1177
-      },
-      "46": {
-        "filename": "Elector.Update.sol",
-        "line": 1177
-      },
-      "94": {
-        "filename": "Elector.Update.sol",
-        "line": 1177
-      },
-      "102": {
-        "filename": "Elector.Update.sol",
-        "line": 1177
-      },
-      "150": {
-        "filename": "Elector.Update.sol",
-        "line": 1177
-      },
-      "158": {
-        "filename": "Elector.Update.sol",
-        "line": 1177
-      },
-      "174": {
-        "filename": "Elector.Update.sol",
-        "line": 1177
-      },
-      "190": {
-        "filename": "Elector.Update.sol",
-        "line": 1178
-      },
-      "206": {
-        "filename": "Elector.Update.sol",
-        "line": 1178
-      },
-      "214": {
-        "filename": "Elector.Update.sol",
-        "line": 1178
-      },
-      "230": {
-        "filename": "Elector.Update.sol",
-        "line": 1178
       }
     },
     "551074806f66612cda741db2b933bb8e8b0119941efd9ea0a904792206fe5e3c": {
@@ -6831,41 +6785,41 @@
     "61ab4641fa30d9310391025086eec65d200d79268e1b7cd402565e01ba64be3c": {
       "0": {
         "filename": "./Elector.Update.code",
-        "line": 6175
+        "line": 3234
       }
     },
     "61c8c0dc4c72b22bf5fc386ae167cf3633accf79c16e90a9dcb789aee42dba29": {
       "0": {
         "filename": "Elector.Update.sol",
-        "line": 1094
+        "line": 579
       },
       "16": {
         "filename": "Elector.Update.sol",
-        "line": 1094
+        "line": 579
       },
       "32": {
         "filename": "Elector.Update.sol",
-        "line": 1094
+        "line": 579
       },
       "40": {
         "filename": "Elector.Update.sol",
-        "line": 1094
+        "line": 579
       },
       "56": {
         "filename": "Elector.Update.sol",
-        "line": 1094
+        "line": 579
       },
       "72": {
         "filename": "Elector.Update.sol",
-        "line": 1094
+        "line": 579
       },
       "80": {
         "filename": "Elector.Update.sol",
-        "line": 1094
+        "line": 579
       },
       "96": {
         "filename": "Elector.Update.sol",
-        "line": 1094
+        "line": 579
       }
     },
     "6305f3584f8925ea9f849bd0cb4683b8fc2caaf8064b09fe507a39c92327033b": {
@@ -11781,6 +11735,52 @@
         "line": 1102
       }
     },
+    "c7ed4511df01fa9f1ce95c301ea18ca97d4c304c4d26602e943347b297aaa865": {
+      "4": {
+        "filename": "Elector.Update.sol",
+        "line": 1177
+      },
+      "12": {
+        "filename": "Elector.Update.sol",
+        "line": 1177
+      },
+      "60": {
+        "filename": "Elector.Update.sol",
+        "line": 1177
+      },
+      "68": {
+        "filename": "Elector.Update.sol",
+        "line": 1177
+      },
+      "116": {
+        "filename": "Elector.Update.sol",
+        "line": 1177
+      },
+      "124": {
+        "filename": "Elector.Update.sol",
+        "line": 1177
+      },
+      "140": {
+        "filename": "Elector.Update.sol",
+        "line": 1177
+      },
+      "156": {
+        "filename": "Elector.Update.sol",
+        "line": 1178
+      },
+      "172": {
+        "filename": "Elector.Update.sol",
+        "line": 1178
+      },
+      "180": {
+        "filename": "Elector.Update.sol",
+        "line": 1178
+      },
+      "196": {
+        "filename": "Elector.Update.sol",
+        "line": 1178
+      }
+    },
     "c7fc0097edb5c2c9c0d09bfb187ee48520c657bc90742f0a902614d8e68f3e70": {
       "0": {
         "filename": "Elector.Update.sol",
@@ -14038,39 +14038,39 @@
     "dc9b85629ef51caf9268340efe855b33a105f400bc98c8d17b6fbacd8b186143": {
       "0": {
         "filename": "Elector.Update.sol",
-        "line": 341
+        "line": 732
       },
       "16": {
         "filename": "Elector.Update.sol",
-        "line": 341
+        "line": 732
       },
       "32": {
         "filename": "Elector.Update.sol",
-        "line": 341
+        "line": 732
       },
       "48": {
         "filename": "Elector.Update.sol",
-        "line": 341
+        "line": 732
       },
       "64": {
         "filename": "Elector.Update.sol",
-        "line": 341
+        "line": 732
       },
       "80": {
         "filename": "Elector.Update.sol",
-        "line": 341
+        "line": 732
       },
       "96": {
         "filename": "Elector.Update.sol",
-        "line": 341
+        "line": 732
       },
       "112": {
         "filename": "Elector.Update.sol",
-        "line": 341
+        "line": 732
       },
       "120": {
         "filename": "Elector.Update.sol",
-        "line": 341
+        "line": 732
       }
     },
     "ded20c742bfe2b5b30216b4837a8ddb8cbc418da0423c33ccbf6f0eb70b95302": {
@@ -14272,51 +14272,51 @@
     "e70148db8a78389fafcbd3f0b3dd03ed3bb5f1400273566dc649eabe90ca762e": {
       "0": {
         "filename": "Elector.Update.sol",
-        "line": 349
+        "line": 654
       },
       "16": {
         "filename": "Elector.Update.sol",
-        "line": 349
+        "line": 654
       },
       "32": {
         "filename": "Elector.Update.sol",
-        "line": 349
+        "line": 654
       },
       "40": {
         "filename": "Elector.Update.sol",
-        "line": 349
+        "line": 654
       },
       "56": {
         "filename": "Elector.Update.sol",
-        "line": 349
+        "line": 654
       },
       "72": {
         "filename": "Elector.Update.sol",
-        "line": 349
+        "line": 654
       },
       "88": {
         "filename": "Elector.Update.sol",
-        "line": 349
+        "line": 654
       },
       "104": {
         "filename": "Elector.Update.sol",
-        "line": 349
+        "line": 654
       },
       "112": {
         "filename": "Elector.Update.sol",
-        "line": 349
+        "line": 654
       },
       "128": {
         "filename": "Elector.Update.sol",
-        "line": 349
+        "line": 654
       },
       "136": {
         "filename": "Elector.Update.sol",
-        "line": 349
+        "line": 654
       },
       "152": {
         "filename": "Elector.Update.sol",
-        "line": 349
+        "line": 654
       }
     },
     "e760e96fbe877d6165429fb885723615392efeeb3656001e48e0809e22a42722": {
