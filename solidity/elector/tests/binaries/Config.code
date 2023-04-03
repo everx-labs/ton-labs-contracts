@@ -10,101 +10,101 @@ IFREF {
 GETGLOB 6
 THROWIF 51
 ENDS
-.loc Config.sol, 37
+.loc Config.tsol, 37
 PUSHINT 38597363079105398474523661669562635951089994888546854679819194669304376546645
 NEWC
 STU 256
-.loc Config.sol, 39
+.loc Config.tsol, 39
 ENDC
 PUSHINT 0
 GETGLOB 10
 PUSHINT 32
 DICTUSETREF
 SETGLOB 10
-.loc Config.sol, 42
+.loc Config.tsol, 42
 PUSHINT 23158417847463239084714197001737581570653996933128112807891516801582625927987
 NEWC
 STU 256
-.loc Config.sol, 44
+.loc Config.tsol, 44
 ENDC
 PUSHINT 1
 GETGLOB 10
 PUSHINT 32
 DICTUSETREF
 SETGLOB 10
-.loc Config.sol, 48
+.loc Config.tsol, 48
 NEWC
 STSLICECONST x1a
-.loc Config.sol, 49
+.loc Config.tsol, 49
 PUSHPOW2 30
 STGRAMS
-.loc Config.sol, 50
+.loc Config.tsol, 50
 PUSHINT 1
 STGRAMS
-.loc Config.sol, 51
+.loc Config.tsol, 51
 PUSHPOW2 9
 STGRAMS
-.loc Config.sol, 52
+.loc Config.tsol, 52
 ENDC
 PUSHINT 13
 GETGLOB 10
 PUSHINT 32
 DICTUSETREF
 SETGLOB 10
-.loc Config.sol, 60
+.loc Config.tsol, 60
 PUSHREF {
 	.blob x0000177000000e100000070800008000
 }
-.loc Config.sol, 61
+.loc Config.tsol, 61
 PUSHINT 15
 GETGLOB 10
 PUSHINT 32
 DICTUSETREF
 SETGLOB 10
-.loc Config.sol, 68
+.loc Config.tsol, 68
 PUSHREF {
 	.blob x000700640003
 }
-.loc Config.sol, 69
+.loc Config.tsol, 69
 PUSHINT 16
 GETGLOB 10
 PUSHINT 32
 DICTUSETREF
 SETGLOB 10
-.loc Config.sol, 76
+.loc Config.tsol, 76
 NEWC
-.loc Config.sol, 77
+.loc Config.tsol, 77
 PUSHINT 2000000000
 STGRAMS
-.loc Config.sol, 78
+.loc Config.tsol, 78
 PUSHINT 50000000000
 STGRAMS
-.loc Config.sol, 79
+.loc Config.tsol, 79
 PUSHINT 10000000000
 STGRAMS
-.loc Config.sol, 80
+.loc Config.tsol, 80
 STSLICECONST x00030000
-.loc Config.sol, 81
+.loc Config.tsol, 81
 ENDC
 PUSHINT 17
 GETGLOB 10
 PUSHINT 32
 DICTUSETREF
 SETGLOB 10
-.loc Config.sol, 86
+.loc Config.tsol, 86
 PUSHREF {
 	.blob xcc000000000000000000000000000000000000000000000000000000000000000000000000
 }
-.loc Config.sol, 93
+.loc Config.tsol, 93
 CTOS
 PUSHINT 0
 NEWDICT
 PUSHINT 32
 DICTUSET
-.loc Config.sol, 97
+.loc Config.tsol, 97
 NEWC
 STDICT
-.loc Config.sol, 98
+.loc Config.tsol, 98
 ENDC
 CTOS
 PLDREF
@@ -113,11 +113,11 @@ GETGLOB 10
 PUSHINT 32
 DICTUSETREF
 SETGLOB 10
-.loc Config.sol, 102
+.loc Config.tsol, 102
 PUSHSLICE xd100000000000000000000000000000000de0000000000000000000000ffffffffff000000ffffffffff0000000000ffffffffffffffffffffff00000000000000000000000000000000
 NEWC
 STSLICE
-.loc Config.sol, 114
+.loc Config.tsol, 114
 DUP
 ENDC
 PUSHINT 20
@@ -125,18 +125,18 @@ GETGLOB 10
 PUSHINT 32
 DICTUSETREF
 SETGLOB 10
-.loc Config.sol, 115
+.loc Config.tsol, 115
 ENDC
 PUSHINT 21
 GETGLOB 10
 PUSHINT 32
 DICTUSETREF
 SETGLOB 10
-.loc Config.sol, 118
+.loc Config.tsol, 118
 PUSHSLICE xea0000000000000000000000000000000000000000000000000000000000000000
 NEWC
 STSLICE
-.loc Config.sol, 126
+.loc Config.tsol, 126
 DUP
 ENDC
 PUSHINT 24
@@ -144,51 +144,51 @@ GETGLOB 10
 PUSHINT 32
 DICTUSETREF
 SETGLOB 10
-.loc Config.sol, 127
+.loc Config.tsol, 127
 ENDC
 PUSHINT 25
 GETGLOB 10
 PUSHINT 32
 DICTUSETREF
 SETGLOB 10
-.loc Config.sol, 130
+.loc Config.tsol, 130
 NEWC
-.loc Config.sol, 131
+.loc Config.tsol, 131
 STSLICECONST 0
-.loc Config.sol, 132
+.loc Config.tsol, 132
 ENDC
 PUSHINT 31
 GETGLOB 10
 PUSHINT 32
 DICTUSETREF
 SETGLOB 10
-.loc Config.sol, 135
+.loc Config.tsol, 135
 PUSHINT 0
 BLKPUSH 5, 0
 NEWDICT
 TUPLE 7
-.loc Config.sol, 136
+.loc Config.tsol, 136
 PUSHINT 18
 SETINDEX 0
-.loc Config.sol, 137
+.loc Config.tsol, 137
 PUSHINT 0
 SETINDEX 1
-.loc Config.sol, 138
+.loc Config.tsol, 138
 PUSHINT 6000
 SETINDEX 2
-.loc Config.sol, 139
+.loc Config.tsol, 139
 PUSHINT 0
 SETINDEX 3
-.loc Config.sol, 140
+.loc Config.tsol, 140
 PUSHINT 0
 SETINDEX 4
-.loc Config.sol, 141
+.loc Config.tsol, 141
 PUSHINT 0
 SETINDEX 5
-.loc Config.sol, 142
+.loc Config.tsol, 142
 NEWDICT
 SETINDEX 6
-.loc Config.sol, 145
+.loc Config.tsol, 145
 NEWC
 SWAP
 UNTUPLE 7
@@ -200,14 +200,14 @@ STU 16
 STU 16
 STU 64
 STDICT
-.loc Config.sol, 146
+.loc Config.tsol, 146
 ENDC
 PUSHINT 34
 GETGLOB 10
 PUSHINT 32
 DICTUSETREF
 SETGLOB 10
-.loc Config.sol, 0
+.loc Config.tsol, 0
 CALLREF {
 	CALL $c7_to_c4$
 }
@@ -218,7 +218,7 @@ THROW 0
 CALL $check_validator_set_12139cfb_internal_macro$
 
 .macro check_validator_set_12139cfb_internal_macro
-.loc Config.sol, 151
+.loc Config.tsol, 151
 CTOS
 LDU 8
 LDU 32
@@ -228,19 +228,19 @@ LDU 16
 LDU 64
 PLDDICT
 TUPLE 7
-.loc Config.sol, 152
+.loc Config.tsol, 152
 DUP
 SECOND
 SWAP
 THIRD
-.loc Config.sol, 0
+.loc Config.tsol, 0
 
 .globl	send_confirmation_c685eda7_internal
 .type	send_confirmation_c685eda7_internal, @function
 CALL $send_confirmation_c685eda7_internal_macro$
 
 .macro send_confirmation_c685eda7_internal_macro
-.loc Config.sol, 156
+.loc Config.tsol, 156
 GETGLOB 9
 NEWC
 STSLICECONST x62_
@@ -251,14 +251,14 @@ STU 64
 ENDC
 PUSHINT 64
 SENDRAWMSG
-.loc Config.sol, 0
+.loc Config.tsol, 0
 
 .globl	send_error_38827eac_internal
 .type	send_error_38827eac_internal, @function
 CALL $send_error_38827eac_internal_macro$
 
 .macro send_error_38827eac_internal_macro
-.loc Config.sol, 160
+.loc Config.tsol, 160
 GETGLOB 9
 NEWC
 STSLICECONST x62_
@@ -269,14 +269,14 @@ STU 64
 ENDC
 PUSHINT 64
 SENDRAWMSG
-.loc Config.sol, 0
+.loc Config.tsol, 0
 
 .globl	send_slash_confirmation_fa0055d5_internal
 .type	send_slash_confirmation_fa0055d5_internal, @function
 CALL $send_slash_confirmation_fa0055d5_internal_macro$
 
 .macro send_slash_confirmation_fa0055d5_internal_macro
-.loc Config.sol, 164
+.loc Config.tsol, 164
 GETGLOB 9
 NEWC
 STSLICECONST x62_
@@ -287,14 +287,14 @@ STU 64
 ENDC
 PUSHINT 64
 SENDRAWMSG
-.loc Config.sol, 0
+.loc Config.tsol, 0
 
 .globl	send_slash_error_8c89b69d_internal
 .type	send_slash_error_8c89b69d_internal, @function
 CALL $send_slash_error_8c89b69d_internal_macro$
 
 .macro send_slash_error_8c89b69d_internal_macro
-.loc Config.sol, 168
+.loc Config.tsol, 168
 GETGLOB 9
 NEWC
 STSLICECONST x62_
@@ -305,7 +305,7 @@ STU 64
 ENDC
 PUSHINT 64
 SENDRAWMSG
-.loc Config.sol, 0
+.loc Config.tsol, 0
 
 .macro set_next_validator_set
 DROP
@@ -316,11 +316,11 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Config.sol, 171
+.loc Config.tsol, 171
 LDU 64
 LDREF
 ENDS
-.loc Config.sol, 0
+.loc Config.tsol, 0
 CALLREF {
 	CALL $set_next_validator_set_6d13b750_internal_macro$
 }
@@ -334,7 +334,7 @@ THROW 0
 CALL $set_next_validator_set_6d13b750_internal_macro$
 
 .macro set_next_validator_set_6d13b750_internal_macro
-.loc Config.sol, 173
+.loc Config.tsol, 173
 PUSHINT 1
 CONFIGPARAM
 DUP
@@ -344,19 +344,19 @@ PUSHCONT {
 	SWAP
 }
 IFNOT
-.loc Config.sol, 174
+.loc Config.tsol, 174
 PUSHCONT {
-	.loc Config.sol, 175
+	.loc Config.tsol, 175
 	BLKDROP 3
-	.loc Config.sol, 0
+	.loc Config.tsol, 0
 }
 IFNOTJMP
-.loc Config.sol, 177
+.loc Config.tsol, 177
 CTOS
 PLDU 256
-.loc Config.sol, 178
+.loc Config.tsol, 178
 FALSE
-.loc Config.sol, 179
+.loc Config.tsol, 179
 GETGLOB 9
 PARSEMSGADDR
 INDEX 3
@@ -364,14 +364,14 @@ PLDU 256
 ROT
 EQUAL
 PUSHCONT {
-	.loc Config.sol, 180
+	.loc Config.tsol, 180
 	ACCEPT
-	.loc Config.sol, 183
+	.loc Config.tsol, 183
 	OVER
 	CALLREF {
 		CALL $check_validator_set_12139cfb_internal_macro$
 	}
-	.loc Config.sol, 184
+	.loc Config.tsol, 184
 	OVER
 	NOW
 	GREATER
@@ -379,33 +379,33 @@ PUSHCONT {
 	GREATER
 	AND
 	NIP
-	.loc Config.sol, 0
+	.loc Config.tsol, 0
 }
 IF
-.loc Config.sol, 186
+.loc Config.tsol, 186
 PUSHCONT {
-	.loc Config.sol, 187
+	.loc Config.tsol, 187
 	DUP
 	PUSHINT 36
 	GETGLOB 10
 	PUSHINT 32
 	DICTUSETREF
 	SETGLOB 10
-	.loc Config.sol, 189
+	.loc Config.tsol, 189
 	OVER
 	CALLREF {
 		CALL $send_confirmation_c685eda7_internal_macro$
 	}
 }
 PUSHCONT {
-	.loc Config.sol, 191
+	.loc Config.tsol, 191
 	OVER
 	CALLREF {
 		CALL $send_error_38827eac_internal_macro$
 	}
 }
 IFELSE
-.loc Config.sol, 0
+.loc Config.tsol, 0
 DROP2
 
 .macro set_slashed_validator_set
@@ -417,11 +417,11 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Config.sol, 195
+.loc Config.tsol, 195
 LDU 64
 LDREF
 ENDS
-.loc Config.sol, 0
+.loc Config.tsol, 0
 CALLREF {
 	CALL $set_slashed_validator_set_a5518e9f_internal_macro$
 }
@@ -435,19 +435,19 @@ THROW 0
 CALL $set_slashed_validator_set_a5518e9f_internal_macro$
 
 .macro set_slashed_validator_set_a5518e9f_internal_macro
-.loc Config.sol, 197
+.loc Config.tsol, 197
 MYADDR
 REWRITESTDADDR
 DROP
-.loc Config.sol, 198
+.loc Config.tsol, 198
 NEQINT -1
 PUSHCONT {
-	.loc Config.sol, 199
+	.loc Config.tsol, 199
 	DROP2
-	.loc Config.sol, 0
+	.loc Config.tsol, 0
 }
 IFJMP
-.loc Config.sol, 201
+.loc Config.tsol, 201
 PUSHINT 1
 CONFIGPARAM
 DUP
@@ -457,19 +457,19 @@ PUSHCONT {
 	SWAP
 }
 IFNOT
-.loc Config.sol, 202
+.loc Config.tsol, 202
 PUSHCONT {
-	.loc Config.sol, 203
+	.loc Config.tsol, 203
 	BLKDROP 3
-	.loc Config.sol, 0
+	.loc Config.tsol, 0
 }
 IFNOTJMP
-.loc Config.sol, 205
+.loc Config.tsol, 205
 CTOS
 PLDU 256
-.loc Config.sol, 206
+.loc Config.tsol, 206
 FALSE
-.loc Config.sol, 207
+.loc Config.tsol, 207
 GETGLOB 9
 PARSEMSGADDR
 INDEX 3
@@ -477,14 +477,14 @@ PLDU 256
 ROT
 EQUAL
 PUSHCONT {
-	.loc Config.sol, 208
+	.loc Config.tsol, 208
 	ACCEPT
-	.loc Config.sol, 211
+	.loc Config.tsol, 211
 	OVER
 	CALLREF {
 		CALL $check_validator_set_12139cfb_internal_macro$
 	}
-	.loc Config.sol, 212
+	.loc Config.tsol, 212
 	OVER
 	NOW
 	GREATER
@@ -492,33 +492,33 @@ PUSHCONT {
 	GREATER
 	AND
 	NIP
-	.loc Config.sol, 0
+	.loc Config.tsol, 0
 }
 IF
-.loc Config.sol, 214
+.loc Config.tsol, 214
 PUSHCONT {
-	.loc Config.sol, 215
+	.loc Config.tsol, 215
 	DUP
 	PUSHINT 35
 	GETGLOB 10
 	PUSHINT 32
 	DICTUSETREF
 	SETGLOB 10
-	.loc Config.sol, 217
+	.loc Config.tsol, 217
 	OVER
 	CALLREF {
 		CALL $send_slash_confirmation_fa0055d5_internal_macro$
 	}
 }
 PUSHCONT {
-	.loc Config.sol, 219
+	.loc Config.tsol, 219
 	OVER
 	CALLREF {
 		CALL $send_slash_error_8c89b69d_internal_macro$
 	}
 }
 IFELSE
-.loc Config.sol, 0
+.loc Config.tsol, 0
 DROP2
 
 .macro set_config_param
@@ -530,11 +530,11 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Config.sol, 230
+.loc Config.tsol, 230
 LDU 32
 LDREF
 ENDS
-.loc Config.sol, 0
+.loc Config.tsol, 0
 CALLREF {
 	CALL $set_config_param_3fee4a7e_internal_macro$
 }
@@ -548,16 +548,16 @@ THROW 0
 CALL $set_config_param_3fee4a7e_internal_macro$
 
 .macro set_config_param_3fee4a7e_internal_macro
-.loc Config.sol, 230
+.loc Config.tsol, 230
 DEPTH
 ADDCONST -5
 PICK
 EQINT -1
 THROWIFNOT 71
-.loc Config.sol, 225
+.loc Config.tsol, 225
 GETGLOB 2
 THROWIFNOT 101
-.loc Config.sol, 226
+.loc Config.tsol, 226
 GETGLOB 2
 GETGLOB 5
 DUP
@@ -569,22 +569,22 @@ PUSHCONT {
 IF
 EQUAL
 THROWIFNOT 100
-.loc Config.sol, 231
+.loc Config.tsol, 231
 DUP
 CTOS
 SDEPTH
 PUSHPOW2 7
 LEQ
 THROWIFNOT 39
-.loc Config.sol, 232
+.loc Config.tsol, 232
 ACCEPT
-.loc Config.sol, 233
+.loc Config.tsol, 233
 SWAP
 GETGLOB 10
 PUSHINT 32
 DICTUSETREF
 SETGLOB 10
-.loc Config.sol, 0
+.loc Config.tsol, 0
 
 .macro set_public_key
 DROP
@@ -595,10 +595,10 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Config.sol, 236
+.loc Config.tsol, 236
 LDU 256
 ENDS
-.loc Config.sol, 0
+.loc Config.tsol, 0
 CALLREF {
 	CALL $set_public_key_9a40058e_internal_macro$
 }
@@ -612,16 +612,16 @@ THROW 0
 CALL $set_public_key_9a40058e_internal_macro$
 
 .macro set_public_key_9a40058e_internal_macro
-.loc Config.sol, 236
+.loc Config.tsol, 236
 DEPTH
 ADDCONST -5
 PICK
 EQINT -1
 THROWIFNOT 71
-.loc Config.sol, 225
+.loc Config.tsol, 225
 GETGLOB 2
 THROWIFNOT 101
-.loc Config.sol, 226
+.loc Config.tsol, 226
 GETGLOB 2
 GETGLOB 5
 DUP
@@ -633,11 +633,11 @@ PUSHCONT {
 IF
 EQUAL
 THROWIFNOT 100
-.loc Config.sol, 237
+.loc Config.tsol, 237
 ACCEPT
-.loc Config.sol, 238
+.loc Config.tsol, 238
 SETGLOB 2
-.loc Config.sol, 0
+.loc Config.tsol, 0
 
 .macro set_elector_code
 DROP
@@ -648,11 +648,11 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Config.sol, 241
+.loc Config.tsol, 241
 LDREF
 LDREF
 ENDS
-.loc Config.sol, 0
+.loc Config.tsol, 0
 CALLREF {
 	CALL $set_elector_code_1cfe5815_internal_macro$
 }
@@ -666,16 +666,16 @@ THROW 0
 CALL $set_elector_code_1cfe5815_internal_macro$
 
 .macro set_elector_code_1cfe5815_internal_macro
-.loc Config.sol, 241
+.loc Config.tsol, 241
 DEPTH
 ADDCONST -5
 PICK
 EQINT -1
 THROWIFNOT 71
-.loc Config.sol, 225
+.loc Config.tsol, 225
 GETGLOB 2
 THROWIFNOT 101
-.loc Config.sol, 226
+.loc Config.tsol, 226
 GETGLOB 2
 GETGLOB 5
 DUP
@@ -687,21 +687,21 @@ PUSHCONT {
 IF
 EQUAL
 THROWIFNOT 100
-.loc Config.sol, 227
+.loc Config.tsol, 227
 PUSHCONT {
-	.loc Config.sol, 242
+	.loc Config.tsol, 242
 	OVER
 	CDEPTH
 	PUSHPOW2 7
 	LEQ
 	THROWIFNOT 39
-	.loc Config.sol, 243
+	.loc Config.tsol, 243
 	DUP
 	CDEPTH
 	PUSHPOW2 7
 	LEQ
 	THROWIFNOT 39
-	.loc Config.sol, 244
+	.loc Config.tsol, 244
 	PUSHINT 1
 	CONFIGPARAM
 	DUP
@@ -711,19 +711,19 @@ PUSHCONT {
 		SWAP
 	}
 	IFNOT
-	.loc Config.sol, 245
+	.loc Config.tsol, 245
 	PUSHCONT {
-		.loc Config.sol, 246
+		.loc Config.tsol, 246
 		BLKDROP 3
-		.loc Config.sol, 0
+		.loc Config.tsol, 0
 	}
 	IFNOTJMP
-	.loc Config.sol, 248
+	.loc Config.tsol, 248
 	ACCEPT
-	.loc Config.sol, 249
+	.loc Config.tsol, 249
 	CTOS
 	PLDU 256
-	.loc Config.sol, 251
+	.loc Config.tsol, 251
 	XCHG S2
 	NOW
 	ROLL 3
@@ -745,10 +745,10 @@ PUSHCONT {
 	ENDC
 	PUSHINT 0
 	SENDRAWMSG
-	.loc Config.sol, 241
+	.loc Config.tsol, 241
 }
 CALLX
-.loc Config.sol, 0
+.loc Config.tsol, 0
 
 .macro set_code
 DROP
@@ -759,10 +759,10 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Config.sol, 255
+.loc Config.tsol, 255
 LDREF
 ENDS
-.loc Config.sol, 0
+.loc Config.tsol, 0
 CALLREF {
 	CALL $set_code_58f563b9_internal_macro$
 }
@@ -776,16 +776,16 @@ THROW 0
 CALL $set_code_58f563b9_internal_macro$
 
 .macro set_code_58f563b9_internal_macro
-.loc Config.sol, 255
+.loc Config.tsol, 255
 DEPTH
 ADDCONST -5
 PICK
 EQINT -1
 THROWIFNOT 71
-.loc Config.sol, 225
+.loc Config.tsol, 225
 GETGLOB 2
 THROWIFNOT 101
-.loc Config.sol, 226
+.loc Config.tsol, 226
 GETGLOB 2
 GETGLOB 5
 DUP
@@ -797,16 +797,16 @@ PUSHCONT {
 IF
 EQUAL
 THROWIFNOT 100
-.loc Config.sol, 256
+.loc Config.tsol, 256
 DUP
 CDEPTH
 PUSHPOW2 7
 LEQ
 THROWIFNOT 39
-.loc Config.sol, 257
+.loc Config.tsol, 257
 DUP
 SETCODE
-.loc Config.sol, 258
+.loc Config.tsol, 258
 CTOS
 DUP
 PUSHSLICE x8adb35
@@ -820,11 +820,11 @@ PLDREF
 CTOS
 BLESS
 POP C3
-.loc Config.sol, 259
+.loc Config.tsol, 259
 PUSHINT $onCodeUpgrade_fb00cc5e_internal$
 PUSH C3
 EXECUTE
-.loc Config.sol, 0
+.loc Config.tsol, 0
 
 .macro change_public_key
 DROP
@@ -835,10 +835,10 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Config.sol, 271
+.loc Config.tsol, 271
 LDU 256
 ENDS
-.loc Config.sol, 0
+.loc Config.tsol, 0
 CALLREF {
 	CALL $change_public_key_fb0b1247_internal_macro$
 }
@@ -852,12 +852,12 @@ THROW 0
 CALL $change_public_key_fb0b1247_internal_macro$
 
 .macro change_public_key_fb0b1247_internal_macro
-.loc Config.sol, 271
+.loc Config.tsol, 271
 DEPTH
 ADDCONST -5
 PICK
 THROWIF 72
-.loc Config.sol, 264
+.loc Config.tsol, 264
 PUSHINT 5
 CONFIGPARAM
 DUP
@@ -867,12 +867,12 @@ PUSHCONT {
 	SWAP
 }
 IFNOT
-.loc Config.sol, 265
+.loc Config.tsol, 265
 THROWIFNOT 501
-.loc Config.sol, 266
+.loc Config.tsol, 266
 CTOS
 PLDU 256
-.loc Config.sol, 267
+.loc Config.tsol, 267
 GETGLOB 9
 SWAP
 PUSHINT -1
@@ -884,11 +884,11 @@ ENDC
 CTOS
 SDEQ
 THROWIFNOT 502
-.loc Config.sol, 272
+.loc Config.tsol, 272
 ACCEPT
-.loc Config.sol, 273
+.loc Config.tsol, 273
 SETGLOB 2
-.loc Config.sol, 0
+.loc Config.tsol, 0
 
 .macro change_config_param
 DROP
@@ -899,11 +899,11 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Config.sol, 276
+.loc Config.tsol, 276
 LDU 32
 LDREF
 ENDS
-.loc Config.sol, 0
+.loc Config.tsol, 0
 CALLREF {
 	CALL $change_config_param_93cd5189_internal_macro$
 }
@@ -917,12 +917,12 @@ THROW 0
 CALL $change_config_param_93cd5189_internal_macro$
 
 .macro change_config_param_93cd5189_internal_macro
-.loc Config.sol, 276
+.loc Config.tsol, 276
 DEPTH
 ADDCONST -5
 PICK
 THROWIF 72
-.loc Config.sol, 264
+.loc Config.tsol, 264
 PUSHINT 5
 CONFIGPARAM
 DUP
@@ -932,12 +932,12 @@ PUSHCONT {
 	SWAP
 }
 IFNOT
-.loc Config.sol, 265
+.loc Config.tsol, 265
 THROWIFNOT 501
-.loc Config.sol, 266
+.loc Config.tsol, 266
 CTOS
 PLDU 256
-.loc Config.sol, 267
+.loc Config.tsol, 267
 GETGLOB 9
 SWAP
 PUSHINT -1
@@ -949,32 +949,32 @@ ENDC
 CTOS
 SDEQ
 THROWIFNOT 502
-.loc Config.sol, 277
+.loc Config.tsol, 277
 DUP
 CTOS
 SDEPTH
 PUSHPOW2 7
 LEQ
 THROWIFNOT 39
-.loc Config.sol, 279
+.loc Config.tsol, 279
 ACCEPT
-.loc Config.sol, 280
+.loc Config.tsol, 280
 SWAP
 GETGLOB 10
 PUSHINT 32
 DICTUSETREF
 SETGLOB 10
-.loc Config.sol, 0
+.loc Config.tsol, 0
 
 .macro change_elector_code
 DROP
 GETGLOB 6
 THROWIFNOT 76
-.loc Config.sol, 283
+.loc Config.tsol, 283
 LDREF
 LDREF
 ENDS
-.loc Config.sol, 0
+.loc Config.tsol, 0
 CALLREF {
 	CALL $change_elector_code_1fedc37d_internal_macro$
 }
@@ -988,12 +988,12 @@ THROW 0
 CALL $change_elector_code_1fedc37d_internal_macro$
 
 .macro change_elector_code_1fedc37d_internal_macro
-.loc Config.sol, 283
+.loc Config.tsol, 283
 DEPTH
 ADDCONST -5
 PICK
 THROWIF 72
-.loc Config.sol, 264
+.loc Config.tsol, 264
 PUSHINT 5
 CONFIGPARAM
 DUP
@@ -1003,14 +1003,14 @@ PUSHCONT {
 	SWAP
 }
 IFNOT
-.loc Config.sol, 265
+.loc Config.tsol, 265
 DUP
 THROWIFNOT 501
-.loc Config.sol, 266
+.loc Config.tsol, 266
 OVER
 CTOS
 PLDU 256
-.loc Config.sol, 267
+.loc Config.tsol, 267
 GETGLOB 9
 OVER
 PUSHINT -1
@@ -1022,22 +1022,22 @@ ENDC
 CTOS
 SDEQ
 THROWIFNOT 502
-.loc Config.sol, 268
+.loc Config.tsol, 268
 BLKSWAP 2, 3
 PUSHCONT {
-	.loc Config.sol, 284
+	.loc Config.tsol, 284
 	OVER
 	CDEPTH
 	PUSHPOW2 7
 	LEQ
 	THROWIFNOT 39
-	.loc Config.sol, 285
+	.loc Config.tsol, 285
 	DUP
 	CDEPTH
 	PUSHPOW2 7
 	LEQ
 	THROWIFNOT 39
-	.loc Config.sol, 286
+	.loc Config.tsol, 286
 	PUSHINT 1
 	CONFIGPARAM
 	DUP
@@ -1047,19 +1047,19 @@ PUSHCONT {
 		SWAP
 	}
 	IFNOT
-	.loc Config.sol, 287
+	.loc Config.tsol, 287
 	PUSHCONT {
-		.loc Config.sol, 288
+		.loc Config.tsol, 288
 		BLKDROP 3
-		.loc Config.sol, 0
+		.loc Config.tsol, 0
 	}
 	IFNOTJMP
-	.loc Config.sol, 290
+	.loc Config.tsol, 290
 	ACCEPT
-	.loc Config.sol, 291
+	.loc Config.tsol, 291
 	CTOS
 	PLDU 256
-	.loc Config.sol, 293
+	.loc Config.tsol, 293
 	XCHG S2
 	NOW
 	ROLL 3
@@ -1081,20 +1081,20 @@ PUSHCONT {
 	ENDC
 	PUSHINT 0
 	SENDRAWMSG
-	.loc Config.sol, 283
+	.loc Config.tsol, 283
 }
 CALLX
-.loc Config.sol, 0
+.loc Config.tsol, 0
 BLKDROP 3
 
 .macro change_code
 DROP
 GETGLOB 6
 THROWIFNOT 76
-.loc Config.sol, 297
+.loc Config.tsol, 297
 LDREF
 ENDS
-.loc Config.sol, 0
+.loc Config.tsol, 0
 CALLREF {
 	CALL $change_code_d64b93d8_internal_macro$
 }
@@ -1108,12 +1108,12 @@ THROW 0
 CALL $change_code_d64b93d8_internal_macro$
 
 .macro change_code_d64b93d8_internal_macro
-.loc Config.sol, 297
+.loc Config.tsol, 297
 DEPTH
 ADDCONST -5
 PICK
 THROWIF 72
-.loc Config.sol, 264
+.loc Config.tsol, 264
 PUSHINT 5
 CONFIGPARAM
 DUP
@@ -1123,12 +1123,12 @@ PUSHCONT {
 	SWAP
 }
 IFNOT
-.loc Config.sol, 265
+.loc Config.tsol, 265
 THROWIFNOT 501
-.loc Config.sol, 266
+.loc Config.tsol, 266
 CTOS
 PLDU 256
-.loc Config.sol, 267
+.loc Config.tsol, 267
 GETGLOB 9
 SWAP
 PUSHINT -1
@@ -1140,16 +1140,16 @@ ENDC
 CTOS
 SDEQ
 THROWIFNOT 502
-.loc Config.sol, 298
+.loc Config.tsol, 298
 DUP
 CDEPTH
 PUSHPOW2 7
 LEQ
 THROWIFNOT 39
-.loc Config.sol, 299
+.loc Config.tsol, 299
 DUP
 SETCODE
-.loc Config.sol, 300
+.loc Config.tsol, 300
 CTOS
 DUP
 PUSHSLICE x8adb35
@@ -1163,24 +1163,24 @@ PLDREF
 CTOS
 BLESS
 POP C3
-.loc Config.sol, 301
+.loc Config.tsol, 301
 PUSHINT $onCodeUpgrade_fb00cc5e_internal$
 PUSH C3
 EXECUTE
-.loc Config.sol, 0
+.loc Config.tsol, 0
 
 .internal-alias onCodeUpgrade_fb00cc5e_internal, 2
 .internal onCodeUpgrade_fb00cc5e_internal
-.loc Config.sol, 305
+.loc Config.tsol, 305
 ACCEPT
-.loc Config.sol, 306
+.loc Config.tsol, 306
 GETGLOB 2
 ISNULL
 IFNOTREF {
 	CALL $c7_to_c4$
 }
 THROW 0
-.loc Config.sol, 0
+.loc Config.tsol, 0
 
 .macro setcode_confirmation
 DROP
@@ -1191,11 +1191,11 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Config.sol, 309
+.loc Config.tsol, 309
 LDU 64
 LDU 32
 ENDS
-.loc Config.sol, 0
+.loc Config.tsol, 0
 CALLREF {
 	CALL $setcode_confirmation_29be02bf_internal_macro$
 }
@@ -1209,9 +1209,9 @@ THROW 0
 CALL $setcode_confirmation_29be02bf_internal_macro$
 
 .macro setcode_confirmation_29be02bf_internal_macro
-.loc Config.sol, 309
+.loc Config.tsol, 309
 DROP2
-.loc Config.sol, 0
+.loc Config.tsol, 0
 
 .internal-alias :onTickTock, -2
 .internal :onTickTock
@@ -1223,44 +1223,44 @@ PUSHREFSLICE {
 	.blob x8000000000000000000000000000000000000000000000000000000000000000001_
 }
 SETGLOB 9
-.loc Config.sol, 314
+.loc Config.tsol, 314
 PUSHINT 36
 GETGLOB 10
 PUSHINT 32
 DICTUGETREF
 NULLSWAPIFNOT
 DROP
-.loc Config.sol, 315
+.loc Config.tsol, 315
 FALSE
-.loc Config.sol, 316
+.loc Config.tsol, 316
 OVER
 ISNULL
 PUSHCONT {
-	.loc Config.sol, 318
+	.loc Config.tsol, 318
 	PUSH2 S1, S1
 	ISNULL
 	THROWIF 63
-	.loc Config.sol, 319
+	.loc Config.tsol, 319
 	DUP
 	CTOS
-	.loc Config.sol, 320
+	.loc Config.tsol, 320
 	DUP
 	SBITS
 	GTINT 39
 	PUSHCONT {
-		.loc Config.sol, 321
+		.loc Config.tsol, 321
 		DUP
 		LDU 8
 		LDU 32
 		POP S3
-		.loc Config.sol, 322
+		.loc Config.tsol, 322
 		NOW
 		LEQ
 		SWAP
 		EQINT 18
 		AND
 		PUSHCONT {
-			.loc Config.sol, 324
+			.loc Config.tsol, 324
 			OVER
 			PUSHINT 34
 			GETGLOB 10
@@ -1270,7 +1270,7 @@ PUSHCONT {
 			DROP
 			SWAP
 			SETGLOB 10
-			.loc Config.sol, 325
+			.loc Config.tsol, 325
 			DUP
 			ISNULL
 			THROWIF 63
@@ -1282,30 +1282,30 @@ PUSHCONT {
 			DROP2
 			DUP
 			SETGLOB 10
-			.loc Config.sol, 326
+			.loc Config.tsol, 326
 			PUSHINT 36
 			SWAP
 			PUSHINT 32
 			DICTUDEL
 			DROP
 			SETGLOB 10
-			.loc Config.sol, 327
+			.loc Config.tsol, 327
 			TRUE
 			POP S3
-			.loc Config.sol, 0
+			.loc Config.tsol, 0
 		}
 		IF
-		.loc Config.sol, 0
+		.loc Config.tsol, 0
 	}
 	IF
-	.loc Config.sol, 0
+	.loc Config.tsol, 0
 	DROP2
 }
 IFNOT
-.loc Config.sol, 331
+.loc Config.tsol, 331
 DUP
 PUSHCONT {
-	.loc Config.sol, 332
+	.loc Config.tsol, 332
 	PUSHINT 35
 	GETGLOB 10
 	PUSHINT 32
@@ -1313,35 +1313,35 @@ PUSHCONT {
 	NULLSWAPIFNOT
 	DROP
 	POP S2
-	.loc Config.sol, 333
+	.loc Config.tsol, 333
 	OVER
 	ISNULL
 	PUSHCONT {
-		.loc Config.sol, 334
+		.loc Config.tsol, 334
 		PUSH2 S1, S1
 		ISNULL
 		THROWIF 63
-		.loc Config.sol, 335
+		.loc Config.tsol, 335
 		DUP
 		CTOS
-		.loc Config.sol, 336
+		.loc Config.tsol, 336
 		DUP
 		SBITS
 		GTINT 39
 		PUSHCONT {
-			.loc Config.sol, 337
+			.loc Config.tsol, 337
 			DUP
 			LDU 8
 			LDU 32
 			POP S3
-			.loc Config.sol, 338
+			.loc Config.tsol, 338
 			NOW
 			LEQ
 			SWAP
 			EQINT 18
 			AND
 			PUSHCONT {
-				.loc Config.sol, 339
+				.loc Config.tsol, 339
 				OVER
 				PUSHINT 34
 				GETGLOB 10
@@ -1351,32 +1351,32 @@ PUSHCONT {
 				DROP2
 				DUP
 				SETGLOB 10
-				.loc Config.sol, 340
+				.loc Config.tsol, 340
 				PUSHINT 35
 				SWAP
 				PUSHINT 32
 				DICTUDEL
 				DROP
 				SETGLOB 10
-				.loc Config.sol, 341
+				.loc Config.tsol, 341
 				TRUE
 				POP S3
-				.loc Config.sol, 0
+				.loc Config.tsol, 0
 			}
 			IF
-			.loc Config.sol, 0
+			.loc Config.tsol, 0
 		}
 		IF
-		.loc Config.sol, 0
+		.loc Config.tsol, 0
 		DROP2
 	}
 	IFNOT
-	.loc Config.sol, 0
+	.loc Config.tsol, 0
 }
 IFNOT
-.loc Config.sol, 346
+.loc Config.tsol, 346
 DROP2
-.loc Config.sol, 0
+.loc Config.tsol, 0
 CALLREF {
 	CALL $c7_to_c4$
 }
@@ -1390,7 +1390,7 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Config.sol, 0
+.loc Config.tsol, 0
 CALLREF {
 	CALL $c7_to_c4$
 }
@@ -1403,7 +1403,7 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Config.sol, 0
+.loc Config.tsol, 0
 CALLREF {
 	CALL $c7_to_c4$
 }
@@ -1417,9 +1417,9 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Config.sol, 358
+.loc Config.tsol, 358
 ENDS
-.loc Config.sol, 0
+.loc Config.tsol, 0
 CALLREF {
 	CALL $reset_utime_until_9a1f42b7_internal_macro$
 }
@@ -1433,9 +1433,9 @@ THROW 0
 CALL $reset_utime_until_9a1f42b7_internal_macro$
 
 .macro reset_utime_until_9a1f42b7_internal_macro
-.loc Config.sol, 359
+.loc Config.tsol, 359
 ACCEPT
-.loc Config.sol, 360
+.loc Config.tsol, 360
 PUSHINT 34
 GETGLOB 10
 PUSHINT 32
@@ -1445,7 +1445,7 @@ PUSHCONT {
 	}
 }
 IFNOT
-.loc Config.sol, 361
+.loc Config.tsol, 361
 CTOS
 LDU 8
 LDU 32
@@ -1455,10 +1455,10 @@ LDU 16
 LDU 64
 PLDDICT
 TUPLE 7
-.loc Config.sol, 362
+.loc Config.tsol, 362
 NOW
 SETINDEX 2
-.loc Config.sol, 364
+.loc Config.tsol, 364
 NEWC
 SWAP
 UNTUPLE 7
@@ -1470,7 +1470,7 @@ STU 16
 STU 16
 STU 64
 STDICT
-.loc Config.sol, 365
+.loc Config.tsol, 365
 ENDC
 PUSHINT 34
 GETGLOB 10
@@ -1478,14 +1478,14 @@ PUSHINT 32
 DICTUSETREF
 DUP
 SETGLOB 10
-.loc Config.sol, 367
+.loc Config.tsol, 367
 PUSHINT 36
 SWAP
 PUSHINT 32
 DICTUDEL
 DROP
 SETGLOB 10
-.loc Config.sol, 0
+.loc Config.tsol, 0
 
 .macro get_config_param
 DROP
@@ -1496,10 +1496,10 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Config.sol, 370
+.loc Config.tsol, 370
 LDU 32
 ENDS
-.loc Config.sol, 0
+.loc Config.tsol, 0
 CALLREF {
 	CALL $get_config_param_3a15ecb2_internal_macro$
 }
@@ -1535,7 +1535,7 @@ THROW 0
 CALL $get_config_param_3a15ecb2_internal_macro$
 
 .macro get_config_param_3a15ecb2_internal_macro
-.loc Config.sol, 371
+.loc Config.tsol, 371
 GETGLOB 10
 PUSHINT 32
 DICTUGETREF
@@ -1544,34 +1544,34 @@ PUSHCONT {
 	}
 }
 IFNOT
-.loc Config.sol, 0
+.loc Config.tsol, 0
 
 .globl	get_vset_760f0638_internal
 .type	get_vset_760f0638_internal, @function
 CALL $get_vset_760f0638_internal_macro$
 
 .macro get_vset_760f0638_internal_macro
-.loc Config.sol, 375
+.loc Config.tsol, 375
 GETGLOB 10
 PUSHINT 32
 DICTUGETREF
 NULLSWAPIFNOT
 DROP
-.loc Config.sol, 376
+.loc Config.tsol, 376
 DUP
 ISNULL
 PUSHCONT {
-	.loc Config.sol, 380
+	.loc Config.tsol, 380
 	PUSHINT 0
 	BLKPUSH 5, 0
 	NEWDICT
 	TUPLE 7
-	.loc Config.sol, 381
+	.loc Config.tsol, 381
 	NIP
-	.loc Config.sol, 0
+	.loc Config.tsol, 0
 }
 PUSHCONT {
-	.loc Config.sol, 377
+	.loc Config.tsol, 377
 	DUP
 	ISNULL
 	THROWIF 63
@@ -1584,10 +1584,10 @@ PUSHCONT {
 	LDU 64
 	PLDDICT
 	TUPLE 7
-	.loc Config.sol, 0
+	.loc Config.tsol, 0
 }
 IFELSE
-.loc Config.sol, 0
+.loc Config.tsol, 0
 
 .macro get_previous_vset
 DROP
@@ -1598,9 +1598,9 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Config.sol, 386
+.loc Config.tsol, 386
 ENDS
-.loc Config.sol, 0
+.loc Config.tsol, 0
 CALLREF {
 	CALL $get_previous_vset_f1622ec1_internal_macro$
 }
@@ -1645,12 +1645,12 @@ THROW 0
 CALL $get_previous_vset_f1622ec1_internal_macro$
 
 .macro get_previous_vset_f1622ec1_internal_macro
-.loc Config.sol, 387
+.loc Config.tsol, 387
 PUSHINT 32
 CALLREF {
 	CALL $get_vset_760f0638_internal_macro$
 }
-.loc Config.sol, 0
+.loc Config.tsol, 0
 
 .macro get_current_vset
 DROP
@@ -1661,9 +1661,9 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Config.sol, 391
+.loc Config.tsol, 391
 ENDS
-.loc Config.sol, 0
+.loc Config.tsol, 0
 CALLREF {
 	CALL $get_current_vset_cb181528_internal_macro$
 }
@@ -1708,12 +1708,12 @@ THROW 0
 CALL $get_current_vset_cb181528_internal_macro$
 
 .macro get_current_vset_cb181528_internal_macro
-.loc Config.sol, 392
+.loc Config.tsol, 392
 PUSHINT 34
 CALLREF {
 	CALL $get_vset_760f0638_internal_macro$
 }
-.loc Config.sol, 0
+.loc Config.tsol, 0
 
 .macro get_slashed_vset
 DROP
@@ -1724,9 +1724,9 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Config.sol, 396
+.loc Config.tsol, 396
 ENDS
-.loc Config.sol, 0
+.loc Config.tsol, 0
 CALLREF {
 	CALL $get_slashed_vset_315d8d4c_internal_macro$
 }
@@ -1771,12 +1771,12 @@ THROW 0
 CALL $get_slashed_vset_315d8d4c_internal_macro$
 
 .macro get_slashed_vset_315d8d4c_internal_macro
-.loc Config.sol, 397
+.loc Config.tsol, 397
 PUSHINT 35
 CALLREF {
 	CALL $get_vset_760f0638_internal_macro$
 }
-.loc Config.sol, 0
+.loc Config.tsol, 0
 
 .macro get_next_vset
 DROP
@@ -1787,9 +1787,9 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Config.sol, 401
+.loc Config.tsol, 401
 ENDS
-.loc Config.sol, 0
+.loc Config.tsol, 0
 CALLREF {
 	CALL $get_next_vset_ecc48779_internal_macro$
 }
@@ -1834,12 +1834,12 @@ THROW 0
 CALL $get_next_vset_ecc48779_internal_macro$
 
 .macro get_next_vset_ecc48779_internal_macro
-.loc Config.sol, 402
+.loc Config.tsol, 402
 PUSHINT 36
 CALLREF {
 	CALL $get_vset_760f0638_internal_macro$
 }
-.loc Config.sol, 0
+.loc Config.tsol, 0
 
 .macro public_key
 DROP
@@ -1850,9 +1850,9 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Config.sol, 405
+.loc Config.tsol, 405
 ENDS
-.loc Config.sol, 0
+.loc Config.tsol, 0
 CALLREF {
 	CALL $public_key_e0e349c4_internal_macro$
 }
@@ -1888,17 +1888,17 @@ THROW 0
 CALL $public_key_e0e349c4_internal_macro$
 
 .macro public_key_e0e349c4_internal_macro
-.loc Config.sol, 406
+.loc Config.tsol, 406
 GETGLOB 2
-.loc Config.sol, 0
+.loc Config.tsol, 0
 
 .macro get_version
 DROP
 GETGLOB 6
 THROWIFNOT 76
-.loc Config.sol, 410
+.loc Config.tsol, 410
 ENDS
-.loc Config.sol, 0
+.loc Config.tsol, 0
 CALLREF {
 	CALL $get_version_90179465_internal_macro$
 }
@@ -1937,10 +1937,10 @@ THROW 0
 CALL $get_version_90179465_internal_macro$
 
 .macro get_version_90179465_internal_macro
-.loc Config.sol, 411
+.loc Config.tsol, 411
 PUSHINT 0
 PUSHINT 1
-.loc Config.sol, 0
+.loc Config.tsol, 0
 
 .macro c4_to_c7
 PUSHROOT

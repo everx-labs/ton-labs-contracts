@@ -20,10 +20,10 @@ THROW 0
 DROP
 GETGLOB 6
 THROWIFNOT 76
-.loc Zero.sol, 15
+.loc Zero.tsol, 15
 LDU 128
 ENDS
-.loc Zero.sol, 0
+.loc Zero.tsol, 0
 CALLREF {
 	CALL $grant_db9ef357_internal_macro$
 }
@@ -37,7 +37,7 @@ THROW 0
 CALL $grant_db9ef357_internal_macro$
 
 .macro grant_db9ef357_internal_macro
-.loc Zero.sol, 16
+.loc Zero.tsol, 16
 PUSHINT 1
 CONFIGPARAM
 DUP
@@ -47,9 +47,9 @@ PUSHCONT {
 	SWAP
 }
 IFNOT
-.loc Zero.sol, 17
+.loc Zero.tsol, 17
 THROWIFNOT 123
-.loc Zero.sol, 18
+.loc Zero.tsol, 18
 CTOS
 PLDU 256
 PUSHINT -1
@@ -59,9 +59,9 @@ STI 8
 STU 256
 ENDC
 CTOS
-.loc Zero.sol, 19
+.loc Zero.tsol, 19
 ACCEPT
-.loc Zero.sol, 20
+.loc Zero.tsol, 20
 NEWC
 STSLICECONST x62_
 STSLICE
@@ -72,7 +72,7 @@ STZEROES
 ENDC
 PUSHINT 0
 SENDRAWMSG
-.loc Zero.sol, 0
+.loc Zero.tsol, 0
 
 .macro c4_to_c7
 PUSHROOT
