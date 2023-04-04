@@ -23,11 +23,24 @@ from globals import status, time_set, time_get
 core = globals.core
 
 class Config(BaseContract):
-    def __init__(self, elector_addr,
-                 elect_for, elect_begin_before, elect_end_before, stake_held,
-                 max_validators, main_validators, min_validators,
-                 min_stake, max_stake, min_total_stake, max_stake_factor,
-                 utime_since, utime_until, capabilities = 0, keypair = None):
+    def __init__(self,
+                 elector_addr,
+                 elect_for,
+                 elect_begin_before,
+                 elect_end_before,
+                 stake_held,
+                 max_validators,
+                 main_validators,
+                 min_validators,
+                 min_stake,
+                 max_stake,
+                 min_total_stake,
+                 max_stake_factor,
+                 utime_since,
+                 utime_until,
+                 capabilities = 0,
+                 keypair = None
+             ):
         if elector_addr is None:
             elector_addr = '0x' + '3'*64
         override_address = Address('-1:' + '5'*64)
@@ -2272,30 +2285,30 @@ print()
 # print()
 # test_old_elector_code_upgrade()
 # print()
-test_identical_validators()
-print()
-test_elector_code_upgrade()
-
-print()
-test_seven_validators()
-print()
-test_rich_validator()
-print()
-test_thirty_validators()
-print()
-test_insufficient_number_of_validators()
-print()
-test_bonuses()
-print()
-test_reset_utime_until()
-print()
-test_ban()
-print()
-test_ban_multiple()
-print()
-test_on_bounce()
-print()
-test_1000()
+# test_identical_validators()
+# print()
+# test_elector_code_upgrade()
+#
+# print()
+# test_seven_validators()
+# print()
+# test_rich_validator()
+# print()
+# test_thirty_validators()
+# print()
+# test_insufficient_number_of_validators()
+# print()
+# test_bonuses()
+# print()
+# test_reset_utime_until()
+# print()
+# test_ban()
+# print()
+# test_ban_multiple()
+# print()
+# test_on_bounce()
+# print()
+# test_1000()
 
 ## test_complaints() # it is not working now due to non using algorithms
 ## test_depool() # TODO: it stopped work

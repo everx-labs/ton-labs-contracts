@@ -42,22 +42,23 @@ LDU 32
 LDU 256
 LDU 128
 LDREF
+LDI 32
 ENDS
 .loc Validator.tsol, 0
 CALLREF {
-	CALL $stake_07bcd42f_internal_macro$
+	CALL $stake_1e468a39_internal_macro$
 }
 IFREF {
 	CALL $upd_only_time_in_c4$
 }
 THROW 0
 
-.globl	stake_07bcd42f_internal
-.type	stake_07bcd42f_internal, @function
-CALL $stake_07bcd42f_internal_macro$
+.globl	stake_1e468a39_internal
+.type	stake_1e468a39_internal, @function
+CALL $stake_1e468a39_internal_macro$
 
-.macro stake_07bcd42f_internal_macro
-.loc Validator.tsol, 26
+.macro stake_1e468a39_internal_macro
+.loc Validator.tsol, 33
 PUSHINT 1
 CONFIGPARAM
 DUP
@@ -67,11 +68,11 @@ PUSHCONT {
 	SWAP
 }
 IFNOT
-.loc Validator.tsol, 27
+.loc Validator.tsol, 34
 THROWIFNOT 123
-.loc Validator.tsol, 28
+.loc Validator.tsol, 35
 ACCEPT
-.loc Validator.tsol, 29
+.loc Validator.tsol, 36
 CTOS
 PLDU 256
 PUSHINT -1
@@ -81,9 +82,10 @@ STI 8
 STU 256
 ENDC
 CTOS
-.loc Validator.tsol, 31
-XCHG S1, S2
-REVERSE 6, 2
+.loc Validator.tsol, 38
+ROLL 3
+SWAP
+REVERSE 7, 2
 NEWC
 STSLICECONST x62_
 STSLICE
@@ -91,7 +93,7 @@ SWAP
 STGRAMS
 PUSHINT 1
 STUR 107
-ROLLREV 6
+ROLLREV 7
 NEWC
 STSLICECONST x4e73744b
 STU 64
@@ -100,6 +102,7 @@ STU 32
 STU 32
 STU 256
 STREF
+STI 32
 STBREFR
 ENDC
 PUSHINT 0
@@ -110,7 +113,7 @@ SENDRAWMSG
 DROP
 GETGLOB 6
 THROWIFNOT 76
-.loc Validator.tsol, 36
+.loc Validator.tsol, 49
 LDU 32
 LDU 32
 LDU 256
@@ -151,25 +154,25 @@ THROW 0
 CALL $stake_sign_helper_48cc947e_internal_macro$
 
 .macro stake_sign_helper_48cc947e_internal_macro
-.loc Validator.tsol, 38
+.loc Validator.tsol, 51
 NEWC
-.loc Validator.tsol, 39
+.loc Validator.tsol, 52
 STSLICECONST x654c5074
-.loc Validator.tsol, 40
+.loc Validator.tsol, 53
 ROLL 3
 STUR 32
-.loc Validator.tsol, 41
+.loc Validator.tsol, 54
 XCHG S1, S2
 STU 32
-.loc Validator.tsol, 42
+.loc Validator.tsol, 55
 MYADDR
 PARSEMSGADDR
 INDEX 3
 PLDU 256
 STUR 256
-.loc Validator.tsol, 43
+.loc Validator.tsol, 56
 STU 256
-.loc Validator.tsol, 44
+.loc Validator.tsol, 57
 ENDC
 .loc Validator.tsol, 0
 
@@ -182,7 +185,7 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Validator.tsol, 50
+.loc Validator.tsol, 63
 LDU 64
 LDU 32
 ENDS
@@ -200,10 +203,10 @@ THROW 0
 CALL $return_stake_fe624e47_internal_macro$
 
 .macro return_stake_fe624e47_internal_macro
-.loc Validator.tsol, 51
+.loc Validator.tsol, 64
 SWAP
 SETGLOB 11
-.loc Validator.tsol, 52
+.loc Validator.tsol, 65
 SETGLOB 12
 .loc Validator.tsol, 0
 
@@ -216,7 +219,7 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Validator.tsol, 58
+.loc Validator.tsol, 71
 LDU 64
 LDU 32
 ENDS
@@ -234,10 +237,10 @@ THROW 0
 CALL $confirmation_a034d276_internal_macro$
 
 .macro confirmation_a034d276_internal_macro
-.loc Validator.tsol, 59
+.loc Validator.tsol, 72
 SWAP
 SETGLOB 13
-.loc Validator.tsol, 60
+.loc Validator.tsol, 73
 SETGLOB 14
 .loc Validator.tsol, 0
 
@@ -250,7 +253,7 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Validator.tsol, 63
+.loc Validator.tsol, 76
 ENDS
 .loc Validator.tsol, 0
 CALLREF {
@@ -299,21 +302,21 @@ THROW 0
 CALL $get_6d4ce63c_internal_macro$
 
 .macro get_6d4ce63c_internal_macro
-.loc Validator.tsol, 68
+.loc Validator.tsol, 81
 GETGLOB 13
-.loc Validator.tsol, 69
+.loc Validator.tsol, 82
 GETGLOB 14
-.loc Validator.tsol, 70
+.loc Validator.tsol, 83
 GETGLOB 11
-.loc Validator.tsol, 71
+.loc Validator.tsol, 84
 GETGLOB 12
-.loc Validator.tsol, 72
+.loc Validator.tsol, 85
 GETGLOB 15
-.loc Validator.tsol, 73
+.loc Validator.tsol, 86
 GETGLOB 16
-.loc Validator.tsol, 74
+.loc Validator.tsol, 87
 GETGLOB 17
-.loc Validator.tsol, 75
+.loc Validator.tsol, 88
 GETGLOB 18
 .loc Validator.tsol, 0
 
@@ -321,7 +324,7 @@ GETGLOB 18
 DROP
 GETGLOB 6
 THROWIFNOT 76
-.loc Validator.tsol, 78
+.loc Validator.tsol, 91
 LDU 64
 LDU 128
 ENDS
@@ -339,7 +342,7 @@ THROW 0
 CALL $recover_1c670c7e_internal_macro$
 
 .macro recover_1c670c7e_internal_macro
-.loc Validator.tsol, 79
+.loc Validator.tsol, 92
 PUSHINT 1
 CONFIGPARAM
 DUP
@@ -349,11 +352,11 @@ PUSHCONT {
 	SWAP
 }
 IFNOT
-.loc Validator.tsol, 80
+.loc Validator.tsol, 93
 THROWIFNOT 123
-.loc Validator.tsol, 81
+.loc Validator.tsol, 94
 ACCEPT
-.loc Validator.tsol, 82
+.loc Validator.tsol, 95
 CTOS
 PLDU 256
 PUSHINT -1
@@ -363,7 +366,7 @@ STI 8
 STU 256
 ENDC
 CTOS
-.loc Validator.tsol, 84
+.loc Validator.tsol, 97
 NEWC
 STSLICECONST x62_
 STSLICE
@@ -386,7 +389,7 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Validator.tsol, 89
+.loc Validator.tsol, 102
 ENDS
 .loc Validator.tsol, 0
 CALLREF {
@@ -402,9 +405,9 @@ THROW 0
 CALL $toggle_defunct_6f5fe9a7_internal_macro$
 
 .macro toggle_defunct_6f5fe9a7_internal_macro
-.loc Validator.tsol, 90
+.loc Validator.tsol, 103
 ACCEPT
-.loc Validator.tsol, 91
+.loc Validator.tsol, 104
 GETGLOB 10
 NOT
 SETGLOB 10
@@ -419,7 +422,7 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Validator.tsol, 94
+.loc Validator.tsol, 107
 LDU 64
 ENDS
 .loc Validator.tsol, 0
@@ -436,12 +439,12 @@ THROW 0
 CALL $receive_stake_back_73ea4e06_internal_macro$
 
 .macro receive_stake_back_73ea4e06_internal_macro
-.loc Validator.tsol, 95
+.loc Validator.tsol, 108
 GETGLOB 10
 THROWIF 177
-.loc Validator.tsol, 96
+.loc Validator.tsol, 109
 ACCEPT
-.loc Validator.tsol, 97
+.loc Validator.tsol, 110
 SETGLOB 15
 .loc Validator.tsol, 0
 
@@ -454,7 +457,7 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Validator.tsol, 103
+.loc Validator.tsol, 116
 LDU 64
 LDU 32
 ENDS
@@ -472,10 +475,10 @@ THROW 0
 CALL $error_6f3e8d23_internal_macro$
 
 .macro error_6f3e8d23_internal_macro
-.loc Validator.tsol, 104
+.loc Validator.tsol, 117
 SWAP
 SETGLOB 16
-.loc Validator.tsol, 105
+.loc Validator.tsol, 118
 SETGLOB 17
 .loc Validator.tsol, 0
 
@@ -488,28 +491,28 @@ IFREF {
 	CALL $c4_to_c7$
 }
 PUSHCONT {
-	.loc Validator.tsol, 111
+	.loc Validator.tsol, 124
 	DEPTH
 	ADDCONST -4
 	PICK
-	.loc Validator.tsol, 112
+	.loc Validator.tsol, 125
 	DUP
 	LDU 32
 	POP S2
-	.loc Validator.tsol, 113
+	.loc Validator.tsol, 126
 	DUP
 	PUSHINT 4294967294
 	EQUAL
 	PUSHCONT {
-		.loc Validator.tsol, 114
+		.loc Validator.tsol, 127
 		DROP
 		LDU 64
 		PLDU 32
-		.loc Validator.tsol, 115
+		.loc Validator.tsol, 128
 		CALLREF {
 			CALL $error_6f3e8d23_internal_macro$
 		}
-		.loc Validator.tsol, 116
+		.loc Validator.tsol, 129
 		CALLREF {
 			CALL $c7_to_c4$
 		}
@@ -517,7 +520,7 @@ PUSHCONT {
 		.loc Validator.tsol, 0
 	}
 	IFJMP
-	.loc Validator.tsol, 119
+	.loc Validator.tsol, 132
 	PUSHINT 4066861904
 	OVER
 	LEQ
@@ -526,15 +529,15 @@ PUSHCONT {
 	LEQ
 	AND
 	PUSHCONT {
-		.loc Validator.tsol, 121
+		.loc Validator.tsol, 134
 		SWAP
 		LDU 64
 		PLDU 32
-		.loc Validator.tsol, 122
+		.loc Validator.tsol, 135
 		PUSHINT 1382499184
 		EQUAL
 		THROWIFNOT 101
-		.loc Validator.tsol, 123
+		.loc Validator.tsol, 136
 		SWAP
 		PUSHINT 4066861904
 		SUB
@@ -548,7 +551,7 @@ PUSHCONT {
 		PUSHINT 64
 		DICTUSETB
 		SETGLOB 18
-		.loc Validator.tsol, 124
+		.loc Validator.tsol, 137
 		CALLREF {
 			CALL $c7_to_c4$
 		}
@@ -556,7 +559,7 @@ PUSHCONT {
 		.loc Validator.tsol, 0
 	}
 	IFJMP
-	.loc Validator.tsol, 127
+	.loc Validator.tsol, 140
 	PUSHINT 3597947453
 	OVER
 	LEQ
@@ -565,15 +568,15 @@ PUSHCONT {
 	LEQ
 	AND
 	PUSHCONT {
-		.loc Validator.tsol, 129
+		.loc Validator.tsol, 142
 		SWAP
 		LDU 64
 		PLDU 32
-		.loc Validator.tsol, 130
+		.loc Validator.tsol, 143
 		PUSHINT 1450460016
 		EQUAL
 		THROWIFNOT 102
-		.loc Validator.tsol, 131
+		.loc Validator.tsol, 144
 		SWAP
 		PUSHINT 3597947456
 		SUB
@@ -587,7 +590,7 @@ PUSHCONT {
 		PUSHINT 64
 		DICTUSETB
 		SETGLOB 18
-		.loc Validator.tsol, 132
+		.loc Validator.tsol, 145
 		CALLREF {
 			CALL $c7_to_c4$
 		}
@@ -595,10 +598,10 @@ PUSHCONT {
 		.loc Validator.tsol, 0
 	}
 	IFJMP
-	.loc Validator.tsol, 135
+	.loc Validator.tsol, 148
 	DROP2
 	THROW 103
-	.loc Validator.tsol, 110
+	.loc Validator.tsol, 123
 }
 CALLX
 .loc Validator.tsol, 0
@@ -611,22 +614,22 @@ CALLREF {
 CALL $send_complaint_4b67f590_internal_macro$
 
 .macro send_complaint_4b67f590_internal_macro
-.loc Validator.tsol, 139
+.loc Validator.tsol, 152
 NEWC
-.loc Validator.tsol, 140
+.loc Validator.tsol, 153
 STSLICECONST x62_
-.loc Validator.tsol, 141
+.loc Validator.tsol, 154
 ROLL 3
 STSLICER
-.loc Validator.tsol, 142
+.loc Validator.tsol, 155
 ROT
 STGRAMS
-.loc Validator.tsol, 143
+.loc Validator.tsol, 156
 PUSHINT 1
 STUR 107
-.loc Validator.tsol, 145
+.loc Validator.tsol, 158
 STREF
-.loc Validator.tsol, 146
+.loc Validator.tsol, 159
 ENDC
 PUSHINT 0
 SENDRAWMSG
@@ -636,7 +639,7 @@ SENDRAWMSG
 DROP
 GETGLOB 6
 THROWIFNOT 76
-.loc Validator.tsol, 149
+.loc Validator.tsol, 162
 OVER
 PUSHCONT {
 	LDU 64
@@ -668,7 +671,7 @@ THROW 0
 CALL $complain_2e6f89c2_internal_macro$
 
 .macro complain_2e6f89c2_internal_macro
-.loc Validator.tsol, 151
+.loc Validator.tsol, 164
 PUSHINT 1
 CONFIGPARAM
 DUP
@@ -678,11 +681,11 @@ PUSHCONT {
 	SWAP
 }
 IFNOT
-.loc Validator.tsol, 152
+.loc Validator.tsol, 165
 THROWIFNOT 100
-.loc Validator.tsol, 153
+.loc Validator.tsol, 166
 ACCEPT
-.loc Validator.tsol, 154
+.loc Validator.tsol, 167
 CTOS
 PLDU 256
 PUSHINT -1
@@ -692,40 +695,40 @@ STI 8
 STU 256
 ENDC
 CTOS
-.loc Validator.tsol, 157
+.loc Validator.tsol, 170
 NEWC
 STSLICECONST x52674370
-.loc Validator.tsol, 158
+.loc Validator.tsol, 171
 BLKSWAP 2, 5
 XCHG S2
 STU 64
 STU 32
-.loc Validator.tsol, 159
+.loc Validator.tsol, 172
 ROLL 4
 PUSHINT 188
 ROT
 STU 8
 STU 256
-.loc Validator.tsol, 161
+.loc Validator.tsol, 174
 PUSHINT 95626317870726800411714327930097829901973960224302
 NEWC
 STU 256
-.loc Validator.tsol, 162
+.loc Validator.tsol, 175
 ENDC
 SWAP
 STREF
-.loc Validator.tsol, 163
+.loc Validator.tsol, 176
 PUSHINT 296
 STZEROES
-.loc Validator.tsol, 166
+.loc Validator.tsol, 179
 PUSHINT 0
 STGRAMS
-.loc Validator.tsol, 167
+.loc Validator.tsol, 180
 ROT
 STGRAMS
-.loc Validator.tsol, 168
+.loc Validator.tsol, 181
 STSLICECONST x00000000
-.loc Validator.tsol, 169
+.loc Validator.tsol, 182
 XCHG S1, S2
 ENDC
 CALLREF {
@@ -737,7 +740,7 @@ CALLREF {
 DROP
 GETGLOB 6
 THROWIFNOT 76
-.loc Validator.tsol, 172
+.loc Validator.tsol, 185
 LDU 16
 LDU 32
 LDU 256
@@ -778,19 +781,19 @@ THROW 0
 CALL $vote_sign_helper_81591805_internal_macro$
 
 .macro vote_sign_helper_81591805_internal_macro
-.loc Validator.tsol, 174
+.loc Validator.tsol, 187
 NEWC
-.loc Validator.tsol, 175
+.loc Validator.tsol, 188
 STSLICECONST x56744350
-.loc Validator.tsol, 176
+.loc Validator.tsol, 189
 ROLL 3
 STUR 16
-.loc Validator.tsol, 177
+.loc Validator.tsol, 190
 XCHG S1, S2
 STU 32
-.loc Validator.tsol, 178
+.loc Validator.tsol, 191
 STU 256
-.loc Validator.tsol, 179
+.loc Validator.tsol, 192
 ENDC
 .loc Validator.tsol, 0
 
@@ -798,7 +801,7 @@ ENDC
 DROP
 GETGLOB 6
 THROWIFNOT 76
-.loc Validator.tsol, 182
+.loc Validator.tsol, 195
 OVER
 PUSHCONT {
 	LDU 256
@@ -849,13 +852,13 @@ THROW 0
 CALL $report_sign_helper_d9990fb0_internal_macro$
 
 .macro report_sign_helper_d9990fb0_internal_macro
-.loc Validator.tsol, 185
+.loc Validator.tsol, 198
 XCHG S2
 NEWC
 STU 256
 STU 256
 STU 8
-.loc Validator.tsol, 186
+.loc Validator.tsol, 199
 ENDC
 .loc Validator.tsol, 0
 
@@ -863,7 +866,7 @@ ENDC
 DROP
 GETGLOB 6
 THROWIFNOT 76
-.loc Validator.tsol, 189
+.loc Validator.tsol, 202
 LDU 128
 ENDS
 .loc Validator.tsol, 0
@@ -880,7 +883,7 @@ THROW 0
 CALL $transfer_f2c1d67e_internal_macro$
 
 .macro transfer_f2c1d67e_internal_macro
-.loc Validator.tsol, 190
+.loc Validator.tsol, 203
 PUSHINT 1
 CONFIGPARAM
 DUP
@@ -890,11 +893,11 @@ PUSHCONT {
 	SWAP
 }
 IFNOT
-.loc Validator.tsol, 191
+.loc Validator.tsol, 204
 THROWIFNOT 123
-.loc Validator.tsol, 192
+.loc Validator.tsol, 205
 ACCEPT
-.loc Validator.tsol, 193
+.loc Validator.tsol, 206
 CTOS
 PLDU 256
 PUSHINT -1
@@ -904,7 +907,7 @@ STI 8
 STU 256
 ENDC
 CTOS
-.loc Validator.tsol, 194
+.loc Validator.tsol, 207
 NEWC
 STSLICECONST x62_
 STSLICE
@@ -921,7 +924,7 @@ SENDRAWMSG
 DROP
 GETGLOB 6
 THROWIFNOT 76
-.loc Validator.tsol, 197
+.loc Validator.tsol, 210
 LDREF
 ENDS
 .loc Validator.tsol, 0
@@ -938,7 +941,7 @@ THROW 0
 CALL $transfer_to_config_97e0998c_internal_macro$
 
 .macro transfer_to_config_97e0998c_internal_macro
-.loc Validator.tsol, 198
+.loc Validator.tsol, 211
 PUSHINT 0
 CONFIGPARAM
 DUP
@@ -948,11 +951,11 @@ PUSHCONT {
 	SWAP
 }
 IFNOT
-.loc Validator.tsol, 199
+.loc Validator.tsol, 212
 THROWIFNOT 123
-.loc Validator.tsol, 200
+.loc Validator.tsol, 213
 ACCEPT
-.loc Validator.tsol, 201
+.loc Validator.tsol, 214
 CTOS
 PLDU 256
 PUSHINT -1
@@ -962,7 +965,7 @@ STI 8
 STU 256
 ENDC
 CTOS
-.loc Validator.tsol, 202
+.loc Validator.tsol, 215
 NEWC
 STSLICECONST x42_
 STSLICE
@@ -983,7 +986,7 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Validator.tsol, 205
+.loc Validator.tsol, 218
 LDU 64
 LDI 1
 LDU 32
@@ -998,7 +1001,7 @@ CALLREF {
 THROW 0
 
 .macro receive_elect_at_19e6f4cf_internal_macro
-.loc Validator.tsol, 208
+.loc Validator.tsol, 221
 BLKDROP 3
 .loc Validator.tsol, 0
 
@@ -1025,7 +1028,7 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Validator.tsol, 216
+.loc Validator.tsol, 229
 ENDS
 .loc Validator.tsol, 0
 CALLREF {
@@ -1063,7 +1066,7 @@ THROW 0
 CALL $public_key_e0e349c4_internal_macro$
 
 .macro public_key_e0e349c4_internal_macro
-.loc Validator.tsol, 217
+.loc Validator.tsol, 230
 GETGLOB 2
 .loc Validator.tsol, 0
 
@@ -1071,7 +1074,7 @@ GETGLOB 2
 DROP
 GETGLOB 6
 THROWIFNOT 76
-.loc Validator.tsol, 220
+.loc Validator.tsol, 233
 LDU 32
 LDU 32
 LDREF
@@ -1112,19 +1115,19 @@ THROW 0
 CALL $upgrade_old_config_code_sign_helper_dab31d2a_internal_macro$
 
 .macro upgrade_old_config_code_sign_helper_dab31d2a_internal_macro
-.loc Validator.tsol, 222
+.loc Validator.tsol, 235
 NEWC
-.loc Validator.tsol, 223
+.loc Validator.tsol, 236
 STSLICECONST x4e436f64
-.loc Validator.tsol, 224
+.loc Validator.tsol, 237
 ROLL 3
 STUR 32
-.loc Validator.tsol, 225
+.loc Validator.tsol, 238
 XCHG S1, S2
 STU 32
-.loc Validator.tsol, 226
+.loc Validator.tsol, 239
 STREF
-.loc Validator.tsol, 227
+.loc Validator.tsol, 240
 ENDC
 .loc Validator.tsol, 0
 
@@ -1132,7 +1135,7 @@ ENDC
 DROP
 GETGLOB 6
 THROWIFNOT 76
-.loc Validator.tsol, 230
+.loc Validator.tsol, 243
 LDU 256
 LDREF
 LDU 32
@@ -1175,7 +1178,7 @@ THROW 0
 CALL $upgrade_old_config_code_message_builder_1dbbedb2_internal_macro$
 
 .macro upgrade_old_config_code_message_builder_1dbbedb2_internal_macro
-.loc Validator.tsol, 232
+.loc Validator.tsol, 245
 ROLL 4
 PUSHINT -1
 NEWC
@@ -1184,33 +1187,33 @@ STI 8
 STU 256
 ENDC
 CTOS
-.loc Validator.tsol, 234
+.loc Validator.tsol, 247
 NEWC
-.loc Validator.tsol, 235
+.loc Validator.tsol, 248
 STSLICECONST x8
-.loc Validator.tsol, 238
+.loc Validator.tsol, 251
 STSLICE
-.loc Validator.tsol, 240
+.loc Validator.tsol, 253
 STSLICECONST x06_
-.loc Validator.tsol, 249
+.loc Validator.tsol, 262
 ROLL 4
 CTOS
 NEWC
 STSLICE
-.loc Validator.tsol, 250
+.loc Validator.tsol, 263
 STSLICECONST x4e436f64
-.loc Validator.tsol, 251
+.loc Validator.tsol, 264
 ROLL 4
 STUR 32
-.loc Validator.tsol, 252
+.loc Validator.tsol, 265
 ROLL 3
 STUR 32
-.loc Validator.tsol, 253
+.loc Validator.tsol, 266
 XCHG S1, S2
 STREF
-.loc Validator.tsol, 254
+.loc Validator.tsol, 267
 STBREFR
-.loc Validator.tsol, 256
+.loc Validator.tsol, 269
 ENDC
 .loc Validator.tsol, 0
 
@@ -1439,15 +1442,9 @@ IFJMPREF {
 		}
 	}
 	DUP
-	PUSHINT 1144796841
+	PUSHINT 1169904856
 	LEQ
 	IFJMPREF {
-		DUP
-		PUSHINT 558553781
-		EQUAL
-		IFJMPREF {
-			CALL $stake$
-		}
 		DUP
 		PUSHINT 640182456
 		EQUAL
@@ -1465,6 +1462,12 @@ IFJMPREF {
 		EQUAL
 		IFJMPREF {
 			CALL $stake_sign_helper$
+		}
+		DUP
+		PUSHINT 1169904856
+		EQUAL
+		IFJMPREF {
+			CALL $stake$
 		}
 	}
 	DUP

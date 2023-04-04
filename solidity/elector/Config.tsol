@@ -145,6 +145,13 @@ contract Config is IConfig {
             b.store(vset);
             m_cfg_dict[34] = b.toCell();
         }
+        {
+
+            mapping (int32 => Common.ValidatorSet) vsets;
+            TvmBuilder b;
+            b.store(vsets);
+            m_cfg_dict[100] = b.toCell();
+        }
     }
 
     function check_validator_set(TvmCell vset) internal pure returns (uint32, uint32) {
@@ -152,12 +159,12 @@ contract Config is IConfig {
         return (v.utime_since, v.utime_until);
     }
 
-    function send_confirmation(uint64 query_id) internal pure {
-        IElector(msg.sender).config_set_confirmed_ok{flag: 64, value: 0}(query_id);
+    function send_confirmation(uint64 query_id, int32 chainId) internal pure {
+        IElector(msg.sender).config_set_confirmed_ok{flag: 64, value: 0}(query_id, chainId);
     }
 
-    function send_error(uint64 query_id) internal pure {
-        IElector(msg.sender).config_set_confirmed_err{flag: 64, value: 0}(query_id);
+    function send_error(uint64 query_id, int32 chainId) internal pure {
+        IElector(msg.sender).config_set_confirmed_err{flag: 64, value: 0}(query_id, chainId);
     }
 
     function send_slash_confirmation(uint64 query_id) internal pure {
@@ -168,7 +175,7 @@ contract Config is IConfig {
         IElector(msg.sender).config_slash_confirmed_err{flag: 64, value: 0}(query_id);
     }
 
-    function set_next_validator_set(uint64 query_id, TvmCell vset) override
+    function set_next_validator_set(uint64 query_id, TvmCell vset, int32 chainId) override
         functionID(0x4e565354) public {
         (TvmCell cfg1, bool f) = tvm.rawConfigParam(1);
         if (!f) {
@@ -184,11 +191,17 @@ contract Config is IConfig {
             ok = (t_since > now) && (t_until > t_since);
         }
         if (ok) {
-            m_cfg_dict[36] = vset;
+//            TODO resolve it to config 100
+//            m_cfg_dict[100] = vset;
+            mapping(int32 => Common.ValidatorSet) vsets = m_cfg_dict[100].toSlice().decode(mapping(int32 => Common.ValidatorSet));
+            vsets[chainId] = vset.toSlice().decode(Common.ValidatorSet);
+            TvmBuilder v;
+            v.store(vsets);
+            m_cfg_dict[100] = v.toCell();
             // send confirmation
-            send_confirmation(query_id);
+            send_confirmation(query_id, chainId);
         } else {
-            send_error(query_id);
+            send_error(query_id, chainId);
         }
     }
 
