@@ -43,8 +43,6 @@ contract Elector is IElector {
         bool failed;
         bool finished;
         bool open;
-        uint256 active_hash;
-        uint32 active_id;
     }
 
     struct Member {
@@ -66,8 +64,11 @@ contract Elector is IElector {
     }
 
     struct Chain {
-         mapping(uint32 =>PastElection) past_elections;
-         Elect election;
+        mapping(uint32 =>PastElection) past_elections;
+        Elect election;
+        uint32 active_id;
+        uint256 active_hash;
+        uint64 vtors_weight;
     }
 
     struct Frozen {
@@ -93,6 +94,8 @@ contract Elector is IElector {
 
     constructor() public {
         tvm.setPubkey(0);
+        Chain startChain;
+        m_chains[0] = startChain;
     }
 
     function get_validator_conf() internal pure inline returns (uint32, uint32, uint32, uint32) {
@@ -101,16 +104,39 @@ contract Elector is IElector {
         return (elect_for, elect_begin_before, elect_end_before, stake_held);
     }
 
-    function get_current_vset() internal pure returns (TvmCell, uint64, mapping(uint16 => TvmSlice)) {
-        TvmCell info;
-        bool f;
-        (info, f) = tvm.rawConfigParam(35);
-        if (!f) {
-            (info, /* bool */) = tvm.rawConfigParam(34);
+    function get_current_vset(int32 chainId) internal pure returns (Common.ValidatorSet) {
+//        TvmCell info;
+//        bool f;
+//        (info, f) = tvm.rawConfigParam(35);
+//        if (!f) {
+//            (info, /* bool */) = tvm.rawConfigParam(34);
+//        }
+//        Common.ValidatorSet vset = info.toSlice().decode(Common.ValidatorSet);
+//        require(vset.tag == 0x12, 40);
+//        return (info, vset.total_weight, vset.vdict);
+        optional(Common.ValidatorSets) may_be_vsets = Common.getValidatorSetsByChain(chainId);
+
+        Common.ValidatorSet info;
+        if (may_be_vsets.hasValue()) {
+            Common.ValidatorSets vsets = may_be_vsets.get();
+            if (vsets.slashed.hasValue()) {
+                info = vsets.slashed.get();
+            }
+            if (vsets.current.hasValue()) {
+                info = vsets.current.get();
+            }
         }
-        Common.ValidatorSet vset = info.toSlice().decode(Common.ValidatorSet);
-        require(vset.tag == 0x12, 40);
-        return (info, vset.total_weight, vset.vdict);
+        return info;
+
+//        bool f;
+//
+//        (info, f) = tvm.rawConfigParam(35);
+//        if (!f) {
+//            (info, /* bool */) = tvm.rawConfigParam(34);
+//        }
+//        Common.ValidatorSet vset = info.toSlice().decode(Common.ValidatorSet);
+//        require(vset.tag == 0x12, 40);
+//        return (info, vset.total_weight, vset.vdict);
     }
 
     function send_message_back(address addr, uint32 ans_tag, uint64 query_id,
@@ -247,15 +273,21 @@ contract Elector is IElector {
         return recovered;
     }
 
-    function unfreeze_with_bonuses(mapping(uint256 => Frozen) freeze_dict,
-                                   uint128 tot_stakes, uint128 tot_bonuses) internal
-            returns (uint128) {
+    function unfreeze_with_bonuses(
+        mapping(uint256 => Frozen) freeze_dict,
+        uint128 tot_stakes,
+        uint128 tot_bonuses
+    ) internal returns (uint128) {
         uint128 total = 0;
         uint128 recovered = 0;
         uint128 returned_bonuses = 0;
+
         optional(uint256, Frozen) f = freeze_dict.min();
         while (f.hasValue()) {
+
+
             (uint256 pubkey, Frozen frozen) = f.get();
+
             if (frozen.banned) {
                 recovered += uint128(frozen.stake);
             } else {
@@ -282,7 +314,7 @@ contract Elector is IElector {
     }
 
     function unfreeze_all(uint32 elect_id, int32 chainId) internal returns (uint128) {
-//        TODO save
+
         optional(PastElection) p = m_chains[chainId].past_elections.fetch(elect_id);
         if (!p.hasValue()) {
             return 0;
@@ -301,13 +333,15 @@ contract Elector is IElector {
         (int8 src_wc, uint256 src_addr) = msg.sender.unpack();
         (TvmCell cfg0, /* bool */) = tvm.rawConfigParam(0);
         uint256 config_addr = cfg0.toSlice().loadUnsigned(256);
-//        TODO extract election only once
-        if (src_wc != -1 || src_addr != config_addr || !m_chains[chainId].election.open) {
+
+        Elect election = m_chains[chainId].election;
+
+        if (src_wc != -1 || src_addr != config_addr || !election.open) {
             // not from config smc, somebody's joke?
             // or no elections active (or just completed)
             return;
         }
-        if (m_chains[chainId].election.elect_at != query_id || !m_chains[chainId].election.finished) {
+        if (election.elect_at != query_id || !election.finished) {
             // not these elections, or elections not finished yet
             return;
         }
@@ -345,6 +379,20 @@ contract Elector is IElector {
     function take_change() override public internalMsg {
     }
 
+
+    function receiveBonuses(int32 chainId) override external internalMsg {
+        if  (m_chains.exists(chainId)) {
+            ( mapping(uint32 => PastElection) past_elections, ,uint32 activeId,,) = m_chains[chainId].unpack();
+
+            if (past_elections.exists(activeId)) {
+                m_chains[chainId].past_elections[activeId].bonuses += varUint16(msg.value);
+            }
+        }
+    }
+
+    function process_simple_transfer() internal {
+        msg.sender.transfer({value: 0, flag: 64});
+    }
 //    TODO understand what this method do
 //    function process_simple_transfer() internal {
 //        (int8 src_wc, uint256 src_addr) = msg.sender.unpack();
@@ -367,8 +415,12 @@ contract Elector is IElector {
 //        }
 //    }
 
-    function recover_stake(uint64 query_id) override public
-            functionID(0x47657424) internalMsg {
+    function recover_stake(uint64 query_id)
+        override
+        public
+        functionID(0x47657424)
+        internalMsg
+    {
         (int8 src_wc, uint256 src_addr) = msg.sender.unpack();
         if (src_wc != -1) {
             // not from masterchain, return error
@@ -378,6 +430,7 @@ contract Elector is IElector {
         // need to check banned
         optional(uint128) amount = m_credits.fetch(src_addr);
         if (!amount.hasValue()) {
+
             // no credit for sender, return error
             send_message_back(msg.sender, 0xfffffffe, query_id, 0x47657424, 0, 64);
             return;
@@ -387,8 +440,16 @@ contract Elector is IElector {
         IValidator(msg.sender).receive_stake_back{value: amount.get(), flag: 64}(query_id);
     }
 
-    function recover_stake_gracefully(uint64 query_id, uint32 elect_id, int32 chainId) override public
-            functionID(0x47657425) internalMsg {
+    function recover_stake_gracefully(
+        uint64 query_id,
+        uint32 elect_id,
+        int32 chainId
+    )
+    override
+    public
+    functionID(0x47657425)
+    internalMsg
+    {
         (int8 src_wc, uint256 src_addr) = msg.sender.unpack();
         if (src_wc != -1) {
             // not from masterchain, return error
@@ -396,16 +457,20 @@ contract Elector is IElector {
             return;
         }
         optional(uint128) amount = m_credits.fetch(src_addr);
-        if (!amount.hasValue()) {
-//            TODO save
-            optional(PastElection) p = m_chains[chainId].past_elections.fetch(elect_id);
-            if (!p.hasValue()) {
-                send_message_back(msg.sender, 0xfffffffe, query_id, 0x47657425, 0, 64);
+        if (!amount.hasValue() ) {
+            optional(Chain) chain = m_chains.fetch(chainId);
+
+            if (chain.hasValue()) {
+                optional(PastElection) p = chain.get().past_elections.fetch(elect_id);
+                if (!p.hasValue()) {
+                    send_message_back(msg.sender, 0xfffffffe, query_id, 0x47657425, 0, 64);
+                    return;
+                }
+                PastElection past = p.get();
+                send_message_back(msg.sender, 0xfffffffd, query_id, past.unfreeze_at, 0, 64);
                 return;
             }
-            PastElection past = p.get();
-            send_message_back(msg.sender, 0xfffffffd, query_id, past.unfreeze_at, 0, 64);
-            return;
+
         }
         delete m_credits[src_addr];
         // send amount to sender in a new message
@@ -452,6 +517,7 @@ contract Elector is IElector {
     // computes the total stake out of the first n entries of list l
     function compute_total_stake(optional(List) l, uint16 n, uint128 m_stake) internal pure inline
             returns (uint128) {
+
         uint128 tot_stake = 0;
         repeat(n) {
             List h = l.get();
@@ -664,19 +730,19 @@ contract Elector is IElector {
         (uint32 elect_for, /* uint32 */, uint32 elect_end_before, uint32 stake_held) =
             get_validator_conf();
         uint32 start = math.max(now + elect_end_before - 60, cur_elect_at);
-        (TvmCell cfg16, /* bool */) = tvm.rawConfigParam(16);
-        (/* uint16 */, uint16 max_main_validators) = cfg16.toSlice().decode(uint16, uint16);
 
-        // Common.ValidatorSet vset;
+
+        Common.ValidatorSet vset = Common.ValidatorSet({
+            tag:uint8(0x12),
+            utime_since: start,
+            utime_until: start + elect_for,
+            total: cnt,
+            total_weight: total_weight,
+            vdict: vdict
+        });
+
         TvmBuilder b;
-        b.store(
-            uint8(0x12),
-            start,
-            start + elect_for,
-            cnt,
-            math.min(cnt, max_main_validators),
-            total_weight, vdict
-        );
+        b.store(vset);
         TvmCell vsetCell = b.toCell();
 
         (TvmCell cfg0, /* bool */) = tvm.rawConfigParam(0);
@@ -689,65 +755,62 @@ contract Elector is IElector {
         past.vset_hash = tvm.hash(vsetCell);
         past.frozen_dict = frozen;
         past.total_stake = varUint16(total_stakes);
-//        TODO save
         m_chains[chainId].past_elections[cur_elect_at] = past;
         // reset slasher
         mapping(uint256 => bool) nil1;
         m_banned = nil1;
         mapping(uint256 => mapping(uint8 => Bucket)) nil2;
         m_reports = nil2;
-        m_reports_workchain = nil2;
 
-        uint64 masterchain_vtors_weight = 0;
-        uint64 workchain_vtors_weight = 0;
-        uint16 index = 0;
+        uint64 vtors_weight = 0;
         for((, TvmSlice entry) : vdict) {
             (,, uint64 weight) = decode_validator(entry);
-            if (index < max_main_validators) {
-                masterchain_vtors_weight += weight;
-            } else {
-                workchain_vtors_weight += weight;
-            }
-            index += 1;
+                vtors_weight += weight;
         }
-        m_masterchain_vtors_weight = masterchain_vtors_weight;
-        m_workchain_vtors_weight = workchain_vtors_weight;
+        m_chains[chainId].vtors_weight = vtors_weight;
 
         return true;
     }
 
     function update_active_vset_id(int32 chainId) internal returns (bool) {
-        (TvmCell cfg34, /* bool */) = tvm.rawConfigParam(100);
-        // TODO qdecode
-        (mapping (int32 => Common.ValidatorSet) vsets) = cfg34.toSlice().decode(mapping (int32 => Common.ValidatorSet));
+
+        (optional(Common.ValidatorSets) may_be_vsets)  = Common.getValidatorSetsByChain(chainId);
+
+        if (!may_be_vsets.hasValue() ) {
+            // can't decode config 100
+            return false;
+        }
+        if  (!may_be_vsets.get().current.hasValue()) {
+            return false;
+
+        }
+        Common.ValidatorSet vset = may_be_vsets.get().current.get();
 
         TvmBuilder v;
-        //TODO save get
-        v.store(vsets[chainId]);
+        v.store(vset);
+        Elect election = m_chains[chainId].election;
 
         uint256 cur_hash = tvm.hash(v.toCell());
-        if (cur_hash == m_chains[chainId].election.active_hash) {
+        if (cur_hash == m_chains[chainId].active_hash) {
             // validator set unchanged
             return false;
         }
-// TODO save
-        uint32 active_id = m_chains[chainId].election.active_id;
+
+        uint32 active_id = m_chains[chainId].active_id;
         if (active_id != 0) {
             // active_id becomes inactive
-// TODO save
+
             optional(PastElection) p_opt = m_chains[chainId].past_elections.fetch(active_id);
             if (p_opt.hasValue()) {
                 PastElection past = p_opt.get();
                 // adjust unfreeze time of this validator set
-                require(past.vset_hash == m_chains[chainId].election.active_hash, 57);
+                require(past.vset_hash == m_chains[chainId].active_hash, 57);
                 past.unfreeze_at = now + past.stake_held;
-// TODO save
 
                 m_chains[chainId].past_elections[active_id] = past;
             }
         }
         // look up new active_id by hash
-// TODO save
 
         optional(uint32, PastElection) p = m_chains[chainId].past_elections.min();
         while (p.hasValue()) {
@@ -757,23 +820,22 @@ contract Elector is IElector {
                 uint128 amount = (m_grams >> 3);
                 m_grams -= varUint16(amount);
                 past.bonuses += varUint16(amount);
-// TODO save
 
                 m_chains[chainId].past_elections[id] = past;
                 // found
                 break;
             }
-// TODO save
 
             p = m_chains[chainId].past_elections.next(id);
         }
+
         if (p.hasValue()) {
             (uint32 id, ) = p.get();
-            m_chains[chainId].election.active_id = id;
+            m_chains[chainId].active_id = id;
         } else {
-            m_chains[chainId].election.active_id = 0;
+            m_chains[chainId].active_id = 0;
         }
-        m_chains[chainId].election.active_hash = cur_hash;
+        m_chains[chainId].active_hash = cur_hash;
         return true;
     }
 
@@ -782,7 +844,6 @@ contract Elector is IElector {
             // elections not finished yet
             return false;
         }
-// TODO save
 
         optional(PastElection) p = m_chains[chainId].past_elections.fetch(m_chains[chainId].election.elect_at);
         if (!p.hasValue()) {
@@ -790,11 +851,27 @@ contract Elector is IElector {
             return false;
         }
         PastElection past = p.get();
+
+        optional(Common.ValidatorSets) vsets = Common.getValidatorSetsByChain(chainId);
+        if (!vsets.hasValue()) {
+            // can't decode config 100 or config doesn't include particular `chainId`
+            return false;
+        }
+        Common.ValidatorSets chainSet = vsets.get();
+
+        TvmBuilder currentSetHash;
+        if  (chainSet.current.hasValue()) {
+            currentSetHash.store(chainSet.current.get());
+        }
+
+        TvmBuilder nextSetHash;
+        if  (chainSet.next.hasValue()) {
+            nextSetHash.store(chainSet.next.get());
+        }
         // recover validator set hash
-        (TvmCell cfg34, bool f1) = tvm.rawConfigParam(34);
-        (TvmCell cfg36, bool f2) = tvm.rawConfigParam(36);
-        if ((f1 && (tvm.hash(cfg34) == past.vset_hash)) ||
-            (f2 && (tvm.hash(cfg36) == past.vset_hash))) {
+
+        if ((chainSet.current.hasValue() && (tvm.hash(currentSetHash.toCell()) == past.vset_hash)) ||
+            (chainSet.next.hasValue() && (tvm.hash(nextSetHash.toCell()) == past.vset_hash))) {
             // this validator set has been installed, forget elections
             m_chains[chainId].election.open = false;
             Elect elect;
@@ -806,26 +883,30 @@ contract Elector is IElector {
     }
 
     function check_unfreeze(int32 chainId) internal {
-// TODO save
 
         optional(uint32, PastElection) p = m_chains[chainId].past_elections.min();
         while (p.hasValue()) {
             (uint32 id, PastElection past) = p.get();
-            if ((past.unfreeze_at <= now) && (id != m_chains[chainId].election.active_id)) {
+
+            if ((past.unfreeze_at <= now) && (id != m_chains[chainId].active_id)) {
                 // unfreeze!
                 m_grams += varUint16(unfreeze_all(id,chainId));
                 // unfreeze only one at time, exit loop
                 break;
             }
-// TODO save
-
             p = m_chains[chainId].past_elections.next(id);
         }
     }
 
     function announce_new_elections(int32 chainId) internal returns (bool) {
-        (/* TvmCell */, bool f) = tvm.rawConfigParam(36); // next validator set
-        if (f) {
+
+        optional(Common.ValidatorSets) may_be_vsets = Common.getValidatorSetsByChain(chainId);
+
+        if (!may_be_vsets.hasValue()) {
+            return false;
+        }
+        Common.ValidatorSets vsets = may_be_vsets.get();
+        if (vsets.next.hasValue()) {
             // next validator set exists, no elections needed
             return false;
         }
@@ -836,12 +917,15 @@ contract Elector is IElector {
             // this smart contract is not the elections smart contract anymore, no new elections
             return false;
         }
-        (TvmCell cur_vset, bool f2) = tvm.rawConfigParam(34); // current validator set
-        if (!f2) {
+        optional(Common.ValidatorSet) cur_vset = vsets.current;
+
+        if (!cur_vset.hasValue()) {
             return false;
         }
+
         (/* uint32 */, uint32 elect_begin_before, uint32 elect_end_before, /* uint32 */) = get_validator_conf();
-        (/* uint8 */ /* uint32 */, uint32 cur_valid_until) = cur_vset.toSlice().decode(uint40, uint32);
+        uint32 cur_valid_until = cur_vset.get().utime_until;
+
         uint32 t = now;
         uint32 t0 = cur_valid_until - elect_begin_before;
         if (t < t0) {
@@ -869,9 +953,7 @@ contract Elector is IElector {
             members: emptyMap,
             failed: false,
             finished: false,
-            open: true,
-            active_hash: tvm.hash(e),
-            active_id: 0
+            open: true
         });
         m_chains[chainId].election = n_elect;
         return true;
@@ -883,7 +965,7 @@ contract Elector is IElector {
             if (chain.election.open) {
                 // have an active election
                 if (conduct_elections(chainId)) {
-                    // todo handle if consenmsu finished
+                    // todo handle if consensus success
                     // elections conducted, exit
                     return;
                 }
@@ -919,9 +1001,6 @@ contract Elector is IElector {
     uint8 constant BAD_REPORT_DUPLICATE    = 140;
     uint8 constant BAD_TOTAL_VTORS         = 141;
 
-    uint64 m_masterchain_vtors_weight;
-    uint64 m_workchain_vtors_weight;
-
     mapping(uint256 => bool) m_banned;
 
     struct Bucket {
@@ -930,14 +1009,10 @@ contract Elector is IElector {
     }
 
     mapping(uint256 => mapping(uint8 => Bucket)) m_reports;
+    uint64 constant THRESHOLD_NUMERATOR   = 2;
+    uint64 constant THRESHOLD_DENOMINATOR = 3;
 
-    uint64 constant THRESHOLD_MASTERCHAIN_NUMERATOR   = 2;
-    uint64 constant THRESHOLD_MASTERCHAIN_DENOMINATOR = 3;
 
-    mapping(uint256 => mapping(uint8 => Bucket)) m_reports_workchain;
-
-    uint64 constant THRESHOLD_WORKCHAIN_NUMERATOR   = 1;
-    uint64 constant THRESHOLD_WORKCHAIN_DENOMINATOR = 3;
 
     function require_ok(bool condition, uint errorCode) internal inline {
         if (!condition) {
@@ -961,10 +1036,8 @@ contract Elector is IElector {
         uint256 victim_pubkey,
         uint8 metric_id,
         int32 chainId
-    )
-        public externalMsg {
-        (TvmCell info, /* uint64 */, /* Common.ValidatorSet vset */) = get_current_vset();
-        Common.ValidatorSet vset = info.toSlice().decode(Common.ValidatorSet);
+    ) public externalMsg {
+        Common.ValidatorSet vset = get_current_vset(chainId);
         require(vset.tag == 0x12, BAD_CONFIG_PARAM_34);
 
         // ignore reports outside of the vset's active time interval
@@ -974,10 +1047,10 @@ contract Elector is IElector {
         signature.store(signature_hi, signature_lo);
         TvmBuilder msg_body;
         msg_body.store(reporter_pubkey, victim_pubkey, metric_id);
-        require(tvm.checkSign(msg_body.toSlice(), signature.toSlice(), reporter_pubkey), 34);
 
         // accept external message
         tvm.accept();
+        require(tvm.checkSign(msg_body.toSlice(), signature.toSlice(), reporter_pubkey), 34);
 
         // ignore reports from already banned reporters
         require_ok(!m_banned.exists(reporter_pubkey), BAD_BANNED_REPORTER);
@@ -1013,42 +1086,26 @@ contract Elector is IElector {
 
         (TvmCell cfg16, ) = tvm.rawConfigParam(16);
         ( , , uint16 min_validators) = cfg16.toSlice().decode(uint16, uint16, uint16);
-        if (reporter_index < vset.main) {
-            Bucket bucket = m_reports[victim_pubkey][metric_id];
-            optional(uint64) exists = bucket.reports.fetch(reporter_pubkey);
-            // proceed only if the reporter hasn't yet reported
-            require_ok(!exists.hasValue(), BAD_REPORT_DUPLICATE);
 
-            bucket.weight += reporter_weight;
-            bucket.reports[reporter_pubkey] = reporter_weight;
-            m_reports[victim_pubkey][metric_id] = bucket;
-            tvm.commit();
+        // TODO what is the metric_id ?
+        Bucket bucket = m_reports[victim_pubkey][metric_id];
+        optional(uint64) exists = bucket.reports.fetch(reporter_pubkey);
+        // proceed only if the reporter hasn't yet reported
+        require_ok(!exists.hasValue(), BAD_REPORT_DUPLICATE);
 
-            if (bucket.weight >= math.muldiv(m_masterchain_vtors_weight,
-                    THRESHOLD_MASTERCHAIN_NUMERATOR, THRESHOLD_MASTERCHAIN_DENOMINATOR)) {
-                // slashing condition is met
-                require(vset.main > min_validators, BAD_TOTAL_VTORS);
-                m_banned[victim_pubkey] = true;
-                emit_updated_validator_set(victim_pubkey, victim_index, chainId);
-            }
-        } else {
-            Bucket bucket = m_reports_workchain[victim_pubkey][metric_id];
-            optional(uint64) exists = bucket.reports.fetch(reporter_pubkey);
-            // proceed only if the reporter hasn't yet reported
-            require_ok(!exists.hasValue(), BAD_REPORT_DUPLICATE);
+        bucket.weight += reporter_weight;
+        bucket.reports[reporter_pubkey] = reporter_weight;
+        m_reports[victim_pubkey][metric_id] = bucket;
+        tvm.commit();
 
-            bucket.weight += reporter_weight;
-            bucket.reports[reporter_pubkey] = reporter_weight;
-            m_reports_workchain[victim_pubkey][metric_id] = bucket;
-            tvm.commit();
 
-            if (bucket.weight >= math.muldiv(m_workchain_vtors_weight,
-                    THRESHOLD_WORKCHAIN_NUMERATOR, THRESHOLD_WORKCHAIN_DENOMINATOR)) {
-                // slashing condition is met
-                require(vset.total > min_validators, BAD_TOTAL_VTORS);
-                m_banned[victim_pubkey] = true;
-                emit_updated_validator_set(victim_pubkey, victim_index, chainId);
-            }
+
+        if (bucket.weight >= math.muldiv(m_chains[chainId].vtors_weight, THRESHOLD_NUMERATOR, THRESHOLD_DENOMINATOR)) {
+            // slashing condition is met
+            // TODO fix it after understanding metric_id
+//            require(vset.vdict.keys().length > min_validators, BAD_TOTAL_VTORS);
+            m_banned[victim_pubkey] = true;
+            emit_updated_validator_set(victim_pubkey, victim_index, chainId);
         }
     }
 
@@ -1077,8 +1134,9 @@ contract Elector is IElector {
         uint16 victim_index,
         int32 chainId
     ) internal inline {
-        (TvmCell info, uint64 total_weight, mapping(uint16 => TvmSlice) vdict) = get_current_vset();
-        Common.ValidatorSet vset = info.toSlice().decode(Common.ValidatorSet);
+        Common.ValidatorSet vset = get_current_vset(chainId);
+        mapping(uint16 => TvmSlice) vdict = vset.vdict;
+        uint64 total_weight;
 
         (TvmCell p16, ) = tvm.rawConfigParam(16);
         (, , uint16 min_validators) = p16.toSlice().decode(uint16, uint16, uint16);
@@ -1092,44 +1150,34 @@ contract Elector is IElector {
                 min_validators -= 1;
                 m_reports = update_reports(victim_pubkey, m_reports);
             } else {
-                m_reports_workchain = update_reports(victim_pubkey, m_reports_workchain);
+                m_reports = update_reports(victim_pubkey, m_reports);
             }
 
             mapping(uint16 => TvmSlice) vdict_updated = emptyMap;
-            uint64 masterchain_vtors_weight = 0;
-            uint64 workchain_vtors_weight = 0;
+
             total_weight = 0;
-            index = 0;
+
             for((, TvmSlice entry) : vdict) {
                 TvmSlice entryRead = entry;
                 (, uint256 pubkey, uint64 weight) = decode_validator(entryRead);
                 if (!m_banned.exists(pubkey)) {
-                    vdict_updated[index] = entry;
-                    total_weight += weight;
-                    if (index < vset.main) {
-                        masterchain_vtors_weight += weight;
-                    } else {
-                        workchain_vtors_weight += weight;
-                    }
-                    index += 1;
+                        vdict_updated[index] = entry;
+                        total_weight += weight;
+                        index += 1;
                 }
             }
             require(index >= min_validators, BAD_TOTAL_VTORS);
-            m_masterchain_vtors_weight = masterchain_vtors_weight;
-            m_workchain_vtors_weight = workchain_vtors_weight;
 
+
+            m_chains[chainId].vtors_weight = total_weight;
             index = 0;
+
+
             mapping(uint256 => mapping(uint8 => Bucket)) reports = m_reports;
-            uint128 max_weight = math.muldiv(m_masterchain_vtors_weight,
-                THRESHOLD_MASTERCHAIN_NUMERATOR, THRESHOLD_MASTERCHAIN_DENOMINATOR);
+            uint128 max_weight = math.muldiv(m_chains[chainId].vtors_weight, THRESHOLD_NUMERATOR, THRESHOLD_DENOMINATOR);
             for((, TvmSlice entry) : vdict_updated) {
                 Common.ValidatorAddr vtor = entry.decode(Common.ValidatorAddr);
                 require(vtor.tag != 0x53, BAD_CONFIG_PARAM_34);
-                if (index == min_validators) {
-                    max_weight = math.muldiv(m_workchain_vtors_weight,
-                        THRESHOLD_WORKCHAIN_NUMERATOR, THRESHOLD_WORKCHAIN_DENOMINATOR);
-                    reports = m_reports_workchain;
-                }
                 optional(mapping(uint8 => Bucket)) buckets = reports[vtor.pubkey];
                 if (buckets.hasValue()) {
                     for((, Bucket bucket) : buckets.get()) {
@@ -1158,20 +1206,19 @@ contract Elector is IElector {
         vset_updated.utime_until  = vset.utime_until;
         vset_updated.total_weight = total_weight;
         vset_updated.total        = index;
-        vset_updated.main         = math.min(index, vset.main);
         vset_updated.vdict        = vdict;
 
         TvmBuilder b;
         b.store(vset_updated);
         TvmCell vset_updated_cell = b.toCell();
-// TODO save
-        uint32 active_id = m_chains[chainId].election.active_id;
+
+        uint32 active_id = m_chains[chainId].active_id;
         optional(PastElection) p = m_chains[chainId].past_elections.fetch(active_id);
         require(p.hasValue(), BAD_ACTIVE_ID);
         PastElection past = p.get();
 
         uint256 active_hash = tvm.hash(vset_updated_cell);
-        m_chains[chainId].election.active_hash = active_hash;
+        m_chains[chainId].active_hash = active_hash;
         past.vset_hash = active_hash;
         optional(Frozen) f = past.frozen_dict.fetch(victim_pubkey);
         if (f.hasValue()) {
@@ -1181,17 +1228,18 @@ contract Elector is IElector {
             past.bonuses += frozen.stake;
             past.total_stake -= frozen.stake;
         }
-// TODO save
+
 
         m_chains[chainId].past_elections[active_id] = past;
-
         (TvmCell cfg0, ) = tvm.rawConfigParam(0);
         address config_addr = address.makeAddrStd(-1, cfg0.toSlice().loadUnsigned(256));
-        IConfig(config_addr).set_slashed_validator_set{value: (1 << 30), flag: 1}(active_id, vset_updated_cell);
+        IConfig(config_addr).set_slashed_validator_set{
+                value: (1 << 30),
+                flag: 1
+        }(active_id, vset_updated_cell, chainId);
     }
 
     // Get complete storage
-//    TODO update method
     function get() public view
         returns (
             mapping(int32 => Chain) chains,
@@ -1210,9 +1258,9 @@ contract Elector is IElector {
         return m_reports[victim_pubkey];
     }
 
-    function get_buckets_workchain(uint256 victim_pubkey) public view returns (mapping(uint8 => Bucket)) {
-        return m_reports_workchain[victim_pubkey];
-    }
+//    function get_buckets_workchain(uint256 victim_pubkey) public view returns (mapping(uint8 => Bucket)) {
+//        return m_reports_workchain[victim_pubkey];
+//    }
 
     // returns active election id or 0
     function active_election_id(int32 chainId) public view returns (uint32) {
@@ -1242,7 +1290,7 @@ contract Elector is IElector {
     receive() external {
         // inbound message has empty body
         // simple transfer with comment, return
-//        process_simple_transfer();
+        process_simple_transfer();
     }
 
     fallback() external pure {

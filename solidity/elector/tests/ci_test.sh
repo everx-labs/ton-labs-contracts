@@ -33,4 +33,5 @@ cd ..
 mv rebuild/* binaries/
 rm -rf rebuild
 echo "Run tests..."
-python test_elector.py
+python test_elector.py > ./1.txt
+

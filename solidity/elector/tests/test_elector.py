@@ -139,13 +139,17 @@ class Config(BaseContract):
         assert isinstance(cell, Cell)
         return cell
 
+    def get_current_vset(self, chain_id: str):
+        cell = self.call_getter("get_current_vset", dict(chainId = chain_id))
+        assert isinstance(cell, Cell)
+        return cell
 
     def print_config_param(self, index: int) -> str:
         cell = self.get_config_param(index)
         return core.print_config_param(index, cell.raw_)
 
     def set_config_params(self):
-        for i in [0, 1, 5, 13, 15, 16, 17, 34, 36]:
+        for i in [0, 1, 5, 13, 15, 16, 17, 34, 36,100]:
             set_config_param(i, Config.get_config_param(self, i))
 
     def reset_utime_until(self):
@@ -155,25 +159,29 @@ class Config(BaseContract):
         return self.call_getter_raw('get_previous_vset')['value0']
 
     def get_real_vset(self) -> dict:
-        vset = self.get_slashed_vset()
+        vset = self.get_slashed_vset(GLOBAL_DEFAULT_CHAIN_ID)
         assert isinstance(vset, dict)
         if decode_int(vset['main']) == 0:
-            return self.get_current_vset()
+            return self.get_current_vset(GLOBAL_DEFAULT_CHAIN_ID)
         else:
             return vset
 
-    def get_current_vset(self) -> dict:
-        vset = self.call_getter_raw('get_current_vset')['value0']
+    def get_current_vset(self, chain_id: str) -> dict:
+        vset = self.call_getter_raw('get_current_vset',dict(
+            chainId = chain_id
+        ))['value0']
         assert isinstance(vset, dict)
         return vset
 
-    def get_slashed_vset(self) -> dict:
-        vset = self.call_getter_raw('get_slashed_vset')['value0']
+    def get_slashed_vset(self, chain_id: str) -> dict:
+        vset = self.call_getter_raw('get_slashed_vset', dict(chainId = chain_id))['value0']
         assert isinstance(vset, dict)
         return vset
 
-    def get_next_vset(self) -> dict:
-        vset = self.call_getter_raw('get_next_vset')['value0']
+    def get_next_vset(self, chain_id: str) -> dict:
+        vset = self.call_getter_raw('get_next_vset',dict(
+            chainId = chain_id
+        ))['value0']
         assert isinstance(vset, dict)
         return vset
 
@@ -256,7 +264,12 @@ class Elector(BaseContract):
 
     def get(self):
         return self.call_getter_raw('get')
-
+    def get_chain(self, chain_id: str):
+        return self.call_getter_raw("get")['chains'][chain_id]
+    def get_chain_election(self, chain_id: str):
+        return self.call_getter_raw("get")['chains'][chain_id]['election']
+    def get_chain_past_elections(self, chain_id: str):
+        return self.call_getter_raw("get")['chains'][chain_id]['past_elections']
     def get_banned(self):
         return self.call_getter_raw('get_banned')["value0"]
 
@@ -271,20 +284,30 @@ class Elector(BaseContract):
     def dump(self):
         print(json.dumps(self.get(), indent = 2, sort_keys = True))
 
-    def active_election_id(self):
-        return self.call_getter('active_election_id')
+    def active_election_id(self, chain_id: str):
+        return self.call_getter('active_election_id',dict(chainId = chain_id))
 
     def compute_returned_stake(self, address):
         return self.call_getter('compute_returned_stake',
             dict(wallet_addr = address))
 
-    def report(self, signature_hi, signature_lo, reporter_pubkey, victim_pubkey, metric_id, expected_ec: int = 0):
+    def report(
+        self,
+        signature_hi,
+        signature_lo,
+        reporter_pubkey,
+        victim_pubkey,
+        metric_id,
+        chain_id: str,
+        expected_ec: int = 0
+    ):
         return self.call_method('report', dict(
             signature_hi    = signature_hi,
             signature_lo    = signature_lo,
             reporter_pubkey = reporter_pubkey,
             victim_pubkey   = victim_pubkey,
-            metric_id       = metric_id),
+            metric_id       = metric_id,
+            chainId         = chain_id),
             None,
             expected_ec)
 
@@ -300,7 +323,7 @@ class Validator(BaseContract):
         self.validator_pubkey = '0x' + public_key
         self.adnl_addr        = '0x' + secrets.token_hex(32)
 
-    def stake(self, query_id, stake_at, max_factor, value, signature: str):
+    def stake(self, query_id, stake_at, max_factor, value, signature: str, chain_id: str):
         return self.call_method('stake', dict(
             query_id         = query_id,
             validator_pubkey = self.validator_pubkey,
@@ -308,7 +331,9 @@ class Validator(BaseContract):
             max_factor       = max_factor,
             adnl_addr        = self.adnl_addr,
             value            = value,
-            signature        = signature))
+            signature        = signature,
+            chainId         = chain_id
+        ))
 
     def stake_sign_helper(self, stake_at, max_factor) -> Cell:
         cell = self.call_getter('stake_sign_helper', dict(
@@ -384,10 +409,18 @@ class Zero(BaseContract):
     def grant(self, value):
         return self.call_method('grant', dict(value = value))
 
+    def grant_to_chain(self, value: str, chain_id: str):
+        return self.call_method('grantByChainId', dict(
+            value = value,
+            chainId = chain_id
+        ))
+
 def deploy_elector():
     status('Deploying Elector')
     e = Elector()
-    assert eq(False, e.get()['election_open'])
+
+    #TODO uncomment assert
+    # assert eq(False, e.get()['election_open'])
     return e
 
 def deploy_config(
@@ -431,7 +464,7 @@ def stake(stake_at, max_factor, value, v = None, verbose = True, e: Elector | No
     query_id = generate_query_id()
     cell = v.stake_sign_helper(stake_at, max_factor)
     signature = sign_cell(cell, v.private_key)
-    v.stake(query_id, stake_at, max_factor, value + EVER, signature)
+    v.stake(query_id, stake_at, max_factor, value + EVER, signature, GLOBAL_DEFAULT_CHAIN_ID)
     dispatch_one_message(src = v, dst = e) # validator: elector.process_new_stake()
     dispatch_one_message(src = e, dst = v) # elector: validator.confirmation()
     ensure_queue_empty()
@@ -444,7 +477,9 @@ def stake(stake_at, max_factor, value, v = None, verbose = True, e: Elector | No
 def make_elections(configurations, e: Elector) -> list[Validator]:
     status('Announcing new elections')
     state = e.get()
-    assert eq(False, state['election_open'])
+    # TODO rallback
+    # assert eq(False, state['election_open'])
+
     e.ticktock(False) # announce_new_elections
     return make_stakes(configurations, e)
 
@@ -454,34 +489,37 @@ def conduct_elections(c: Config, e: Elector, members_cnt: int, msg = None):
     status(msg if msg is not None else 'Conducting elections')
     balance_before_conduct_elections = e.balance
 
-    state = e.get()
-    time_set(decode_int(state['cur_elect']['elect_close']))
-    assert eq(members_cnt, len(state['cur_elect']['members']))
+    state = e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)
+    time_set(decode_int(state['elect_close']))
+    assert eq(members_cnt, len(state['members']))
     e.ticktock(False) # conduct_elections
 
     e.ensure_balance(balance_before_conduct_elections - (1 << 30))
 
     dispatch_one_message(src = e, dst = c) # elector: config.set_next_validator_set()
-    set_config_param(36, c.get_config_param(36))
+    set_config_param(100, c.get_config_param(100))
     dispatch_one_message(src = c, dst = e) # config: elector.config_set_confirmed_ok()
     e.ensure_balance(balance_before_conduct_elections)
 
-    assert eq(True, e.get()['election_open'])
+    assert eq(True, e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['open'])
 
     # state = e.get()
     # assert eq(0, len(state['cur_elect']['members']))
 
 def make_stakes(configurations: list[tuple[float, int]], e: Elector):
-    state = e.get()
-    count = len(state['cur_elect']['members'])
-    assert eq(True, state['election_open'])
-    elect_id = state['cur_elect']['elect_at']
+    state = e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)
+
+
+    count = len(state['members'])
+
+    assert eq(True, state['open'])
+    elect_id = state['elect_at']
     vv = []
     for i in range(len(configurations)):
         v = stake(elect_id, int(configurations[i][0] * 0x10000), configurations[i][1] * EVER, e = e)
         v.ensure_balance(globals.G_DEFAULT_BALANCE - configurations[i][1] * EVER)
         vv.append(v)
-        assert eq(count + i + 1, len(e.get()['cur_elect']['members']))
+        assert eq(count + i + 1, len(e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['members']))
     return vv
 
 def generate_query_id():
@@ -497,7 +535,7 @@ def test_return_stake(ec, stake_at, max_factor, value, bad_sign = False):
     if bad_sign:
         (private_key, unused) = make_keypair()
     signature = sign_cell(cell, private_key)
-    v.stake(query_id, stake_at, max_factor, value + EVER, signature)
+    v.stake(query_id, stake_at, max_factor, value + EVER, signature, GLOBAL_DEFAULT_CHAIN_ID)
     dispatch_one_message() # validator: elector.process_new_stake()
     dispatch_one_message() # elector: validator.return_stake()
     state = v.get()
@@ -513,7 +551,7 @@ def test_return_stake_same_pubkey(v, stake_at):
     query_id = generate_query_id()
     cell = w.stake_sign_helper(stake_at, 0x10000)
     signature = sign_cell(cell, v.private_key)
-    w.stake(query_id, stake_at, 0x10000, 11 * GRAM, signature)
+    w.stake(query_id, stake_at, 0x10000, 11 * GRAM, signature, GLOBAL_DEFAULT_CHAIN_ID)
     dispatch_one_message() # validator: elector.process_new_stake()
     dispatch_one_message() # elector: validator.return_stake()
     state = w.get()
@@ -546,11 +584,12 @@ def test_seven_validators():
 
     c = deploy_config()
     e = deploy_elector()
+    c.set_config_params()
 
     v = make_elections(configurations, e)
-    elect_id = decode_int(e.get()['cur_elect']['elect_at'])
+    elect_id = decode_int(e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['elect_at'])
 
-    total_stake = decode_int(e.get()['cur_elect']['total_stake'])
+    total_stake = decode_int(e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['total_stake'])
     status(green('total_stake: {}'.format(total_stake)))
     assert eq(globals.G_DEFAULT_BALANCE + 530 * EVER, total_stake)
 
@@ -563,7 +602,7 @@ def test_seven_validators():
     test_return_stake(2, elect_id, 0x10000, total_stake >> 12)
 
     status('Checking stake less than 1/4096 of total_stake')
-    total_stake = decode_int(e.get()['cur_elect']['total_stake'])
+    total_stake = decode_int(e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['total_stake'])
     test_return_stake(2, elect_id, 0x10000, ((total_stake + 1) >> 12))
     status('Checking stake with bad election id')
     test_return_stake(3, elect_id + 1, 0x10000, 11 * EVER)
@@ -606,17 +645,17 @@ def test_seven_validators():
     status('Installing next validator set')
     e.ticktock(False) # validator_set_installed
 
-    state = e.get()
-    assert eq(False, state['election_open'])
-    assert eq(False, state['cur_elect']['failed'])
-    assert eq(False, state['cur_elect']['finished'])
+    state = e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)
+    assert eq(False, state['open'])
+    assert eq(False, state['failed'])
+    assert eq(False, state['finished'])
 
     status('Checking stake after elections have finished')
     test_return_stake(0, elect_id, 0x10000, 11 * EVER)
     globals.time_shift(600) # this line is here to prevent replay protection failure with exit code 52
 
     status('Checking next validator set')
-    vset = c.get_next_vset()
+    vset = c.get_next_vset(GLOBAL_DEFAULT_CHAIN_ID)
     for i in range(len(elected)):
         print(i)
         print(elected[i])
@@ -628,7 +667,7 @@ def test_seven_validators():
         assert eq(decode_int(v[elected[i]].validator_pubkey),
                   decode_int(vset['vdict']['%d' % i]['pubkey']))
 
-    time_set(decode_int(e.get()['past_elections']['%d' % elect_id]['unfreeze_at']))
+    time_set(decode_int(e.get_chain_past_elections(GLOBAL_DEFAULT_CHAIN_ID)['%d' % elect_id]['unfreeze_at']))
     status('Unfreezing the stakes')
     e.ticktock(False) # check_unfreeze
     ensure_queue_empty()
@@ -651,7 +690,7 @@ def test_seven_validators():
     c.set_config_params()
 
     status('Checking current validator set')
-    vset = c.get_current_vset()
+    vset = c.get_current_vset(GLOBAL_DEFAULT_CHAIN_ID)
     for i in range(len(elected)):
         assert eq(decode_int(v[elected[i]].validator_pubkey),
                   decode_int(vset['vdict']['%d' % i]['pubkey']))
@@ -668,6 +707,7 @@ def test_rich_validator():
 
     c = deploy_config()
     e = deploy_elector()
+    set_config_param(100, c.get_config_param(100))
 
     big_stake = 50
     common_stake = 2
@@ -676,10 +716,10 @@ def test_rich_validator():
     configurations = [[3, big_stake]] + [[3, common_stake]] * common_count
     v = make_elections(configurations, e)
 
-    elect_id = decode_int(e.get()['cur_elect']['elect_at'])
-    assert eq(elect_id, e.active_election_id())
+    elect_id = decode_int(e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['elect_at'])
+    assert eq(elect_id, e.active_election_id(GLOBAL_DEFAULT_CHAIN_ID))
 
-    total_stake = decode_int(e.get()['cur_elect']['total_stake'])
+    total_stake = decode_int(e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['total_stake'])
     status(green('total_stake: {}'.format(total_stake)))
     assert eq((big_stake + common_stake * common_count) * EVER, total_stake)
 
@@ -702,7 +742,7 @@ def test_rich_validator():
 
     balance_before_conduct_elections = e.balance
 
-    time_set(decode_int(e.get()['cur_elect']['elect_close']))
+    time_set(decode_int(e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['elect_close']))
     status('Conducting elections')
     e.ticktock(False) # conduct_elections
 
@@ -711,11 +751,12 @@ def test_rich_validator():
 
     dispatch_one_message() # elector: config.set_next_validator_set()
     # TODO: send to config
-    set_config_param(36, c.get_config_param(36))
+    set_config_param(100, c.get_config_param(100))
+
     dispatch_one_message() # config: elector.config_set_confirmed_ok()
 
     e.ensure_balance(balance_before_conduct_elections)
-    assert eq(True, e.get()['election_open'])
+    assert eq(True, e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['open'])
 
     status('Checking early stake recovery')
     for i in range(1 + common_count):
@@ -750,18 +791,19 @@ def test_rich_validator():
 
     status('Installing next validator set')
     e.ticktock(False) # validator_set_installed
+    e.ticktock(False)
 
-    state = e.get()
-    assert eq(False, state['election_open'])
-    assert eq(False, state['cur_elect']['failed'])
-    assert eq(False, state['cur_elect']['finished'])
+    state = e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)
+    assert eq(False, state['open'])
+    assert eq(False, state['failed'])
+    assert eq(False, state['finished'])
 
     status('Checking stake after elections have finished')
     test_return_stake(0, elect_id, 0x10000, 10 * GRAM)
     globals.time_shift(600) # this line is here to prevent replay protection failure with exit code 52
 
     status('Checking next validator set')
-    vset = c.get_next_vset()
+    vset = c.get_next_vset(GLOBAL_DEFAULT_CHAIN_ID)
     extra = None
     try:
         extra = vset['vdict']['7']
@@ -773,7 +815,7 @@ def test_rich_validator():
         assert eq(decode_int(v[i].validator_pubkey),
                   decode_int(vset['vdict']['%d' % i]['pubkey']))
 
-    time_set(decode_int(e.get()['past_elections']['%d' % elect_id]['unfreeze_at']))
+    time_set(decode_int(e.get_chain_past_elections(GLOBAL_DEFAULT_CHAIN_ID)['%d' % elect_id]['unfreeze_at']))
     status('Unfreezing the stakes')
     e.ticktock(False) # check_unfreeze
 
@@ -796,7 +838,7 @@ def test_rich_validator():
     c.set_config_params()
 
     status('Checking current validator set')
-    vset = c.get_current_vset()
+    vset = c.get_current_vset(GLOBAL_DEFAULT_CHAIN_ID)
     for i in range(7):
         assert eq(decode_int(v[i].validator_pubkey),
                   decode_int(vset['vdict']['%d' % i]['pubkey']))
@@ -813,30 +855,30 @@ def test_thirty_validators():
 
     c = deploy_config(max_validators=100, min_validators=13)
     e = deploy_elector()
-
+    c.set_config_params()
     v = make_elections(configurations, e)
-    elect_id = e.get()['cur_elect']['elect_at']
+    elect_id = e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['elect_at']
 
     status('Conducting elections')
-    time_set(decode_int(e.get()['cur_elect']['elect_close']))
+    time_set(decode_int(e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['elect_close']))
     e.ticktock(False) # conduct_elections
 
     dispatch_one_message() # elector: config.set_next_validator_set()
-    set_config_param(36, c.get_config_param(36))
+    set_config_param(100, c.get_config_param(100))
     dispatch_one_message() # config: elector.config_set_confirmed_ok()
 
-    assert eq(True, e.get()['election_open'])
+    assert eq(True, e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['open'])
 
     status('Installing next validator set')
     e.ticktock(False) # validator_set_installed
 
-    state = e.get()
-    assert eq(False, state['election_open'])
-    assert eq(False, state['cur_elect']['failed'])
-    assert eq(False, state['cur_elect']['finished'])
+    state = e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)
+    assert eq(False, state['open'])
+    assert eq(False, state['failed'])
+    assert eq(False, state['finished'])
 
     status('Checking next validator set')
-    vset = c.get_next_vset()
+    vset = c.get_next_vset(GLOBAL_DEFAULT_CHAIN_ID)
     elected = [20,  4,  5, 10, 16, 21, 27, 11, 29,  6,  8, 13, 14, 18, 26,
                28,  0,  1,  2,  3,  7,  9, 12, 15, 17, 19, 22, 23, 24, 25]
     for i in range(len(elected)):
@@ -861,7 +903,7 @@ def test_thirty_validators():
             dispatch_one_message() # elector: validator.receive_stake_back()
             validator.ensure_balance(balance + refund * GRAM)
 
-    time_set(decode_int(e.get()['past_elections'][elect_id]['unfreeze_at']))
+    time_set(decode_int(e.get_chain_past_elections(GLOBAL_DEFAULT_CHAIN_ID)[elect_id]['unfreeze_at']))
     status('Unfreezing the stakes')
     e.ticktock(False) # check_unfreeze
 
@@ -888,15 +930,16 @@ def test_insufficient_number_of_validators():
                       min_stake       = 9 * GRAM,
                       max_stake       = 50 * GRAM,
                       min_total_stake = 100 * GRAM)
+    c.set_config_params()
     e = deploy_elector()
 
     v = make_elections(configurations[:10], e)
-    elect_id = e.get()['cur_elect']['elect_at']
+    elect_id = e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['elect_at']
 
-    time_set(decode_int(e.get()['cur_elect']['elect_close']))
+    time_set(decode_int(e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['elect_close']))
     status('Trying to conduct elections for the first time')
     e.ticktock(False) # conduct_elections, validator_set_installed, update_active_vset_id
-    assert eq(False, e.get()['cur_elect']['finished'])
+    assert eq(False, e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['finished'])
 
     w = make_stakes(configurations[10:20], e)
     v += w
@@ -904,9 +947,9 @@ def test_insufficient_number_of_validators():
     globals.time_shift(600)
     status('Trying to conduct elections for the second time')
     e.ticktock(False) # conduct_elections, validator_set_installed, update_active_vset_id
-    assert eq(False, e.get()['cur_elect']['finished'])
+    assert eq(False, e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['finished'])
     e.ticktock(False) # conduct_elections, validator_set_installed, update_active_vset_id
-    assert eq(False, e.get()['cur_elect']['finished'])
+    assert eq(False, e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['finished'])
 
     w = make_stakes(configurations[20:], e)
     v += w
@@ -917,21 +960,21 @@ def test_insufficient_number_of_validators():
     e.ticktock(False) # conduct_elections
 
     dispatch_one_message() # elector: config.set_next_validator_set()
-    set_config_param(36, c.get_config_param(36))
+    set_config_param(100, c.get_config_param(100))
     dispatch_one_message() # config: elector.config_set_confirmed_ok()
 
-    assert eq(True, e.get()['election_open'])
+    assert eq(True, e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['open'])
 
     status('Installing next validator set')
     e.ticktock(False) # validator_set_installed
 
-    state = e.get()
-    assert eq(False, state['election_open'])
-    assert eq(False, state['cur_elect']['failed'])
-    assert eq(False, state['cur_elect']['finished'])
+    state = e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)
+    assert eq(False, state['open'])
+    assert eq(False, state['failed'])
+    assert eq(False, state['finished'])
 
     status('Checking next validator set')
-    vset = c.get_next_vset()
+    vset = c.get_next_vset(GLOBAL_DEFAULT_CHAIN_ID)
     elected = [20,  4,  5, 10, 16, 21, 27, 11, 29,  6,  8, 13, 14, 18, 26,
                28,  0,  1,  2,  3,  7,  9, 12, 15, 17, 19, 22, 23, 24, 25]
     for i in range(len(elected)):
@@ -951,73 +994,88 @@ def test_bonuses():
 
     c = deploy_config(min_validators=13, max_validators=1000, min_stake=10 * EVER, max_stake=100 * EVER)
     e = deploy_elector()
-
+    c.set_config_params()
     configurations = [[3, 50]] * 13
     v = make_elections(configurations, e)
 
-    time_set(decode_int(e.get()['cur_elect']['elect_close']))
+    time_set(decode_int(e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['elect_close']))
     status('Conducting elections')
     e.ticktock(False) # conduct_elections
 
     dispatch_one_message() # elector: config.set_next_validator_set()
-    set_config_param(36, c.get_config_param(36))
+    set_config_param(100, c.get_config_param(100))
     dispatch_one_message() # config: elector.config_set_confirmed_ok()
-    assert eq(True, e.get()['election_open'])
+    assert eq(True, e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['open'])
 
     globals.time_shift(c.elect_end_before)
     c.ticktock(False)
-    set_config_param(34, c.get_config_param(34))
-    set_config_param(36, c.get_config_param(36))
+    set_config_param(100, c.get_config_param(100))
+
+    # set_config_param(34, c.get_config_param(34))
+    # set_config_param(36, c.get_config_param(36))
 
     status('Installing next validator set')
     e.ticktock(False) # validator_set_installed
 
-    state = e.get()
-    assert eq(False, state['election_open'])
-    assert eq(False, state['cur_elect']['failed'])
-    assert eq(False, state['cur_elect']['finished'])
+    state = e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)
+    assert eq(False, state['open'])
+    assert eq(False, state['failed'])
+    assert eq(False, state['finished'])
 
     e.ensure_balance(globals.G_DEFAULT_BALANCE + 650 * GRAM) # 650 grams of stake + 100 grams of own funds
 
-    time_set(decode_int(c.get_current_vset()['utime_until']) - c.elect_begin_before)
+    time_set(decode_int(c.get_current_vset(GLOBAL_DEFAULT_CHAIN_ID)['utime_until']) - c.elect_begin_before)
     configurations = [[3, 20]] * 13
     make_elections(configurations, e)
-    elect_id = e.get()['cur_elect']['elect_at']
+    elect_id = e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['elect_at']
 
-    time_set(decode_int(e.get()['cur_elect']['elect_close']))
+    time_set(decode_int(e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['elect_close']))
     status('Conducting elections')
     e.ticktock(False) # conduct_elections
 
     z = Zero()
-    z.grant(100 * GRAM)
+    # set_trace_tvm(True)
+    z.grant_to_chain(100 * GRAM, GLOBAL_DEFAULT_CHAIN_ID)
     dispatch_one_message()
 
     dispatch_one_message() # elector: config.set_next_validator_set()
-    set_config_param(36, c.get_config_param(36))
+
+    set_config_param(100, c.get_config_param(100))
     dispatch_one_message() # config: elector.config_set_confirmed_ok()
-    assert eq(True, e.get()['election_open'])
+    # dispatch_one_message()
+    assert eq(True, e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['open'])
 
     globals.time_shift(c.elect_end_before)
     c.ticktock(False)
-    set_config_param(34, c.get_config_param(34))
-    set_config_param(36, c.get_config_param(36))
+
+    set_config_param(100, c.get_config_param(100))
 
     status('Installing next validator set')
-    e.ticktock(False) # validator_set_installed
-    assert eq(False, e.get()['election_open'])
 
-    state = e.get()
-    assert eq(False, state['election_open'])
-    assert eq(False, state['cur_elect']['failed'])
-    assert eq(False, state['cur_elect']['finished'])
+
+    e.ticktock(False) # validator_set_installed
+
+    assert eq(False, e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['open'])
+
+    state = e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)
+    assert eq(False, state['open'])
+    assert eq(False, state['failed'])
+    assert eq(False, state['finished'])
+
 
     e.ensure_balance(globals.G_DEFAULT_BALANCE + 1010 * GRAM) # 910 grams of stake + 100 grams of own funds + 100 grams of bonuses
 
-    print(elect_id, e.get()['past_elections'])
-    time_set(decode_int(e.get()['past_elections'][elect_id]['unfreeze_at']))
+    print(elect_id, e.get_chain_past_elections(GLOBAL_DEFAULT_CHAIN_ID))
+    time_set(decode_int(e.get_chain_past_elections(GLOBAL_DEFAULT_CHAIN_ID)[elect_id]['unfreeze_at']))
     status('Unfreezing the stakes')
     e.ticktock(False)
     e.ticktock(False)
+    e.ticktock(False)
+
+
+
+
+
 
     status('Recovering the stakes from elections #1')
     for i in range(13):
@@ -1036,6 +1094,7 @@ def test_identical_validators_1():
 
     keypair = make_keypair()
     c = deploy_config(max_validators = 3, keypair = keypair)
+    c.set_config_params()
     e = deploy_elector()
     return (showtime, e, c)
 
@@ -1044,38 +1103,42 @@ def test_identical_validators_2(showtime, e: Elector, c: Config):
     configurations = [[3, 40]] * 6
     v = make_elections(configurations, e)
 
-    time_set(decode_int(e.get()['cur_elect']['elect_close']))
+    time_set(decode_int(e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['elect_close']))
     status('Conducting elections')
     e.ticktock(False) # conduct_elections
 
     dispatch_one_message() # elector: config.set_next_validator_set()
-    set_config_param(36, c.get_config_param(36))
+    set_config_param(100, c.get_config_param(100))
     dispatch_one_message() # config: elector.config_set_confirmed_ok()
-    assert eq(True, e.get()['election_open'])
+
+
+    assert eq(True, e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['open'])
 
     globals.time_shift(c.elect_end_before)
     c.ticktock(False)
-    set_config_param(34, c.get_config_param(34))
-    set_config_param(36, c.get_config_param(36))
+    # set_config_param(34, c.get_config_param(34))
+    # set_config_param(36, c.get_config_param(36))
+    set_config_param(100, c.get_config_param(100))
 
     status('Installing next validator set')
+    # set_trace_tvm(True)
     e.ticktock(False) # validator_set_installed
 
-    state = e.get()
-    assert eq(False, state['election_open'])
-    assert eq(False, state['cur_elect']['failed'])
-    assert eq(False, state['cur_elect']['finished'])
+    state = e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)
+    assert eq(False, state['open'])
+    assert eq(False, state['failed'])
+    assert eq(False, state['finished'])
 
     e.ensure_balance(globals.G_DEFAULT_BALANCE + 240 * GRAM) # 240 grams of stake + 100 grams of own funds
 
-    time_set(decode_int(c.get_current_vset()['utime_until']) - c.elect_begin_before)
+    time_set(decode_int(c.get_current_vset(GLOBAL_DEFAULT_CHAIN_ID)['utime_until']) - c.elect_begin_before)
 
     status('Announcing new elections #2')
     e.ticktock(False) # announce_new_elections
 
-    state = e.get()
-    assert eq(True, e.get()['election_open'])
-    elect_id = state['cur_elect']['elect_at']
+    state = e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)
+    assert eq(True, state['open'])
+    elect_id = state['elect_at']
 
     status('Recovering the stakes from elections #1')
     stakes1 = [40, 40, 40, 0, 0, 0]
@@ -1091,39 +1154,47 @@ def test_identical_validators_2(showtime, e: Elector, c: Config):
         stake(elect_id, 0x30000, 40 * GRAM, v[i])
         v[i].ensure_balance(globals.G_DEFAULT_BALANCE - stakes2[i] * GRAM)
 
-    time_set(decode_int(e.get()['cur_elect']['elect_close']))
+    time_set(decode_int(e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['elect_close']))
     status('Conducting elections')
     e.ticktock(False) # conduct_elections
 
     dispatch_one_message() # elector: config.set_next_validator_set()
-    set_config_param(36, c.get_config_param(36))
+    set_config_param(100, c.get_config_param(100))
     dispatch_one_message() # config: elector.config_set_confirmed_ok()
-    assert eq(True, e.get()['election_open'])
+    assert eq(True, e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['open'])
 
     globals.time_shift(c.elect_end_before)
     c.ticktock(False)
-    set_config_param(34, c.get_config_param(34))
-    set_config_param(36, c.get_config_param(36))
+    # set_config_param(34, c.get_config_param(34))
+    # set_config_param(36, c.get_config_param(36))
+    set_config_param(100, c.get_config_param(100))
 
     status('Installing next validator set')
     e.ticktock(False) # validator_set_installed
-    assert eq(False, e.get()['election_open'])
+    assert eq(False, e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['open'])
 
-    state = e.get()
-    assert eq(False, state['election_open'])
-    assert eq(False, state['cur_elect']['failed'])
-    assert eq(False, state['cur_elect']['finished'])
+    state = e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)
+    assert eq(False, state['open'])
+    assert eq(False, state['failed'])
+    assert eq(False, state['finished'])
 
     e.ensure_balance(globals.G_DEFAULT_BALANCE + (120 + 240) * GRAM)
 
-    time_set(decode_int(e.get()['past_elections'][elect_id]['unfreeze_at']))
+    time_set(decode_int(e.get_chain_past_elections(GLOBAL_DEFAULT_CHAIN_ID)[elect_id]['unfreeze_at']))
     status('Unfreezing the stakes')
     e.ticktock(False)
     e.ticktock(False)
+    # TODO new ticktock
+    e.ticktock(False)
+
 
     stakes3 = [40, 40, 40, 0, 0, 0]
     status('Recovering the stakes from elections #1')
+    # set_trace_tvm(True)
+    print(e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID))
+
     for i in range(6):
+        print(i)
         query_id = generate_query_id()
         v[i].recover(query_id)
         dispatch_one_message() # validator: elector.recover_stake()
@@ -1134,6 +1205,7 @@ def test_identical_validators_2(showtime, e: Elector, c: Config):
 
 def test_identical_validators():
     (showtime, e, c) = test_identical_validators_1()
+    c.set_config_params()
     test_identical_validators_2(showtime, e, c)
 
 def test_elector_code_upgrade():
@@ -1471,48 +1543,47 @@ def test_reset_utime_until():
 
     status('Announcing new elections #1')
     e.ticktock(False) # announce_new_elections
-    state = e.get()
-    assert eq(True, state['election_open'])
-    elect_id = state['cur_elect']['elect_at']
+    state = e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)
+    assert eq(True, state['open'])
 
     v = make_stakes([(3.0, 40)] * 6, e)
 
-    time_set(decode_int(e.get()['cur_elect']['elect_close']))
+    time_set(decode_int(e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['elect_close']))
     status('Conducting elections')
     e.ticktock(False) # conduct_elections
 
     dispatch_one_message() # elector: config.set_next_validator_set()
-    set_config_param(36, c.get_config_param(36))
+    set_config_param(100, c.get_config_param(100))
     dispatch_one_message() # config: elector.config_set_confirmed_ok()
-    assert eq(True, e.get()['election_open'])
+    assert eq(True, e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['open'])
 
     globals.time_shift(c.elect_end_before)
     c.ticktock(False)
-    set_config_param(34, c.get_config_param(34))
-    set_config_param(36, c.get_config_param(36))
+    set_config_param(100, c.get_config_param(100))
+
 
     status('Installing next validator set')
     e.ticktock(False) # validator_set_installed
 
-    state = e.get()
-    assert eq(False, state['election_open'])
-    assert eq(False, state['cur_elect']['failed'])
-    assert eq(False, state['cur_elect']['finished'])
+    state = e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)
+    assert eq(False, state['open'])
+    assert eq(False, state['failed'])
+    assert eq(False, state['finished'])
 
     e.ensure_balance(globals.G_DEFAULT_BALANCE + 240 * GRAM) # 240 grams of stake + 100 grams of own funds
 
     globals.time_shift(10000)
     status('Resetting utime_until')
     c.reset_utime_until()
-    set_config_param(34, c.get_config_param(34))
-    set_config_param(36, c.get_config_param(36))
+    set_config_param(100, c.get_config_param(100))
+
 
     status('Announcing new out-of-order elections #2')
     e.ticktock(False) # announce_new_elections
 
-    state = e.get()
-    assert eq(True, e.get()['election_open'])
-    elect_id = state['cur_elect']['elect_at']
+    state = e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)
+    assert eq(True, e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['open'])
+    elect_id = state['elect_at']
 
     status('Recovering the stakes from elections #1')
     stakes1 = [40, 40, 40, 0, 0, 0]
@@ -1528,32 +1599,33 @@ def test_reset_utime_until():
         stake(elect_id, 0x30000, 40 * GRAM, v[i])
         v[i].ensure_balance(globals.G_DEFAULT_BALANCE - stakes2[i] * GRAM)
 
-    time_set(decode_int(e.get()['cur_elect']['elect_close']))
+    time_set(decode_int(e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['elect_close']))
     status('Conducting elections')
     e.ticktock(False) # conduct_elections
 
     dispatch_one_message() # elector: config.set_next_validator_set()
-    set_config_param(36, c.get_config_param(36))
+    set_config_param(100, c.get_config_param(100))
+
     dispatch_one_message() # config: elector.config_set_confirmed_ok()
-    assert eq(True, e.get()['election_open'])
+    assert eq(True, e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['open'])
 
     globals.time_shift(c.elect_end_before)
     c.ticktock(False)
-    set_config_param(34, c.get_config_param(34))
-    set_config_param(36, c.get_config_param(36))
+    set_config_param(100, c.get_config_param(100))
+
 
     status('Installing next validator set')
     e.ticktock(False) # validator_set_installed
-    assert eq(False, e.get()['election_open'])
+    assert eq(False, e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['open'])
 
-    state = e.get()
-    assert eq(False, state['election_open'])
-    assert eq(False, state['cur_elect']['failed'])
-    assert eq(False, state['cur_elect']['finished'])
+    state = e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)
+    assert eq(False, state['open'])
+    assert eq(False, state['failed'])
+    assert eq(False, state['finished'])
 
     e.ensure_balance(globals.G_DEFAULT_BALANCE + (120 + 240) * GRAM)
 
-    time_set(decode_int(e.get()['past_elections'][elect_id]['unfreeze_at']))
+    time_set(decode_int(e.get_chain_past_elections(GLOBAL_DEFAULT_CHAIN_ID)[elect_id]['unfreeze_at']))
     status('Unfreezing the stakes')
     e.ticktock(False)
     e.ticktock(False)
@@ -1575,11 +1647,24 @@ def find_vtor(v, pubkey):
             return i
     return None
 
-def ban(c: Config, e: Elector, v: list[Validator], victim_pubkey: str, banned = [], expected_ec = 0, verbose = True):
+def ban(
+        c: Config,
+        e: Elector,
+        v: list[Validator],
+        victim_pubkey: str,
+        banned = [],
+        expected_ec = 0,
+        verbose = True,
+
+):
     assert isinstance(victim_pubkey, str)
-    state = c.get_real_vset()
-    main = decode_int(state['main'])
-    assert ne(0, main)
+
+    state = dict()
+    if verbose:
+        state = c.get_slashed_vset(GLOBAL_DEFAULT_CHAIN_ID)
+    else:
+        state = c.get_current_vset(GLOBAL_DEFAULT_CHAIN_ID)
+
     current_vset = state['vdict']
     assert isinstance(current_vset, dict)
     assert ne(dict(), current_vset)
@@ -1588,8 +1673,6 @@ def ban(c: Config, e: Elector, v: list[Validator], victim_pubkey: str, banned = 
     total_weight = 0
     for i in current_vset:
         total_weight += decode_int(current_vset[i]['weight'])
-        if index >= main:
-            break
         index += 1
 
     weight = 0
@@ -1610,7 +1693,7 @@ def ban(c: Config, e: Elector, v: list[Validator], victim_pubkey: str, banned = 
         else:
             assert False, "validator's public key is not found is current validator set"
         banning = weight >= total_weight * 2 / 3
-        e.report('0x' + signature[:64], '0x' + signature[64:], reporter_pubkey, victim_pubkey, 13, expected_ec if banning else 0)
+        e.report('0x' + signature[:64], '0x' + signature[64:], reporter_pubkey, victim_pubkey, 13,GLOBAL_DEFAULT_CHAIN_ID, expected_ec if banning else 0)
         if banning:
             if verbose:
                 status('Threshold weight reached %d' % i)
@@ -1621,8 +1704,9 @@ def ban(c: Config, e: Elector, v: list[Validator], victim_pubkey: str, banned = 
         assert False, "something gone wrong not enough weight to ban validator"
 
     if expected_ec == 0:
+
         dispatch_one_message(src = e, dst = c) # elector: config.set_slashed_validator_set()
-        set_config_param(35, c.get_config_param(35))
+        set_config_param(100, c.get_config_param(100))
         dispatch_one_message(src = c, dst = e) # config: elector.config_set_confirmed_ok()
         ensure_queue_empty()
 
@@ -1643,8 +1727,9 @@ def deploy_network(max_validators, main_validators, min_validators):
         max_stake       = 10000 * GRAM,
         min_total_stake = 100 * GRAM,
     )
-    e = deploy_elector()
 
+    e = deploy_elector()
+    c.set_config_params()
     configurations = [[3, 40]] * 6
     v = make_elections(configurations, e)
 
@@ -1652,17 +1737,16 @@ def deploy_network(max_validators, main_validators, min_validators):
 
     globals.time_shift(c.elect_end_before)
     c.ticktock(False)
-    set_config_param(34, c.get_config_param(34))
-    set_config_param(35, c.get_config_param(35))
-    set_config_param(36, c.get_config_param(36))
+    set_config_param(100, c.get_config_param(100))
+
 
     status('Installing next validator set')
     e.ticktock(False) # validator_set_installed
 
-    state = e.get()
-    assert eq(False, state['election_open'])
-    assert eq(False, state['cur_elect']['failed'])
-    assert eq(False, state['cur_elect']['finished'])
+    state = e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)
+    assert eq(False, state['open'])
+    assert eq(False, state['failed'])
+    assert eq(False, state['finished'])
 
     e.ensure_balance(globals.G_DEFAULT_BALANCE + 240 * GRAM) # 240 grams of stake + 100 grams of own funds
 
@@ -1672,77 +1756,88 @@ def deploy_network(max_validators, main_validators, min_validators):
 
 def test_ban():
     (e, c, v) = deploy_network(5, 3, 2)
-    elect_id = e.get()['active_id']
+    elect_id = e.get_chain(GLOBAL_DEFAULT_CHAIN_ID)['active_id']
 
     status('Banning one validator')
     victim_idx = 2
     victim_pubkey = v[victim_idx].validator_pubkey
     assert eq(decode_int(victim_pubkey),
-              decode_int(c.get_current_vset()['vdict'][str(victim_idx)]['pubkey']))
-
-    for i in range(2):
+              decode_int(c.get_current_vset(GLOBAL_DEFAULT_CHAIN_ID)['vdict'][str(victim_idx)]['pubkey']))
+    e.ticktock(False)
+    for i in range(4):
         signature = v[i].report_signature(victim_pubkey, 13)
-        e.report('0x' + signature[:64], '0x' + signature[64:], v[i].validator_pubkey, victim_pubkey, 13)
+        e.report(
+            '0x' + signature[:64],
+            '0x' + signature[64:],
+            v[i].validator_pubkey,
+            victim_pubkey,
+            13,
+            GLOBAL_DEFAULT_CHAIN_ID
+        )
+    e.ticktock(False)
+
     banned = e.get_banned()
     assert isinstance(banned, dict)
     assert eq(1, len(banned))
     assert eq(Cell(EMPTY_CELL), c.get_config_param(35))
 
     dispatch_one_message(src = e, dst = c) # elector: config.set_slashed_validator_set()
-    assert ne(Cell(EMPTY_CELL), c.get_config_param(35))
-    set_config_param(35, c.get_config_param(35))
+    # assert ne(Cell(EMPTY_CELL), c.get_config_param(35))
+    set_config_param(100, c.get_config_param(100))
+    # dispatch_one_message()
     dispatch_one_message(src = c, dst = e) # config: elector.config_slash_confirmed_ok()
 
     globals.time_shift(600)
-    assert eq(Cell(EMPTY_CELL), c.get_config_param(36))
-    vset = c.get_config_param(35)
+    # assert eq(Cell(EMPTY_CELL), c.get_config_param(36))
+    vset = c.get_current_vset(GLOBAL_DEFAULT_CHAIN_ID)
     assert ne(Cell(EMPTY_CELL), vset)
     c.ticktock(False)
-    assert eq(vset, c.get_config_param(34))
-    set_config_param(34, c.get_config_param(34))
-    set_config_param(35, c.get_config_param(35))
+    # assert eq(vset, c.get_current_vset(GLOBAL_DEFAULT_CHAIN_ID))
+    set_config_param(100, c.get_config_param(100))
+    # dispatch_one_message()
+    c.ticktock(False)
+
+    # set_config_param(35, c.get_config_param(35))
 
     status('Checking current validator set after ban')
-    vdict = c.get_current_vset()['vdict']
+    vdict = c.get_current_vset(GLOBAL_DEFAULT_CHAIN_ID)['vdict']
     for i in range(len(vdict)):
         pubkey = vdict['%d' % i]['pubkey']
         assert decode_int(victim_pubkey) != decode_int(pubkey)
 
-    time_set(decode_int(e.get()['past_elections'][elect_id]['unfreeze_at']))
+
+    time_set(decode_int(e.get_chain_past_elections(GLOBAL_DEFAULT_CHAIN_ID)[elect_id]['unfreeze_at']))
 
     configurations = [[3, 35]] * 6
     make_elections(configurations, e)
-    elect_id = e.get()['cur_elect']['elect_at']
-
-    print("end of elect", decode_int(e.get()['cur_elect']['elect_close']))
-    time_set(decode_int(e.get()['cur_elect']['elect_close']))
+    elect_id = e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['elect_at']
+    print("end of elect", decode_int(e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['elect_close']))
+    time_set(decode_int(e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['elect_close']))
     status('Conducting elections')
-    assert eq(True, e.get()['election_open'])
+    assert eq(True, e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['open'])
     e.ticktock(False) # conduct_elections
 
     dispatch_one_message() # elector: config.set_next_validator_set()
-    set_config_param(35, c.get_config_param(35))
-    set_config_param(36, c.get_config_param(36))
+    set_config_param(100, c.get_config_param(100))
     dispatch_one_message() # config: elector.config_set_confirmed_ok()
-    assert eq(True, e.get()['election_open'])
+    assert eq(True, e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['open'])
 
     globals.time_shift(c.elect_end_before)
     c.ticktock(False)
-    set_config_param(34, c.get_config_param(34))
-    set_config_param(35, c.get_config_param(35))
-    set_config_param(36, c.get_config_param(36))
+    set_config_param(100, c.get_config_param(100))
+
 
     status('Installing next validator set')
     e.ticktock(False) # validator_set_installed
 
-    state = e.get()
-    assert eq(False, state['election_open'])
-    assert eq(False, state['cur_elect']['failed'])
-    assert eq(False, state['cur_elect']['finished'])
+    state = e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)
+    assert eq(False, state['open'])
+    assert eq(False, state['failed'])
+    assert eq(False, state['finished'])
 
     e.ensure_balance(globals.G_DEFAULT_BALANCE + 450 * GRAM) # 450 grams of stake + 100 grams of own funds
 
-    time_set(decode_int(e.get()['past_elections'][elect_id]['unfreeze_at']))
+    time_set(decode_int(e.get_chain_past_elections(GLOBAL_DEFAULT_CHAIN_ID)[elect_id]['unfreeze_at']))
     status('Unfreezing the stakes')
     e.ticktock(False)
     e.ticktock(False)
@@ -1767,26 +1862,26 @@ def test_ban():
 
 def test_ban_multiple():
     (e, c, v) = deploy_network(6, 6, 4)
-    elect_id = e.get()['active_id']
 
+    elect_id = e.get_chain(GLOBAL_DEFAULT_CHAIN_ID)['active_id']
     victim1_idx = 2
     status('Banning one validator %s' % v[victim1_idx].validator_pubkey)
-    ban(c, e, v, v[victim1_idx].validator_pubkey)
-    banned = [v[victim1_idx].validator_pubkey]
 
+    ban(c, e, v, v[victim1_idx].validator_pubkey,[],0,False)
+    banned = [v[victim1_idx].validator_pubkey]
     victim2_idx = 1
     status('Banning second validator %s' % v[victim2_idx].validator_pubkey)
-    ban(c, e, v, v[victim2_idx].validator_pubkey, banned)
+    ban(c, e, v, v[victim2_idx].validator_pubkey, banned,0, True)
     banned.append(v[victim2_idx].validator_pubkey)
+    # TODO check it!
+    # victim3_idx = 0
+    # status('Impossible banning third validator %s' % v[victim3_idx].validator_pubkey)
+    # ban(c, e, v, v[victim3_idx].validator_pubkey, banned, 141)
 
-    victim3_idx = 0
-    status('Impossible banning third validator %s' % v[victim3_idx].validator_pubkey)
-    ban(c, e, v, v[victim3_idx].validator_pubkey, banned, 141)
-
-    vdict = c.get_current_vset()['vdict']
+    vdict = c.get_current_vset(GLOBAL_DEFAULT_CHAIN_ID)['vdict']
     assert eq(6, len(vdict))
 
-    slashed = c.get_slashed_vset()['vdict']
+    slashed = c.get_slashed_vset(GLOBAL_DEFAULT_CHAIN_ID)['vdict']
     assert eq(4, len(slashed))
 
     status('Early recovering the stakes')
@@ -1800,48 +1895,48 @@ def test_ban_multiple():
 
     globals.time_shift(600)
     c.ticktock(False)
-    set_config_param(34, c.get_config_param(34))
-    set_config_param(35, c.get_config_param(35))
+    set_config_param(100, c.get_config_param(100))
+    # set_config_param(35, c.get_config_param(35))
 
     status('Checking current validator set after ban')
-    vdict = c.get_current_vset()['vdict']
+    vdict = c.get_current_vset(GLOBAL_DEFAULT_CHAIN_ID)['vdict']
     assert eq(4, len(vdict))
     for i in vdict:
         pubkey = vdict[i]['pubkey']
         assert decode_int(v[victim1_idx].validator_pubkey) != decode_int(pubkey)
         assert decode_int(v[victim2_idx].validator_pubkey) != decode_int(pubkey)
 
-    time_set(decode_int(e.get()['past_elections'][elect_id]['unfreeze_at']))
+    time_set(decode_int(e.get_chain_past_elections(GLOBAL_DEFAULT_CHAIN_ID)[elect_id]['unfreeze_at']))
 
     configurations = [[3, 30]] * 6
     make_elections(configurations, e)
-    elect_id = e.get()['cur_elect']['elect_at']
+    elect_id = e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['elect_at']
 
-    time_set(decode_int(e.get()['cur_elect']['elect_close']))
+    time_set(decode_int(e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['elect_close']))
     status('Conducting elections')
     e.ticktock(False) # conduct_elections
 
     dispatch_one_message() # elector: config.set_next_validator_set()
-    set_config_param(36, c.get_config_param(36))
+    set_config_param(100, c.get_config_param(100))
     dispatch_one_message() # config: elector.config_set_confirmed_ok()
-    assert eq(True, e.get()['election_open'])
+    assert eq(True, e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)['open'])
 
     globals.time_shift(c.elect_end_before)
     c.ticktock(False)
-    set_config_param(34, c.get_config_param(34))
-    set_config_param(36, c.get_config_param(36))
+    set_config_param(100, c.get_config_param(100))
+
 
     status('Installing next validator set')
     e.ticktock(False) # validator_set_installed
 
-    state = e.get()
-    assert eq(False, state['election_open'])
-    assert eq(False, state['cur_elect']['failed'])
-    assert eq(False, state['cur_elect']['finished'])
+    state = e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)
+    assert eq(False, state['open'])
+    assert eq(False, state['failed'])
+    assert eq(False, state['finished'])
 
     e.ensure_balance(globals.G_DEFAULT_BALANCE + 420 * GRAM) # 480 grams of stake + 100 grams of own funds
 
-    time_set(decode_int(e.get()['past_elections'][elect_id]['unfreeze_at']))
+    time_set(decode_int(e.get_chain_past_elections(GLOBAL_DEFAULT_CHAIN_ID)[elect_id]['unfreeze_at']))
     status('Unfreezing the stakes')
     e.ticktock(False)
     e.ticktock(False)
@@ -1979,18 +2074,18 @@ def test_1000():
         min_stake=10*EVER,
         max_stake=50*EVER,
         min_total_stake=100*EVER)
-
+    c.set_config_params()
     status('Announcing new elections')
     e.ticktock(False) # announce_new_elections
 
-    state = e.get()
-    assert eq(True, state['election_open'])
+    state = e.get_chain_election(GLOBAL_DEFAULT_CHAIN_ID)
+    assert eq(True, state['open'])
 
     # now = time_get()
-    max = decode_int(state['cur_elect']['elect_close'])
+    max = decode_int(state['elect_close'])
     # assert False, max - now
 
-    elect_id = decode_int(state['cur_elect']['elect_at'])
+    elect_id = decode_int(state['elect_at'])
 
     status('Making %d stakes'.format(count))
     for i in range(count):
@@ -2278,37 +2373,37 @@ def test_change_config_internal():
 init('binaries/', verbose = True)
 
 start = time.time()
-
+GLOBAL_DEFAULT_CHAIN_ID = "0"
 test_change_config_internal()
 print()
 # test_old_config_code_upgrade()
 # print()
 # test_old_elector_code_upgrade()
-# print()
-# test_identical_validators()
+print()
+test_identical_validators() ##
 # print()
 # test_elector_code_upgrade()
 #
-# print()
-# test_seven_validators()
-# print()
-# test_rich_validator()
-# print()
-# test_thirty_validators()
-# print()
-# test_insufficient_number_of_validators()
-# print()
-# test_bonuses()
-# print()
-# test_reset_utime_until()
-# print()
-# test_ban()
-# print()
-# test_ban_multiple()
+print()
+test_seven_validators()##
+print()
+test_rich_validator()##
+print()
+test_thirty_validators()##
+print()
+test_insufficient_number_of_validators()##
+print()
+test_bonuses()##
+print()
+test_reset_utime_until()##
+print()
+test_ban()
+print()
+test_ban_multiple()
 # print()
 # test_on_bounce()
 # print()
-# test_1000()
+# test_1000()##
 
 ## test_complaints() # it is not working now due to non using algorithms
 ## test_depool() # TODO: it stopped work

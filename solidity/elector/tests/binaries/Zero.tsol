@@ -20,4 +20,13 @@ contract Zero {
         elector.transfer(value);
     }
 
+    function grantByChainId(uint128 value, int32 chainId) public pure {
+
+        (TvmCell cfg1, bool f) = tvm.rawConfigParam(1);
+        require(f, 123);
+        address elector = address.makeAddrStd(-1, cfg1.toSlice().loadUnsigned(256));
+        tvm.accept();
+        IElector(elector).receiveBonuses{value: value}(chainId);
+    }
+
 }

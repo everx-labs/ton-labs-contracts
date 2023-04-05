@@ -74,6 +74,67 @@ PUSHINT 0
 SENDRAWMSG
 .loc Zero.tsol, 0
 
+.macro grantByChainId
+DROP
+GETGLOB 6
+THROWIFNOT 76
+.loc Zero.tsol, 23
+LDU 128
+LDI 32
+ENDS
+.loc Zero.tsol, 0
+CALLREF {
+	CALL $grantByChainId_884931b8_internal_macro$
+}
+IFREF {
+	CALL $c7_to_c4$
+}
+THROW 0
+
+.globl	grantByChainId_884931b8_internal
+.type	grantByChainId_884931b8_internal, @function
+CALL $grantByChainId_884931b8_internal_macro$
+
+.macro grantByChainId_884931b8_internal_macro
+.loc Zero.tsol, 25
+PUSHINT 1
+CONFIGPARAM
+DUP
+PUSHCONT {
+	PUSHREF {
+	}
+	SWAP
+}
+IFNOT
+.loc Zero.tsol, 26
+THROWIFNOT 123
+.loc Zero.tsol, 27
+CTOS
+PLDU 256
+PUSHINT -1
+NEWC
+STSLICECONST x9_
+STI 8
+STU 256
+ENDC
+CTOS
+.loc Zero.tsol, 28
+ACCEPT
+.loc Zero.tsol, 29
+XCHG S1, S2
+NEWC
+STSLICECONST x62_
+STSLICE
+SWAP
+STGRAMS
+PUSHINT 295954618
+STUR 139
+STI 32
+ENDC
+PUSHINT 0
+SENDRAWMSG
+.loc Zero.tsol, 0
+
 .macro c4_to_c7
 PUSHROOT
 CTOS
@@ -204,6 +265,12 @@ CALLREF {
 THROW 60
 
 .macro public_function_selector
+DUP
+PUSHINT 776791774
+EQUAL
+IFJMPREF {
+	CALL $grantByChainId$
+}
 DUP
 PUSHINT 973828957
 EQUAL

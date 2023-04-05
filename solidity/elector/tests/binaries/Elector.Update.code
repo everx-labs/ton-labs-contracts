@@ -12,68 +12,112 @@ IFREF {
 GETGLOB 6
 THROWIF 51
 ENDS
-.loc Elector.Update.tsol, 95
+.loc Elector.Update.tsol, 96
 PUSHINT 0
 SETGLOB 2
+.loc Elector.Update.tsol, 98
+PUSHINT 0
+GETGLOB 10
+NEWDICT
+PUSHINT 0
+BLKPUSH 3, 0
+NEWDICT
+PUSHINT 0
+BLKPUSH 2, 0
+TUPLE 8
+PUSHINT 0
+BLKPUSH 2, 0
+TUPLE 5
+CALLREF {
+	UNTUPLE 5
+	REVERSE 5, 0
+	NEWC
+	STDICT
+	SWAP
+	UNTUPLE 8
+	REVERSE 9, 0
+	STU 32
+	STU 32
+	SWAP
+	STVARUINT16
+	SWAP
+	STVARUINT16
+	STDICT
+	STI 1
+	STI 1
+	STI 1
+	STU 32
+	STU 256
+	STU 64
+}
+ROTREV
+PUSHINT 32
+DICTISETB
+SETGLOB 10
 .loc Elector.Update.tsol, 0
 CALLREF {
 	CALL $c7_to_c4$
 }
 THROW 0
 
-.globl	get_current_vset_cb181528_internal
-.type	get_current_vset_cb181528_internal, @function
-CALL $get_current_vset_cb181528_internal_macro$
+.globl	get_current_vset_f0cade92_internal
+.type	get_current_vset_f0cade92_internal, @function
+CALL $get_current_vset_f0cade92_internal_macro$
 
-.macro get_current_vset_cb181528_internal_macro
-.loc Elector.Update.tsol, 107
-PUSHINT 35
-CONFIGPARAM
-DUP
-PUSHCONT {
-	PUSHREF {
-	}
-	SWAP
+.macro get_current_vset_f0cade92_internal_macro
+.loc Elector.Update.tsol, 117
+CALLREF {
+	CALL $Common_no_obj_getValidatorSetsByChain_d29f0692_macro$
 }
-IFNOT
-.loc Elector.Update.tsol, 108
+.loc Elector.Update.tsol, 119
+PUSHINT 0
+BLKPUSH 4, 0
+NEWDICT
+TUPLE 6
+.loc Elector.Update.tsol, 120
+OVER
+ISNULL
 PUSHCONT {
-	.loc Elector.Update.tsol, 109
-	PUSHINT 34
-	CONFIGPARAM
+	.loc Elector.Update.tsol, 121
+	PUSH2 S1, S1
+	ISNULL
+	THROWIF 63
+	.loc Elector.Update.tsol, 122
 	DUP
+	THIRD
+	ISNULL
 	PUSHCONT {
-		PUSHREF {
-		}
-		SWAP
+		.loc Elector.Update.tsol, 123
+		DUP
+		THIRD
+		DUP
+		ISNULL
+		THROWIF 63
+		POP S2
+		.loc Elector.Update.tsol, 0
 	}
 	IFNOT
-	DROP
-	NIP
+	.loc Elector.Update.tsol, 125
+	DUP
+	SECOND
+	ISNULL
+	PUSHCONT {
+		.loc Elector.Update.tsol, 126
+		DUP
+		SECOND
+		DUP
+		ISNULL
+		THROWIF 63
+		POP S2
+		.loc Elector.Update.tsol, 0
+	}
+	IFNOT
 	.loc Elector.Update.tsol, 0
+	DROP
 }
 IFNOT
-.loc Elector.Update.tsol, 111
-DUP
-CTOS
-LDU 8
-LDU 32
-LDU 32
-LDU 16
-LDU 16
-LDU 64
-PLDDICT
-TUPLE 7
-.loc Elector.Update.tsol, 112
-DUP
-FIRST
-EQINT 18
-THROWIFNOT 40
-.loc Elector.Update.tsol, 113
-TUCK
-INDEX 5
-ROT
-INDEX 6
+.loc Elector.Update.tsol, 129
+NIP
 .loc Elector.Update.tsol, 0
 
 .globl	send_message_back_30631536_internal
@@ -81,29 +125,29 @@ INDEX 6
 CALL $send_message_back_30631536_internal_macro$
 
 .macro send_message_back_30631536_internal_macro
-.loc Elector.Update.tsol, 118
+.loc Elector.Update.tsol, 144
 NEWC
-.loc Elector.Update.tsol, 119
+.loc Elector.Update.tsol, 145
 STSLICECONST x62_
-.loc Elector.Update.tsol, 120
+.loc Elector.Update.tsol, 146
 ROLL 6
 STSLICER
-.loc Elector.Update.tsol, 121
+.loc Elector.Update.tsol, 147
 ROT
 STGRAMS
-.loc Elector.Update.tsol, 122
+.loc Elector.Update.tsol, 148
 PUSHINT 107
 STZEROES
-.loc Elector.Update.tsol, 123
+.loc Elector.Update.tsol, 149
 ROLL 4
 STUR 32
-.loc Elector.Update.tsol, 124
+.loc Elector.Update.tsol, 150
 ROLL 3
 STUR 64
-.loc Elector.Update.tsol, 125
+.loc Elector.Update.tsol, 151
 ROT
 STUR 32
-.loc Elector.Update.tsol, 126
+.loc Elector.Update.tsol, 152
 ENDC
 SWAP
 SENDRAWMSG
@@ -114,7 +158,7 @@ SENDRAWMSG
 CALL $return_stake_fe624e47_internal_macro$
 
 .macro return_stake_fe624e47_internal_macro
-.loc Elector.Update.tsol, 130
+.loc Elector.Update.tsol, 156
 SWAP
 GETGLOB 9
 NEWC
@@ -134,7 +178,7 @@ SENDRAWMSG
 CALL $send_confirmation_1aa717cd_internal_macro$
 
 .macro send_confirmation_1aa717cd_internal_macro
-.loc Elector.Update.tsol, 134
+.loc Elector.Update.tsol, 160
 SWAP
 GETGLOB 9
 NEWC
@@ -158,7 +202,7 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Elector.Update.tsol, 152
+.loc Elector.Update.tsol, 178
 OVER
 PUSHCONT {
 	LDU 64
@@ -192,16 +236,16 @@ THROW 0
 CALL $process_new_stake_6aecb98a_internal_macro$
 
 .macro process_new_stake_6aecb98a_internal_macro
-.loc Elector.Update.tsol, 152
+.loc Elector.Update.tsol, 178
 DEPTH
 ADDCONST -5
 PICK
 THROWIF 72
 PUSHCONT {
-	.loc Elector.Update.tsol, 161
+	.loc Elector.Update.tsol, 187
 	GETGLOB 9
 	REWRITESTDADDR
-	.loc Elector.Update.tsol, 162
+	.loc Elector.Update.tsol, 188
 	PUSH S2
 	GETGLOB 10
 	PUSHINT 32
@@ -217,13 +261,14 @@ IFREFELSEREF
 		LDI 1
 		LDI 1
 		LDI 1
-		LDU 256
-		LDU 32
-		ROLLREV 10
-		TUPLE 10
+		ROLLREV 8
+		TUPLE 8
 		SWAP
+		LDU 32
+		LDU 256
+		LDU 64
 		ENDS
-		PAIR
+		TUPLE 5
 }
 {
 		NEWDICT
@@ -231,9 +276,11 @@ IFREFELSEREF
 		BLKPUSH 3, 0
 		NEWDICT
 		PUSHINT 0
-		BLKPUSH 4, 0
-		TUPLE 10
-		PAIR
+		BLKPUSH 2, 0
+		TUPLE 8
+		PUSHINT 0
+		BLKPUSH 2, 0
+		TUPLE 5
 }
 	SECOND
 	INDEX 7
@@ -242,7 +289,7 @@ IFREFELSEREF
 	NEQINT -1
 	OR
 	PUSHCONT {
-		.loc Elector.Update.tsol, 165
+		.loc Elector.Update.tsol, 191
 		ROLL 7
 		PUSHINT 0
 		CALLREF {
@@ -252,7 +299,7 @@ IFREFELSEREF
 		.loc Elector.Update.tsol, 0
 	}
 	IFJMP
-	.loc Elector.Update.tsol, 168
+	.loc Elector.Update.tsol, 194
 	PUSH3 S3, S0, S4
 	PUSH S8
 	NEWC
@@ -261,7 +308,7 @@ IFREFELSEREF
 	STU 32
 	STU 256
 	STU 256
-	.loc Elector.Update.tsol, 169
+	.loc Elector.Update.tsol, 195
 	ENDC
 	CTOS
 	ROLL 3
@@ -269,7 +316,7 @@ IFREFELSEREF
 	PUSH S7
 	CHKSIGNS
 	PUSHCONT {
-		.loc Elector.Update.tsol, 171
+		.loc Elector.Update.tsol, 197
 		ROLL 6
 		PUSHINT 1
 		CALLREF {
@@ -279,12 +326,12 @@ IFREFELSEREF
 		.loc Elector.Update.tsol, 0
 	}
 	IFNOTJMP
-	.loc Elector.Update.tsol, 173
+	.loc Elector.Update.tsol, 199
 	PUSH S3
 	PUSHPOW2 16
 	LESS
 	PUSHCONT {
-		.loc Elector.Update.tsol, 175
+		.loc Elector.Update.tsol, 201
 		ROLL 6
 		PUSHINT 6
 		CALLREF {
@@ -294,7 +341,7 @@ IFREFELSEREF
 		.loc Elector.Update.tsol, 0
 	}
 	IFJMP
-	.loc Elector.Update.tsol, 177
+	.loc Elector.Update.tsol, 203
 	OVER
 	GETGLOB 10
 	PUSHINT 32
@@ -310,13 +357,14 @@ IFREFELSEREF
 		LDI 1
 		LDI 1
 		LDI 1
-		LDU 256
-		LDU 32
-		ROLLREV 10
-		TUPLE 10
+		ROLLREV 8
+		TUPLE 8
 		SWAP
+		LDU 32
+		LDU 256
+		LDU 64
 		ENDS
-		PAIR
+		TUPLE 5
 }
 {
 		NEWDICT
@@ -324,24 +372,26 @@ IFREFELSEREF
 		BLKPUSH 3, 0
 		NEWDICT
 		PUSHINT 0
-		BLKPUSH 4, 0
-		TUPLE 10
-		PAIR
+		BLKPUSH 2, 0
+		TUPLE 8
+		PUSHINT 0
+		BLKPUSH 2, 0
+		TUPLE 5
 }
 	INDEX2 1, 3
-	.loc Elector.Update.tsol, 179
+	.loc Elector.Update.tsol, 205
 	DEPTH
 	ADDCONST -2
 	PICK
 	PUSHINT 1000000000
 	SUB
-	.loc Elector.Update.tsol, 180
+	.loc Elector.Update.tsol, 206
 	DUP
 	LSHIFT 12
 	PUSH S2
 	LESS
 	PUSHCONT {
-		.loc Elector.Update.tsol, 182
+		.loc Elector.Update.tsol, 208
 		ROLL 8
 		PUSHINT 2
 		CALLREF {
@@ -351,13 +401,13 @@ IFREFELSEREF
 		.loc Elector.Update.tsol, 0
 	}
 	IFJMP
-	.loc Elector.Update.tsol, 185
+	.loc Elector.Update.tsol, 211
 	DUP
 	UFITS 128
 	PUSH S2
 	ADD
 	POP S2
-	.loc Elector.Update.tsol, 186
+	.loc Elector.Update.tsol, 212
 	ROLL 6
 	PUSH S4
 	GETGLOB 10
@@ -374,13 +424,14 @@ IFREFELSEREF
 		LDI 1
 		LDI 1
 		LDI 1
-		LDU 256
-		LDU 32
-		ROLLREV 10
-		TUPLE 10
+		ROLLREV 8
+		TUPLE 8
 		SWAP
+		LDU 32
+		LDU 256
+		LDU 64
 		ENDS
-		PAIR
+		TUPLE 5
 }
 {
 		NEWDICT
@@ -388,14 +439,16 @@ IFREFELSEREF
 		BLKPUSH 3, 0
 		NEWDICT
 		PUSHINT 0
-		BLKPUSH 4, 0
-		TUPLE 10
-		PAIR
+		BLKPUSH 2, 0
+		TUPLE 8
+		PUSHINT 0
+		BLKPUSH 2, 0
+		TUPLE 5
 }
 	INDEX2 1, 0
 	NEQ
 	PUSHCONT {
-		.loc Elector.Update.tsol, 188
+		.loc Elector.Update.tsol, 214
 		ROLL 7
 		PUSHINT 3
 		CALLREF {
@@ -405,7 +458,7 @@ IFREFELSEREF
 		.loc Elector.Update.tsol, 0
 	}
 	IFJMP
-	.loc Elector.Update.tsol, 190
+	.loc Elector.Update.tsol, 216
 	PUSH S3
 	GETGLOB 10
 	PUSHINT 32
@@ -421,13 +474,14 @@ IFREFELSEREF
 		LDI 1
 		LDI 1
 		LDI 1
-		LDU 256
-		LDU 32
-		ROLLREV 10
-		TUPLE 10
+		ROLLREV 8
+		TUPLE 8
 		SWAP
+		LDU 32
+		LDU 256
+		LDU 64
 		ENDS
-		PAIR
+		TUPLE 5
 }
 {
 		NEWDICT
@@ -435,14 +489,16 @@ IFREFELSEREF
 		BLKPUSH 3, 0
 		NEWDICT
 		PUSHINT 0
-		BLKPUSH 4, 0
-		TUPLE 10
-		PAIR
+		BLKPUSH 2, 0
+		TUPLE 8
+		PUSHINT 0
+		BLKPUSH 2, 0
+		TUPLE 5
 }
 	SECOND
 	INDEX 6
 	PUSHCONT {
-		.loc Elector.Update.tsol, 192
+		.loc Elector.Update.tsol, 218
 		ROLL 7
 		PUSHINT 0
 		CALLREF {
@@ -452,7 +508,7 @@ IFREFELSEREF
 		.loc Elector.Update.tsol, 0
 	}
 	IFJMP
-	.loc Elector.Update.tsol, 194
+	.loc Elector.Update.tsol, 220
 	PUSH2 S6, S3
 	GETGLOB 10
 	PUSHINT 32
@@ -468,13 +524,14 @@ IFREFELSEREF
 		LDI 1
 		LDI 1
 		LDI 1
-		LDU 256
-		LDU 32
-		ROLLREV 10
-		TUPLE 10
+		ROLLREV 8
+		TUPLE 8
 		SWAP
+		LDU 32
+		LDU 256
+		LDU 64
 		ENDS
-		PAIR
+		TUPLE 5
 }
 {
 		NEWDICT
@@ -482,9 +539,11 @@ IFREFELSEREF
 		BLKPUSH 3, 0
 		NEWDICT
 		PUSHINT 0
-		BLKPUSH 4, 0
-		TUPLE 10
-		PAIR
+		BLKPUSH 2, 0
+		TUPLE 8
+		PUSHINT 0
+		BLKPUSH 2, 0
+		TUPLE 5
 }
 	SECOND
 	INDEX 4
@@ -500,23 +559,23 @@ IFREFELSEREF
 		ENDS
 		TUPLE 5
 	}
-	.loc Elector.Update.tsol, 195
+	.loc Elector.Update.tsol, 221
 	FALSE
-	.loc Elector.Update.tsol, 196
+	.loc Elector.Update.tsol, 222
 	OVER
 	ISNULL
 	PUSHCONT {
-		.loc Elector.Update.tsol, 198
+		.loc Elector.Update.tsol, 224
 		PUSH2 S1, S1
 		ISNULL
 		THROWIF 63
-		.loc Elector.Update.tsol, 200
+		.loc Elector.Update.tsol, 226
 		DUP
 		FIRST
 		PUSH S4
 		ADD
 		POP S4
-		.loc Elector.Update.tsol, 201
+		.loc Elector.Update.tsol, 227
 		PUXC S5, S-1
 		INDEX 3
 		NEQ
@@ -524,9 +583,9 @@ IFREFELSEREF
 		.loc Elector.Update.tsol, 0
 	}
 	IFNOT
-	.loc Elector.Update.tsol, 203
+	.loc Elector.Update.tsol, 229
 	PUSHCONT {
-		.loc Elector.Update.tsol, 205
+		.loc Elector.Update.tsol, 231
 		ROLL 8
 		PUSHINT 4
 		CALLREF {
@@ -536,7 +595,7 @@ IFREFELSEREF
 		.loc Elector.Update.tsol, 0
 	}
 	IFJMP
-	.loc Elector.Update.tsol, 207
+	.loc Elector.Update.tsol, 233
 	DROP
 	PUSH2 S0, S3
 	GETGLOB 10
@@ -553,13 +612,14 @@ IFREFELSEREF
 		LDI 1
 		LDI 1
 		LDI 1
-		LDU 256
-		LDU 32
-		ROLLREV 10
-		TUPLE 10
+		ROLLREV 8
+		TUPLE 8
 		SWAP
+		LDU 32
+		LDU 256
+		LDU 64
 		ENDS
-		PAIR
+		TUPLE 5
 }
 {
 		NEWDICT
@@ -567,14 +627,16 @@ IFREFELSEREF
 		BLKPUSH 3, 0
 		NEWDICT
 		PUSHINT 0
-		BLKPUSH 4, 0
-		TUPLE 10
-		PAIR
+		BLKPUSH 2, 0
+		TUPLE 8
+		PUSHINT 0
+		BLKPUSH 2, 0
+		TUPLE 5
 }
 	INDEX2 1, 2
 	LESS
 	PUSHCONT {
-		.loc Elector.Update.tsol, 209
+		.loc Elector.Update.tsol, 235
 		ROLL 7
 		PUSHINT 5
 		CALLREF {
@@ -584,7 +646,7 @@ IFREFELSEREF
 		.loc Elector.Update.tsol, 0
 	}
 	IFJMP
-	.loc Elector.Update.tsol, 211
+	.loc Elector.Update.tsol, 237
 	PUSHINT 17
 	CONFIGPARAM
 	PUSHCONT {
@@ -603,11 +665,11 @@ IFREFELSEREF
 	IFELSE
 	BLKDROP 3
 	NIP
-	.loc Elector.Update.tsol, 212
+	.loc Elector.Update.tsol, 238
 	PUXC S1, S-1
 	GREATER
 	PUSHCONT {
-		.loc Elector.Update.tsol, 214
+		.loc Elector.Update.tsol, 240
 		ROLL 7
 		PUSHINT 7
 		CALLREF {
@@ -617,12 +679,12 @@ IFREFELSEREF
 		.loc Elector.Update.tsol, 0
 	}
 	IFJMP
-	.loc Elector.Update.tsol, 216
+	.loc Elector.Update.tsol, 242
 	DUP
 	THROWIFNOT 44
-	.loc Elector.Update.tsol, 217
+	.loc Elector.Update.tsol, 243
 	ACCEPT
-	.loc Elector.Update.tsol, 219
+	.loc Elector.Update.tsol, 245
 	UFITS 120
 	NOW
 	ROLL 6
@@ -645,13 +707,14 @@ IFREFELSEREF
 		LDI 1
 		LDI 1
 		LDI 1
-		LDU 256
-		LDU 32
-		ROLLREV 10
-		TUPLE 10
+		ROLLREV 8
+		TUPLE 8
 		SWAP
+		LDU 32
+		LDU 256
+		LDU 64
 		ENDS
-		PAIR
+		TUPLE 5
 }
 {
 		NEWDICT
@@ -659,9 +722,11 @@ IFREFELSEREF
 		BLKPUSH 3, 0
 		NEWDICT
 		PUSHINT 0
-		BLKPUSH 4, 0
-		TUPLE 10
-		PAIR
+		BLKPUSH 2, 0
+		TUPLE 8
+		PUSHINT 0
+		BLKPUSH 2, 0
+		TUPLE 5
 }
 	DUP
 	SECOND
@@ -687,13 +752,13 @@ IFREFELSEREF
 	SETINDEX 4
 	SETINDEX 1
 	CALLREF {
-		UNPAIR
-		SWAP
+		UNTUPLE 5
+		REVERSE 5, 0
 		NEWC
 		STDICT
 		SWAP
-		UNTUPLE 10
-		REVERSE 11, 0
+		UNTUPLE 8
+		REVERSE 9, 0
 		STU 32
 		STU 32
 		SWAP
@@ -704,15 +769,16 @@ IFREFELSEREF
 		STI 1
 		STI 1
 		STI 1
-		STU 256
 		STU 32
+		STU 256
+		STU 64
 	}
 	ROTREV
 	PUSHINT 32
 	DICTISETB
 	DUP
 	SETGLOB 10
-	.loc Elector.Update.tsol, 221
+	.loc Elector.Update.tsol, 247
 	PUXC S2, S-1
 	DUP2
 	PUSHINT 32
@@ -728,13 +794,14 @@ IFREFELSEREF
 		LDI 1
 		LDI 1
 		LDI 1
-		LDU 256
-		LDU 32
-		ROLLREV 10
-		TUPLE 10
+		ROLLREV 8
+		TUPLE 8
 		SWAP
+		LDU 32
+		LDU 256
+		LDU 64
 		ENDS
-		PAIR
+		TUPLE 5
 }
 {
 		NEWDICT
@@ -742,9 +809,11 @@ IFREFELSEREF
 		BLKPUSH 3, 0
 		NEWDICT
 		PUSHINT 0
-		BLKPUSH 4, 0
-		TUPLE 10
-		PAIR
+		BLKPUSH 2, 0
+		TUPLE 8
+		PUSHINT 0
+		BLKPUSH 2, 0
+		TUPLE 5
 }
 	DUP
 	SECOND
@@ -752,13 +821,13 @@ IFREFELSEREF
 	SETINDEX 5
 	SETINDEX 1
 	CALLREF {
-		UNPAIR
-		SWAP
+		UNTUPLE 5
+		REVERSE 5, 0
 		NEWC
 		STDICT
 		SWAP
-		UNTUPLE 10
-		REVERSE 11, 0
+		UNTUPLE 8
+		REVERSE 9, 0
 		STU 32
 		STU 32
 		SWAP
@@ -769,15 +838,16 @@ IFREFELSEREF
 		STI 1
 		STI 1
 		STI 1
-		STU 256
 		STU 32
+		STU 256
+		STU 64
 	}
 	ROTREV
 	PUSHINT 32
 	DICTISETB
 	DUP
 	SETGLOB 10
-	.loc Elector.Update.tsol, 222
+	.loc Elector.Update.tsol, 248
 	PUXC S2, S-1
 	DUP2
 	PUSHINT 32
@@ -793,13 +863,14 @@ IFREFELSEREF
 		LDI 1
 		LDI 1
 		LDI 1
-		LDU 256
-		LDU 32
-		ROLLREV 10
-		TUPLE 10
+		ROLLREV 8
+		TUPLE 8
 		SWAP
+		LDU 32
+		LDU 256
+		LDU 64
 		ENDS
-		PAIR
+		TUPLE 5
 }
 {
 		NEWDICT
@@ -807,9 +878,11 @@ IFREFELSEREF
 		BLKPUSH 3, 0
 		NEWDICT
 		PUSHINT 0
-		BLKPUSH 4, 0
-		TUPLE 10
-		PAIR
+		BLKPUSH 2, 0
+		TUPLE 8
+		PUSHINT 0
+		BLKPUSH 2, 0
+		TUPLE 5
 }
 	DUP
 	SECOND
@@ -817,13 +890,13 @@ IFREFELSEREF
 	SETINDEX 6
 	SETINDEX 1
 	CALLREF {
-		UNPAIR
-		SWAP
+		UNTUPLE 5
+		REVERSE 5, 0
 		NEWC
 		STDICT
 		SWAP
-		UNTUPLE 10
-		REVERSE 11, 0
+		UNTUPLE 8
+		REVERSE 9, 0
 		STU 32
 		STU 32
 		SWAP
@@ -834,14 +907,15 @@ IFREFELSEREF
 		STI 1
 		STI 1
 		STI 1
-		STU 256
 		STU 32
+		STU 256
+		STU 64
 	}
 	ROTREV
 	PUSHINT 32
 	DICTISETB
 	SETGLOB 10
-	.loc Elector.Update.tsol, 223
+	.loc Elector.Update.tsol, 249
 	UFITS 120
 	SWAP
 	GETGLOB 10
@@ -859,13 +933,14 @@ IFREFELSEREF
 		LDI 1
 		LDI 1
 		LDI 1
-		LDU 256
-		LDU 32
-		ROLLREV 10
-		TUPLE 10
+		ROLLREV 8
+		TUPLE 8
 		SWAP
+		LDU 32
+		LDU 256
+		LDU 64
 		ENDS
-		PAIR
+		TUPLE 5
 }
 {
 		NEWDICT
@@ -873,9 +948,11 @@ IFREFELSEREF
 		BLKPUSH 3, 0
 		NEWDICT
 		PUSHINT 0
-		BLKPUSH 4, 0
-		TUPLE 10
-		PAIR
+		BLKPUSH 2, 0
+		TUPLE 8
+		PUSHINT 0
+		BLKPUSH 2, 0
+		TUPLE 5
 }
 	DUP
 	SECOND
@@ -883,13 +960,13 @@ IFREFELSEREF
 	SETINDEX 3
 	SETINDEX 1
 	CALLREF {
-		UNPAIR
-		SWAP
+		UNTUPLE 5
+		REVERSE 5, 0
 		NEWC
 		STDICT
 		SWAP
-		UNTUPLE 10
-		REVERSE 11, 0
+		UNTUPLE 8
+		REVERSE 9, 0
 		STU 32
 		STU 32
 		SWAP
@@ -900,17 +977,18 @@ IFREFELSEREF
 		STI 1
 		STI 1
 		STI 1
-		STU 256
 		STU 32
+		STU 256
+		STU 64
 	}
 	ROTREV
 	PUSHINT 32
 	DICTISETB
 	SETGLOB 10
-	.loc Elector.Update.tsol, 225
+	.loc Elector.Update.tsol, 251
 	DUP
 	PUSHCONT {
-		.loc Elector.Update.tsol, 226
+		.loc Elector.Update.tsol, 252
 		PUSHINT 0
 		CALLREF {
 			CALL $send_confirmation_1aa717cd_internal_macro$
@@ -920,7 +998,7 @@ IFREFELSEREF
 	IFJMP
 	.loc Elector.Update.tsol, 0
 	DROP
-	.loc Elector.Update.tsol, 152
+	.loc Elector.Update.tsol, 178
 }
 CALLX
 .loc Elector.Update.tsol, 0
@@ -930,10 +1008,10 @@ CALLX
 CALL $unfreeze_without_bonuses_a32f4563_internal_macro$
 
 .macro unfreeze_without_bonuses_a32f4563_internal_macro
-.loc Elector.Update.tsol, 233
+.loc Elector.Update.tsol, 259
 PUSHINT 0
 PUSH2 S0, S2
-.loc Elector.Update.tsol, 235
+.loc Elector.Update.tsol, 261
 PUSHPOW2 8
 DICTUMIN
 NULLSWAPIFNOT
@@ -947,23 +1025,23 @@ IFREF {
 	TUPLE 4
 	PAIR
 }
-.loc Elector.Update.tsol, 236
+.loc Elector.Update.tsol, 262
 PUSHCONT {
 	DUP
 	ISNULL
 	NOT
 }
 PUSHCONT {
-	.loc Elector.Update.tsol, 237
+	.loc Elector.Update.tsol, 263
 	DUP
 	ISNULL
 	THROWIF 63
 	UNPAIR
-	.loc Elector.Update.tsol, 238
+	.loc Elector.Update.tsol, 264
 	DUP
 	INDEX 3
 	PUSHCONT {
-		.loc Elector.Update.tsol, 239
+		.loc Elector.Update.tsol, 265
 		DUP
 		THIRD
 		PUSH S3
@@ -971,12 +1049,12 @@ PUSHCONT {
 		POP S3
 	}
 	PUSHCONT {
-		.loc Elector.Update.tsol, 241
+		.loc Elector.Update.tsol, 267
 		DUP
 		FIRST
 		OVER
 		THIRD
-		.loc Elector.Update.tsol, 148
+		.loc Elector.Update.tsol, 174
 		UFITS 120
 		SWAP
 		GETGLOB 11
@@ -998,7 +1076,7 @@ PUSHCONT {
 		PUSHPOW2 8
 		DICTUSETB
 		SETGLOB 11
-		.loc Elector.Update.tsol, 242
+		.loc Elector.Update.tsol, 268
 		DUP
 		THIRD
 		PUSH S4
@@ -1006,7 +1084,7 @@ PUSHCONT {
 		POP S4
 	}
 	IFELSE
-	.loc Elector.Update.tsol, 244
+	.loc Elector.Update.tsol, 270
 	DROP
 	PUSH S4
 	PUSHPOW2 8
@@ -1025,12 +1103,12 @@ PUSHCONT {
 	.loc Elector.Update.tsol, 0
 }
 WHILE
-.loc Elector.Update.tsol, 246
+.loc Elector.Update.tsol, 272
 DROP
 XCHG S2
 EQUAL
 THROWIFNOT 59
-.loc Elector.Update.tsol, 247
+.loc Elector.Update.tsol, 273
 NIP
 .loc Elector.Update.tsol, 0
 
@@ -1039,10 +1117,10 @@ NIP
 CALL $unfreeze_with_bonuses_a6255a42_internal_macro$
 
 .macro unfreeze_with_bonuses_a6255a42_internal_macro
-.loc Elector.Update.tsol, 253
+.loc Elector.Update.tsol, 281
 PUSHINT 0
 BLKPUSH 2, 0
-.loc Elector.Update.tsol, 256
+.loc Elector.Update.tsol, 285
 PUSH S5
 PUSHPOW2 8
 DICTUMIN
@@ -1057,23 +1135,23 @@ IFREF {
 	TUPLE 4
 	PAIR
 }
-.loc Elector.Update.tsol, 257
+.loc Elector.Update.tsol, 286
 PUSHCONT {
 	DUP
 	ISNULL
 	NOT
 }
 PUSHCONT {
-	.loc Elector.Update.tsol, 258
+	.loc Elector.Update.tsol, 289
 	DUP
 	ISNULL
 	THROWIF 63
 	UNPAIR
-	.loc Elector.Update.tsol, 259
+	.loc Elector.Update.tsol, 291
 	DUP
 	INDEX 3
 	PUSHCONT {
-		.loc Elector.Update.tsol, 260
+		.loc Elector.Update.tsol, 292
 		DUP
 		THIRD
 		PUSH S4
@@ -1081,24 +1159,24 @@ PUSHCONT {
 		POP S4
 	}
 	PUSHCONT {
-		.loc Elector.Update.tsol, 262
+		.loc Elector.Update.tsol, 294
 		PUSH2 S5, S0
 		THIRD
 		PUSH S8
 		MULDIVMOD
 		DROP
-		.loc Elector.Update.tsol, 263
+		.loc Elector.Update.tsol, 295
 		PUSH2 S3, S0
 		ADD
 		POP S4
-		.loc Elector.Update.tsol, 264
+		.loc Elector.Update.tsol, 296
 		OVER
 		FIRST
 		PUSH S2
 		THIRD
 		ROT
 		ADD
-		.loc Elector.Update.tsol, 148
+		.loc Elector.Update.tsol, 174
 		UFITS 120
 		SWAP
 		GETGLOB 11
@@ -1120,7 +1198,7 @@ PUSHCONT {
 		PUSHPOW2 8
 		DICTUSETB
 		SETGLOB 11
-		.loc Elector.Update.tsol, 265
+		.loc Elector.Update.tsol, 297
 		DUP
 		THIRD
 		PUSH S5
@@ -1128,7 +1206,7 @@ PUSHCONT {
 		POP S5
 	}
 	IFELSE
-	.loc Elector.Update.tsol, 267
+	.loc Elector.Update.tsol, 299
 	DROP
 	PUSH S6
 	PUSHPOW2 8
@@ -1147,7 +1225,7 @@ PUSHCONT {
 	.loc Elector.Update.tsol, 0
 }
 WHILE
-.loc Elector.Update.tsol, 269
+.loc Elector.Update.tsol, 301
 DROP
 ROT
 ROLL 4
@@ -1156,7 +1234,7 @@ PUSH2 S1, S3
 LEQ
 AND
 THROWIFNOT 59
-.loc Elector.Update.tsol, 270
+.loc Elector.Update.tsol, 302
 XCHG S2
 ADD
 SUBR
@@ -1168,9 +1246,9 @@ NIP
 CALL $stakes_sum_8b3419f4_internal_macro$
 
 .macro stakes_sum_8b3419f4_internal_macro
-.loc Elector.Update.tsol, 274
+.loc Elector.Update.tsol, 306
 PUSHINT 0
-.loc Elector.Update.tsol, 275
+.loc Elector.Update.tsol, 307
 OVER
 PUSHPOW2 8
 DICTUMIN
@@ -1185,24 +1263,24 @@ IFREF {
 	TUPLE 4
 	PAIR
 }
-.loc Elector.Update.tsol, 276
+.loc Elector.Update.tsol, 308
 PUSHCONT {
 	DUP
 	ISNULL
 	NOT
 }
 PUSHCONT {
-	.loc Elector.Update.tsol, 277
+	.loc Elector.Update.tsol, 309
 	DUP
 	ISNULL
 	THROWIF 63
 	UNPAIR
-	.loc Elector.Update.tsol, 278
+	.loc Elector.Update.tsol, 310
 	THIRD
 	PUSH S2
 	ADD
 	POP S2
-	.loc Elector.Update.tsol, 279
+	.loc Elector.Update.tsol, 311
 	PUSH S2
 	PUSHPOW2 8
 	DICTUGETNEXT
@@ -1220,7 +1298,7 @@ PUSHCONT {
 	.loc Elector.Update.tsol, 0
 }
 WHILE
-.loc Elector.Update.tsol, 281
+.loc Elector.Update.tsol, 313
 DROP
 NIP
 .loc Elector.Update.tsol, 0
@@ -1230,7 +1308,7 @@ NIP
 CALL $unfreeze_all_4c140ed0_internal_macro$
 
 .macro unfreeze_all_4c140ed0_internal_macro
-.loc Elector.Update.tsol, 286
+.loc Elector.Update.tsol, 318
 DUP2
 GETGLOB 10
 PUSHINT 32
@@ -1246,13 +1324,14 @@ IFREFELSEREF
 	LDI 1
 	LDI 1
 	LDI 1
-	LDU 256
-	LDU 32
-	ROLLREV 10
-	TUPLE 10
+	ROLLREV 8
+	TUPLE 8
 	SWAP
+	LDU 32
+	LDU 256
+	LDU 64
 	ENDS
-	PAIR
+	TUPLE 5
 }
 {
 	NEWDICT
@@ -1260,9 +1339,11 @@ IFREFELSEREF
 	BLKPUSH 3, 0
 	NEWDICT
 	PUSHINT 0
-	BLKPUSH 4, 0
-	TUPLE 10
-	PAIR
+	BLKPUSH 2, 0
+	TUPLE 8
+	PUSHINT 0
+	BLKPUSH 2, 0
+	TUPLE 5
 }
 FIRST
 PUSHINT 32
@@ -1279,17 +1360,17 @@ IFREF {
 	ENDS
 	TUPLE 7
 }
-.loc Elector.Update.tsol, 287
+.loc Elector.Update.tsol, 319
 DUP
 ISNULL
 PUSHCONT {
-	.loc Elector.Update.tsol, 288
+	.loc Elector.Update.tsol, 320
 	BLKDROP 3
 	PUSHINT 0
 	.loc Elector.Update.tsol, 0
 }
 IFJMP
-.loc Elector.Update.tsol, 290
+.loc Elector.Update.tsol, 322
 SWAP
 GETGLOB 10
 DUP2
@@ -1306,13 +1387,14 @@ IFREFELSEREF
 	LDI 1
 	LDI 1
 	LDI 1
-	LDU 256
-	LDU 32
-	ROLLREV 10
-	TUPLE 10
+	ROLLREV 8
+	TUPLE 8
 	SWAP
+	LDU 32
+	LDU 256
+	LDU 64
 	ENDS
-	PAIR
+	TUPLE 5
 }
 {
 	NEWDICT
@@ -1320,9 +1402,11 @@ IFREFELSEREF
 	BLKPUSH 3, 0
 	NEWDICT
 	PUSHINT 0
-	BLKPUSH 4, 0
-	TUPLE 10
-	PAIR
+	BLKPUSH 2, 0
+	TUPLE 8
+	PUSHINT 0
+	BLKPUSH 2, 0
+	TUPLE 5
 }
 DUP
 FIRST
@@ -1333,13 +1417,13 @@ DICTUDEL
 DROP
 SETINDEX 0
 CALLREF {
-	UNPAIR
-	SWAP
+	UNTUPLE 5
+	REVERSE 5, 0
 	NEWC
 	STDICT
 	SWAP
-	UNTUPLE 10
-	REVERSE 11, 0
+	UNTUPLE 8
+	REVERSE 9, 0
 	STU 32
 	STU 32
 	SWAP
@@ -1350,26 +1434,27 @@ CALLREF {
 	STI 1
 	STI 1
 	STI 1
-	STU 256
 	STU 32
+	STU 256
+	STU 64
 }
 ROTREV
 PUSHINT 32
 DICTISETB
 SETGLOB 10
-.loc Elector.Update.tsol, 291
+.loc Elector.Update.tsol, 323
 DUP
 ISNULL
 THROWIF 63
-.loc Elector.Update.tsol, 292
+.loc Elector.Update.tsol, 324
 DUP
 INDEX 4
-.loc Elector.Update.tsol, 294
+.loc Elector.Update.tsol, 326
 OVER
 INDEX 5
 GTINT 0
 PUSHCONT {
-	.loc Elector.Update.tsol, 295
+	.loc Elector.Update.tsol, 327
 	OVER
 	INDEX 3
 	XCHG S2
@@ -1380,7 +1465,7 @@ PUSHCONT {
 	.loc Elector.Update.tsol, 0
 }
 IFJMP
-.loc Elector.Update.tsol, 297
+.loc Elector.Update.tsol, 329
 SWAP
 INDEX 3
 SWAP
@@ -1394,10 +1479,10 @@ CALLREF {
 CALL $config_set_confirmed_724b1541_internal_macro$
 
 .macro config_set_confirmed_724b1541_internal_macro
-.loc Elector.Update.tsol, 301
+.loc Elector.Update.tsol, 333
 GETGLOB 9
 REWRITESTDADDR
-.loc Elector.Update.tsol, 302
+.loc Elector.Update.tsol, 334
 PUSHINT 0
 CONFIGPARAM
 DUP
@@ -1408,64 +1493,11 @@ PUSHCONT {
 }
 IFNOT
 DROP
-.loc Elector.Update.tsol, 303
+.loc Elector.Update.tsol, 335
 CTOS
 PLDU 256
-.loc Elector.Update.tsol, 305
-ROT
-NEQINT -1
-ROTREV
-NEQ
-OR
-DUP
-PUSHCONT {
-	DROP
-	DUP
-	GETGLOB 10
-	PUSHINT 32
-	DICTIGET
-IFREFELSEREF
-{
-		LDDICT
-		LDU 32
-		LDU 32
-		LDVARUINT16
-		LDVARUINT16
-		LDDICT
-		LDI 1
-		LDI 1
-		LDI 1
-		LDU 256
-		LDU 32
-		ROLLREV 10
-		TUPLE 10
-		SWAP
-		ENDS
-		PAIR
-}
-{
-		NEWDICT
-		PUSHINT 0
-		BLKPUSH 3, 0
-		NEWDICT
-		PUSHINT 0
-		BLKPUSH 4, 0
-		TUPLE 10
-		PAIR
-}
-	SECOND
-	INDEX 7
-	NOT
-}
-IFNOT
-PUSHCONT {
-	.loc Elector.Update.tsol, 308
-	BLKDROP 3
-	.loc Elector.Update.tsol, 0
-}
-IFJMP
-.loc Elector.Update.tsol, 310
-DUP
+.loc Elector.Update.tsol, 337
+PUSH S3
 GETGLOB 10
 PUSHINT 32
 DICTIGET
@@ -1480,13 +1512,14 @@ IFREFELSEREF
 	LDI 1
 	LDI 1
 	LDI 1
-	LDU 256
-	LDU 32
-	ROLLREV 10
-	TUPLE 10
+	ROLLREV 8
+	TUPLE 8
 	SWAP
+	LDU 32
+	LDU 256
+	LDU 64
 	ENDS
-	PAIR
+	TUPLE 5
 }
 {
 	NEWDICT
@@ -1494,66 +1527,50 @@ IFREFELSEREF
 	BLKPUSH 3, 0
 	NEWDICT
 	PUSHINT 0
-	BLKPUSH 4, 0
-	TUPLE 10
-	PAIR
+	BLKPUSH 2, 0
+	TUPLE 8
+	PUSHINT 0
+	BLKPUSH 2, 0
+	TUPLE 5
 }
-INDEX2 1, 0
+SECOND
+.loc Elector.Update.tsol, 339
 ROLL 3
+NEQINT -1
+SWAP2
 NEQ
+PUSH S2
+INDEX 7
+NOT
+OR
+OR
+PUSHCONT {
+	.loc Elector.Update.tsol, 342
+	BLKDROP 4
+	.loc Elector.Update.tsol, 0
+}
+IFJMP
+.loc Elector.Update.tsol, 344
 DUP
+FIRST
+ROLL 4
+NEQ
+SWAP
+INDEX 6
+NOT
+OR
 PUSHCONT {
-	DROP
-	DUP
-	GETGLOB 10
-	PUSHINT 32
-	DICTIGET
-IFREFELSEREF
-{
-		LDDICT
-		LDU 32
-		LDU 32
-		LDVARUINT16
-		LDVARUINT16
-		LDDICT
-		LDI 1
-		LDI 1
-		LDI 1
-		LDU 256
-		LDU 32
-		ROLLREV 10
-		TUPLE 10
-		SWAP
-		ENDS
-		PAIR
-}
-{
-		NEWDICT
-		PUSHINT 0
-		BLKPUSH 3, 0
-		NEWDICT
-		PUSHINT 0
-		BLKPUSH 4, 0
-		TUPLE 10
-		PAIR
-}
-	SECOND
-	INDEX 6
-	NOT
-}
-IFNOT
-PUSHCONT {
-	.loc Elector.Update.tsol, 312
+	.loc Elector.Update.tsol, 346
 	DROP2
 	.loc Elector.Update.tsol, 0
 }
 IFJMP
-.loc Elector.Update.tsol, 314
+.loc Elector.Update.tsol, 348
 ACCEPT
-.loc Elector.Update.tsol, 315
+.loc Elector.Update.tsol, 349
 SWAP
 PUSHCONT {
-	.loc Elector.Update.tsol, 317
+	.loc Elector.Update.tsol, 351
 	DUP
 	GETGLOB 10
 	PUSHINT 32
@@ -1569,13 +1586,14 @@ IFREFELSEREF
 		LDI 1
 		LDI 1
 		LDI 1
-		LDU 256
-		LDU 32
-		ROLLREV 10
-		TUPLE 10
+		ROLLREV 8
+		TUPLE 8
 		SWAP
+		LDU 32
+		LDU 256
+		LDU 64
 		ENDS
-		PAIR
+		TUPLE 5
 }
 {
 		NEWDICT
@@ -1583,9 +1601,11 @@ IFREFELSEREF
 		BLKPUSH 3, 0
 		NEWDICT
 		PUSHINT 0
-		BLKPUSH 4, 0
-		TUPLE 10
-		PAIR
+		BLKPUSH 2, 0
+		TUPLE 8
+		PUSHINT 0
+		BLKPUSH 2, 0
+		TUPLE 5
 }
 	INDEX2 1, 0
 	OVER
@@ -1596,7 +1616,7 @@ IFREFELSEREF
 	GETGLOB 12
 	ADD
 	SETGLOB 12
-	.loc Elector.Update.tsol, 318
+	.loc Elector.Update.tsol, 352
 	DUP
 	GETGLOB 10
 	DUP2
@@ -1613,13 +1633,14 @@ IFREFELSEREF
 		LDI 1
 		LDI 1
 		LDI 1
-		LDU 256
-		LDU 32
-		ROLLREV 10
-		TUPLE 10
+		ROLLREV 8
+		TUPLE 8
 		SWAP
+		LDU 32
+		LDU 256
+		LDU 64
 		ENDS
-		PAIR
+		TUPLE 5
 }
 {
 		NEWDICT
@@ -1627,9 +1648,11 @@ IFREFELSEREF
 		BLKPUSH 3, 0
 		NEWDICT
 		PUSHINT 0
-		BLKPUSH 4, 0
-		TUPLE 10
-		PAIR
+		BLKPUSH 2, 0
+		TUPLE 8
+		PUSHINT 0
+		BLKPUSH 2, 0
+		TUPLE 5
 }
 	DUP
 	SECOND
@@ -1637,13 +1660,13 @@ IFREFELSEREF
 	SETINDEX 7
 	SETINDEX 1
 	CALLREF {
-		UNPAIR
-		SWAP
+		UNTUPLE 5
+		REVERSE 5, 0
 		NEWC
 		STDICT
 		SWAP
-		UNTUPLE 10
-		REVERSE 11, 0
+		UNTUPLE 8
+		REVERSE 9, 0
 		STU 32
 		STU 32
 		SWAP
@@ -1654,8 +1677,9 @@ IFREFELSEREF
 		STI 1
 		STI 1
 		STI 1
-		STU 256
 		STU 32
+		STU 256
+		STU 64
 	}
 	ROTREV
 	PUSHINT 32
@@ -1676,7 +1700,7 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Elector.Update.tsol, 323
+.loc Elector.Update.tsol, 357
 LDU 64
 LDI 32
 ENDS
@@ -1694,12 +1718,12 @@ THROW 0
 CALL $config_set_confirmed_ok_1de27b15_internal_macro$
 
 .macro config_set_confirmed_ok_1de27b15_internal_macro
-.loc Elector.Update.tsol, 323
+.loc Elector.Update.tsol, 357
 DEPTH
 ADDCONST -5
 PICK
 THROWIF 72
-.loc Elector.Update.tsol, 325
+.loc Elector.Update.tsol, 359
 TRUE
 SWAP
 CALLREF {
@@ -1716,7 +1740,7 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Elector.Update.tsol, 328
+.loc Elector.Update.tsol, 362
 LDU 64
 LDI 32
 ENDS
@@ -1734,12 +1758,12 @@ THROW 0
 CALL $config_set_confirmed_err_19f44931_internal_macro$
 
 .macro config_set_confirmed_err_19f44931_internal_macro
-.loc Elector.Update.tsol, 328
+.loc Elector.Update.tsol, 362
 DEPTH
 ADDCONST -5
 PICK
 THROWIF 72
-.loc Elector.Update.tsol, 330
+.loc Elector.Update.tsol, 364
 FALSE
 SWAP
 CALLREF {
@@ -1756,7 +1780,7 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Elector.Update.tsol, 333
+.loc Elector.Update.tsol, 367
 LDU 64
 ENDS
 .loc Elector.Update.tsol, 0
@@ -1773,7 +1797,7 @@ THROW 0
 CALL $config_slash_confirmed_ok_19ef6a25_internal_macro$
 
 .macro config_slash_confirmed_ok_19ef6a25_internal_macro
-.loc Elector.Update.tsol, 333
+.loc Elector.Update.tsol, 367
 DROP
 DEPTH
 ADDCONST -5
@@ -1790,7 +1814,7 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Elector.Update.tsol, 337
+.loc Elector.Update.tsol, 371
 LDU 64
 ENDS
 .loc Elector.Update.tsol, 0
@@ -1807,7 +1831,7 @@ THROW 0
 CALL $config_slash_confirmed_err_3407cd03_internal_macro$
 
 .macro config_slash_confirmed_err_3407cd03_internal_macro
-.loc Elector.Update.tsol, 337
+.loc Elector.Update.tsol, 371
 DROP
 DEPTH
 ADDCONST -5
@@ -1824,7 +1848,7 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Elector.Update.tsol, 341
+.loc Elector.Update.tsol, 375
 ENDS
 .loc Elector.Update.tsol, 0
 CALLREF {
@@ -1840,12 +1864,12 @@ THROW 0
 CALL $grant_30c3eaa8_internal_macro$
 
 .macro grant_30c3eaa8_internal_macro
-.loc Elector.Update.tsol, 341
+.loc Elector.Update.tsol, 375
 DEPTH
 ADDCONST -5
 PICK
 THROWIF 72
-.loc Elector.Update.tsol, 342
+.loc Elector.Update.tsol, 376
 DEPTH
 ADDCONST -2
 PICK
@@ -1864,7 +1888,7 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Elector.Update.tsol, 345
+.loc Elector.Update.tsol, 379
 ENDS
 .loc Elector.Update.tsol, 0
 CALLREF {
@@ -1880,11 +1904,239 @@ THROW 0
 CALL $take_change_670f0dd2_internal_macro$
 
 .macro take_change_670f0dd2_internal_macro
-.loc Elector.Update.tsol, 345
+.loc Elector.Update.tsol, 379
 DEPTH
 ADDCONST -5
 PICK
 THROWIF 72
+.loc Elector.Update.tsol, 0
+
+.macro receiveBonuses
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+.loc Elector.Update.tsol, 383
+LDI 32
+ENDS
+.loc Elector.Update.tsol, 0
+CALLREF {
+	CALL $receiveBonuses_f12d5bc9_internal_macro$
+}
+CALLREF {
+	CALL $c7_to_c4$
+}
+THROW 0
+
+.macro receiveBonuses_f12d5bc9_internal_macro
+.loc Elector.Update.tsol, 383
+DEPTH
+ADDCONST -5
+PICK
+THROWIF 72
+.loc Elector.Update.tsol, 384
+DUP
+GETGLOB 10
+PUSHINT 32
+DICTIGET
+NULLSWAPIFNOT
+NIP
+PUSHCONT {
+	.loc Elector.Update.tsol, 385
+	DUP
+	GETGLOB 10
+	PUSHINT 32
+	DICTIGET
+IFREFELSEREF
+{
+		LDDICT
+		LDU 32
+		LDU 32
+		LDVARUINT16
+		LDVARUINT16
+		LDDICT
+		LDI 1
+		LDI 1
+		LDI 1
+		ROLLREV 8
+		TUPLE 8
+		SWAP
+		LDU 32
+		LDU 256
+		LDU 64
+		ENDS
+		TUPLE 5
+}
+{
+		NEWDICT
+		PUSHINT 0
+		BLKPUSH 3, 0
+		NEWDICT
+		PUSHINT 0
+		BLKPUSH 2, 0
+		TUPLE 8
+		PUSHINT 0
+		BLKPUSH 2, 0
+		TUPLE 5
+}
+	UNTUPLE 5
+	DROP2
+	NIP
+	.loc Elector.Update.tsol, 387
+	DUP
+	ROT
+	PUSHINT 32
+	DICTUGET
+	NULLSWAPIFNOT
+	NIP
+	PUSHCONT {
+		.loc Elector.Update.tsol, 388
+		DEPTH
+		ADDCONST -2
+		PICK
+		UFITS 120
+		PUSH S2
+		GETGLOB 10
+		DUP2
+		PUSHINT 32
+		DICTIGET
+IFREFELSEREF
+{
+			LDDICT
+			LDU 32
+			LDU 32
+			LDVARUINT16
+			LDVARUINT16
+			LDDICT
+			LDI 1
+			LDI 1
+			LDI 1
+			ROLLREV 8
+			TUPLE 8
+			SWAP
+			LDU 32
+			LDU 256
+			LDU 64
+			ENDS
+			TUPLE 5
+}
+{
+			NEWDICT
+			PUSHINT 0
+			BLKPUSH 3, 0
+			NEWDICT
+			PUSHINT 0
+			BLKPUSH 2, 0
+			TUPLE 8
+			PUSHINT 0
+			BLKPUSH 2, 0
+			TUPLE 5
+}
+		DUP
+		FIRST
+		PUXC S5, S-1
+		DUP2
+		PUSHINT 32
+		DICTUGET
+IFREFELSEREF
+{
+			LDU 32
+			LDU 32
+			LDU 256
+			LDDICT
+			LDVARUINT16
+			LDVARUINT16
+			LDDICT
+			ENDS
+			TUPLE 7
+}
+{
+			PUSHINT 0
+			BLKPUSH 2, 0
+			NEWDICT
+			PUSHINT 0
+			DUP
+			NEWDICT
+			TUPLE 7
+}
+		DUP
+		INDEX 5
+		ROLL 7
+		ADD
+		SETINDEX 5
+		CALLREF {
+			UNTUPLE 7
+			REVERSE 7, 0
+			NEWC
+			STU 32
+			STU 32
+			STU 256
+			STDICT
+			SWAP
+			STVARUINT16
+			SWAP
+			STVARUINT16
+			STDICT
+		}
+		ROTREV
+		PUSHINT 32
+		DICTUSETB
+		SETINDEX 0
+		CALLREF {
+			UNTUPLE 5
+			REVERSE 5, 0
+			NEWC
+			STDICT
+			SWAP
+			UNTUPLE 8
+			REVERSE 9, 0
+			STU 32
+			STU 32
+			SWAP
+			STVARUINT16
+			SWAP
+			STVARUINT16
+			STDICT
+			STI 1
+			STI 1
+			STI 1
+			STU 32
+			STU 256
+			STU 64
+		}
+		ROTREV
+		PUSHINT 32
+		DICTISETB
+		SETGLOB 10
+		.loc Elector.Update.tsol, 0
+	}
+	IF
+	.loc Elector.Update.tsol, 0
+	DROP
+}
+IF
+.loc Elector.Update.tsol, 0
+DROP
+
+.globl	process_simple_transfer_c2745595_internal
+.type	process_simple_transfer_c2745595_internal, @function
+CALL $process_simple_transfer_c2745595_internal_macro$
+
+.macro process_simple_transfer_c2745595_internal_macro
+.loc Elector.Update.tsol, 394
+GETGLOB 9
+NEWC
+STSLICECONST x62_
+STSLICE
+PUSHINT 111
+STZEROES
+ENDC
+PUSHINT 64
+SENDRAWMSG
 .loc Elector.Update.tsol, 0
 
 .macro recover_stake
@@ -1896,7 +2148,7 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Elector.Update.tsol, 370
+.loc Elector.Update.tsol, 418
 LDU 64
 ENDS
 .loc Elector.Update.tsol, 0
@@ -1913,20 +2165,20 @@ THROW 0
 CALL $recover_stake_c7b13017_internal_macro$
 
 .macro recover_stake_c7b13017_internal_macro
-.loc Elector.Update.tsol, 370
+.loc Elector.Update.tsol, 418
 DEPTH
 ADDCONST -5
 PICK
 THROWIF 72
 PUSHCONT {
-	.loc Elector.Update.tsol, 372
+	.loc Elector.Update.tsol, 424
 	GETGLOB 9
 	REWRITESTDADDR
-	.loc Elector.Update.tsol, 373
+	.loc Elector.Update.tsol, 425
 	SWAP
 	NEQINT -1
 	PUSHCONT {
-		.loc Elector.Update.tsol, 375
+		.loc Elector.Update.tsol, 427
 		GETGLOB 9
 		PUSHINT 4294967294
 		ROLL 3
@@ -1936,12 +2188,12 @@ PUSHCONT {
 		CALLREF {
 			CALL $send_message_back_30631536_internal_macro$
 		}
-		.loc Elector.Update.tsol, 376
+		.loc Elector.Update.tsol, 428
 		DROP
 		.loc Elector.Update.tsol, 0
 	}
 	IFJMP
-	.loc Elector.Update.tsol, 379
+	.loc Elector.Update.tsol, 431
 	DUP
 	GETGLOB 11
 	PUSHPOW2 8
@@ -1952,11 +2204,11 @@ PUSHCONT {
 		DROP
 	}
 	IF
-	.loc Elector.Update.tsol, 380
+	.loc Elector.Update.tsol, 432
 	DUP
 	ISNULL
 	PUSHCONT {
-		.loc Elector.Update.tsol, 382
+		.loc Elector.Update.tsol, 435
 		GETGLOB 9
 		PUSHINT 4294967294
 		ROLL 4
@@ -1966,19 +2218,19 @@ PUSHCONT {
 		CALLREF {
 			CALL $send_message_back_30631536_internal_macro$
 		}
-		.loc Elector.Update.tsol, 383
+		.loc Elector.Update.tsol, 436
 		DROP2
 		.loc Elector.Update.tsol, 0
 	}
 	IFJMP
-	.loc Elector.Update.tsol, 385
+	.loc Elector.Update.tsol, 438
 	SWAP
 	GETGLOB 11
 	PUSHPOW2 8
 	DICTUDEL
 	DROP
 	SETGLOB 11
-	.loc Elector.Update.tsol, 387
+	.loc Elector.Update.tsol, 440
 	DUP
 	ISNULL
 	THROWIF 63
@@ -1994,7 +2246,7 @@ PUSHCONT {
 	ENDC
 	PUSHINT 64
 	SENDRAWMSG
-	.loc Elector.Update.tsol, 370
+	.loc Elector.Update.tsol, 418
 }
 CALLX
 .loc Elector.Update.tsol, 0
@@ -2008,7 +2260,7 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Elector.Update.tsol, 390
+.loc Elector.Update.tsol, 443
 LDU 64
 LDU 32
 LDI 32
@@ -2027,20 +2279,20 @@ THROW 0
 CALL $recover_stake_gracefully_fa654196_internal_macro$
 
 .macro recover_stake_gracefully_fa654196_internal_macro
-.loc Elector.Update.tsol, 390
+.loc Elector.Update.tsol, 443
 DEPTH
 ADDCONST -5
 PICK
 THROWIF 72
 PUSHCONT {
-	.loc Elector.Update.tsol, 392
+	.loc Elector.Update.tsol, 453
 	GETGLOB 9
 	REWRITESTDADDR
-	.loc Elector.Update.tsol, 393
+	.loc Elector.Update.tsol, 454
 	SWAP
 	NEQINT -1
 	PUSHCONT {
-		.loc Elector.Update.tsol, 395
+		.loc Elector.Update.tsol, 456
 		GETGLOB 9
 		PUSHINT 4294967294
 		ROLL 5
@@ -2050,12 +2302,12 @@ PUSHCONT {
 		CALLREF {
 			CALL $send_message_back_30631536_internal_macro$
 		}
-		.loc Elector.Update.tsol, 396
+		.loc Elector.Update.tsol, 457
 		BLKDROP 3
 		.loc Elector.Update.tsol, 0
 	}
 	IFJMP
-	.loc Elector.Update.tsol, 398
+	.loc Elector.Update.tsol, 459
 	DUP
 	GETGLOB 11
 	PUSHPOW2 8
@@ -2066,106 +2318,115 @@ PUSHCONT {
 		DROP
 	}
 	IF
-	.loc Elector.Update.tsol, 399
-	DUP
+	.loc Elector.Update.tsol, 460
+	FALSE ; decl return flag
+	OVER
 	ISNULL
 	PUSHCONT {
-		.loc Elector.Update.tsol, 401
-		SWAP2
+		.loc Elector.Update.tsol, 461
+		PUSH S3
 		GETGLOB 10
 		PUSHINT 32
 		DICTIGET
-IFREFELSEREF
-{
-			LDDICT
-			LDU 32
-			LDU 32
-			LDVARUINT16
-			LDVARUINT16
-			LDDICT
-			LDI 1
-			LDI 1
-			LDI 1
-			LDU 256
-			LDU 32
-			ROLLREV 10
-			TUPLE 10
-			SWAP
-			ENDS
-			PAIR
-}
-{
-			NEWDICT
-			PUSHINT 0
-			BLKPUSH 3, 0
-			NEWDICT
-			PUSHINT 0
-			BLKPUSH 4, 0
-			TUPLE 10
-			PAIR
-}
-		FIRST
-		PUSHINT 32
-		DICTUGET
 		NULLSWAPIFNOT
 		IFREF {
+			LDDICT
 			LDU 32
+			LDU 32
+			LDVARUINT16
+			LDVARUINT16
+			LDDICT
+			LDI 1
+			LDI 1
+			LDI 1
+			ROLLREV 8
+			TUPLE 8
+			SWAP
 			LDU 32
 			LDU 256
-			LDDICT
-			LDVARUINT16
-			LDVARUINT16
-			LDDICT
+			LDU 64
 			ENDS
-			TUPLE 7
+			TUPLE 5
 		}
-		.loc Elector.Update.tsol, 402
+		.loc Elector.Update.tsol, 463
 		DUP
 		ISNULL
 		PUSHCONT {
-			.loc Elector.Update.tsol, 403
-			GETGLOB 9
-			PUSHINT 4294967294
+			.loc Elector.Update.tsol, 464
 			ROLL 5
-			PUSHINT 1197831205
+			XCPU S1, S0
+			ISNULL
+			THROWIF 63
+			FIRST
+			PUSHINT 32
+			DICTUGET
+			NULLSWAPIFNOT
+			IFREF {
+				LDU 32
+				LDU 32
+				LDU 256
+				LDDICT
+				LDVARUINT16
+				LDVARUINT16
+				LDDICT
+				ENDS
+				TUPLE 7
+			}
+			.loc Elector.Update.tsol, 465
+			DUP
+			ISNULL
+			PUSHCONT {
+				.loc Elector.Update.tsol, 466
+				GETGLOB 9
+				PUSHINT 4294967294
+				ROLL 7
+				PUSHINT 1197831205
+				PUSHINT 0
+				PUSHINT 64
+				CALLREF {
+					CALL $send_message_back_30631536_internal_macro$
+				}
+				.loc Elector.Update.tsol, 467
+				BLKDROP 5
+				PUSHINT 4
+				.loc Elector.Update.tsol, 0
+			}
+			IFJMP
+			.loc Elector.Update.tsol, 469
+			DUP
+			ISNULL
+			THROWIF 63
+			.loc Elector.Update.tsol, 470
+			GETGLOB 9
+			PUSHINT 4294967293
+			ROLL 7
+			ROLL 3
+			FIRST
 			PUSHINT 0
 			PUSHINT 64
 			CALLREF {
 				CALL $send_message_back_30631536_internal_macro$
 			}
-			.loc Elector.Update.tsol, 404
-			BLKDROP 3
+			.loc Elector.Update.tsol, 471
+			BLKDROP 4
+			PUSHINT 4
 			.loc Elector.Update.tsol, 0
 		}
-		IFJMP
-		.loc Elector.Update.tsol, 406
-		DUP
-		ISNULL
-		THROWIF 63
-		.loc Elector.Update.tsol, 407
-		GETGLOB 9
-		PUSHINT 4294967293
-		ROLL 5
-		ROLL 3
-		FIRST
-		PUSHINT 0
-		PUSHINT 64
-		CALLREF {
-			CALL $send_message_back_30631536_internal_macro$
-		}
-		.loc Elector.Update.tsol, 408
-		DROP2
+		IFNOTJMP
 		.loc Elector.Update.tsol, 0
+		DROP
 	}
-	IFJMP
-	.loc Elector.Update.tsol, 410
+	IF
+	.loc Elector.Update.tsol, 0
+	IFRET
+	.loc Elector.Update.tsol, 475
 	SWAP
 	GETGLOB 11
 	PUSHPOW2 8
 	DICTUDEL
 	DROP
 	SETGLOB 11
-	.loc Elector.Update.tsol, 412
+	.loc Elector.Update.tsol, 477
 	ROLL 3
 	XCPU S1, S0
 	ISNULL
@@ -2184,7 +2445,7 @@ IFREFELSEREF
 	SENDRAWMSG
 	.loc Elector.Update.tsol, 0
 	DROP2
-	.loc Elector.Update.tsol, 390
+	.loc Elector.Update.tsol, 443
 }
 CALLX
 .loc Elector.Update.tsol, 0
@@ -2198,7 +2459,7 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Elector.Update.tsol, 415
+.loc Elector.Update.tsol, 480
 LDU 64
 LDI 32
 ENDS
@@ -2216,20 +2477,20 @@ THROW 0
 CALL $get_elect_at_dece8bab_internal_macro$
 
 .macro get_elect_at_dece8bab_internal_macro
-.loc Elector.Update.tsol, 415
+.loc Elector.Update.tsol, 480
 DEPTH
 ADDCONST -5
 PICK
 THROWIF 72
 PUSHCONT {
-	.loc Elector.Update.tsol, 417
+	.loc Elector.Update.tsol, 482
 	GETGLOB 9
 	REWRITESTDADDR
 	DROP
-	.loc Elector.Update.tsol, 418
+	.loc Elector.Update.tsol, 483
 	NEQINT -1
 	PUSHCONT {
-		.loc Elector.Update.tsol, 420
+		.loc Elector.Update.tsol, 485
 		GETGLOB 9
 		PUSHINT 4294967292
 		ROLL 3
@@ -2239,12 +2500,12 @@ PUSHCONT {
 		CALLREF {
 			CALL $send_message_back_30631536_internal_macro$
 		}
-		.loc Elector.Update.tsol, 421
+		.loc Elector.Update.tsol, 486
 		DROP
 		.loc Elector.Update.tsol, 0
 	}
 	IFJMP
-	.loc Elector.Update.tsol, 423
+	.loc Elector.Update.tsol, 488
 	DUP
 	GETGLOB 10
 	PUSHINT 32
@@ -2260,13 +2521,14 @@ IFREFELSEREF
 		LDI 1
 		LDI 1
 		LDI 1
-		LDU 256
-		LDU 32
-		ROLLREV 10
-		TUPLE 10
+		ROLLREV 8
+		TUPLE 8
 		SWAP
+		LDU 32
+		LDU 256
+		LDU 64
 		ENDS
-		PAIR
+		TUPLE 5
 }
 {
 		NEWDICT
@@ -2274,9 +2536,11 @@ IFREFELSEREF
 		BLKPUSH 3, 0
 		NEWDICT
 		PUSHINT 0
-		BLKPUSH 4, 0
-		TUPLE 10
-		PAIR
+		BLKPUSH 2, 0
+		TUPLE 8
+		PUSHINT 0
+		BLKPUSH 2, 0
+		TUPLE 5
 }
 	INDEX2 1, 0
 	SWAP
@@ -2294,13 +2558,14 @@ IFREFELSEREF
 		LDI 1
 		LDI 1
 		LDI 1
-		LDU 256
-		LDU 32
-		ROLLREV 10
-		TUPLE 10
+		ROLLREV 8
+		TUPLE 8
 		SWAP
+		LDU 32
+		LDU 256
+		LDU 64
 		ENDS
-		PAIR
+		TUPLE 5
 }
 {
 		NEWDICT
@@ -2308,9 +2573,11 @@ IFREFELSEREF
 		BLKPUSH 3, 0
 		NEWDICT
 		PUSHINT 0
-		BLKPUSH 4, 0
-		TUPLE 10
-		PAIR
+		BLKPUSH 2, 0
+		TUPLE 8
+		PUSHINT 0
+		BLKPUSH 2, 0
+		TUPLE 5
 }
 	SECOND
 	INDEX 7
@@ -2327,7 +2594,7 @@ IFREFELSEREF
 	ENDC
 	PUSHINT 64
 	SENDRAWMSG
-	.loc Elector.Update.tsol, 415
+	.loc Elector.Update.tsol, 480
 }
 CALLX
 .loc Elector.Update.tsol, 0
@@ -2337,9 +2604,9 @@ CALLX
 CALL $conduct_elections_ec3c98f3_internal_macro$
 
 .macro conduct_elections_ec3c98f3_internal_macro
-.loc Elector.Update.tsol, 619
+.loc Elector.Update.tsol, 685
 PUSHINT 0
-.loc Elector.Update.tsol, 620
+.loc Elector.Update.tsol, 686
 OVER
 GETGLOB 10
 PUSHINT 32
@@ -2355,13 +2622,14 @@ IFREFELSEREF
 	LDI 1
 	LDI 1
 	LDI 1
-	LDU 256
-	LDU 32
-	ROLLREV 10
-	TUPLE 10
+	ROLLREV 8
+	TUPLE 8
 	SWAP
+	LDU 32
+	LDU 256
+	LDU 64
 	ENDS
-	PAIR
+	TUPLE 5
 }
 {
 	NEWDICT
@@ -2369,24 +2637,26 @@ IFREFELSEREF
 	BLKPUSH 3, 0
 	NEWDICT
 	PUSHINT 0
-	BLKPUSH 4, 0
-	TUPLE 10
-	PAIR
+	BLKPUSH 2, 0
+	TUPLE 8
+	PUSHINT 0
+	BLKPUSH 2, 0
+	TUPLE 5
 }
 SECOND
-.loc Elector.Update.tsol, 621
+.loc Elector.Update.tsol, 687
 NOW
 OVER
 SECOND
 LESS
 PUSHCONT {
-	.loc Elector.Update.tsol, 623
+	.loc Elector.Update.tsol, 689
 	BLKDROP 3
 	FALSE
 	.loc Elector.Update.tsol, 0
 }
 IFJMP
-.loc Elector.Update.tsol, 625
+.loc Elector.Update.tsol, 691
 PUSHINT 0
 CONFIGPARAM
 DUP
@@ -2397,20 +2667,20 @@ PUSHCONT {
 }
 IFNOT
 NIP
-.loc Elector.Update.tsol, 626
+.loc Elector.Update.tsol, 692
 DUP
 PUSHCONT {
-	.loc Elector.Update.tsol, 628
+	.loc Elector.Update.tsol, 694
 	PUSHINT 1
-	.loc Elector.Update.tsol, 430
+	.loc Elector.Update.tsol, 495
 	HEXDUMP
 	BLKDROP 5
-	.loc Elector.Update.tsol, 431
+	.loc Elector.Update.tsol, 496
 	FALSE
 	.loc Elector.Update.tsol, 0
 }
 IFNOTJMP
-.loc Elector.Update.tsol, 630
+.loc Elector.Update.tsol, 696
 PUSHINT 17
 CONFIGPARAM
 PUSHCONT {
@@ -2428,47 +2698,47 @@ PUSHCONT {
 }
 IFELSE
 DROP
-.loc Elector.Update.tsol, 632
+.loc Elector.Update.tsol, 698
 PUSH S5
 INDEX 3
 PUSH S2
 LESS
 PUSHCONT {
-	.loc Elector.Update.tsol, 634
+	.loc Elector.Update.tsol, 700
 	PUSHINT 2
-	.loc Elector.Update.tsol, 430
+	.loc Elector.Update.tsol, 495
 	HEXDUMP
 	BLKDROP 9
-	.loc Elector.Update.tsol, 431
+	.loc Elector.Update.tsol, 496
 	FALSE
 	.loc Elector.Update.tsol, 0
 }
 IFJMP
-.loc Elector.Update.tsol, 636
+.loc Elector.Update.tsol, 702
 PUSH S5
 INDEX 5
 PUSHCONT {
-	.loc Elector.Update.tsol, 638
+	.loc Elector.Update.tsol, 704
 	PUSHINT 3
-	.loc Elector.Update.tsol, 430
+	.loc Elector.Update.tsol, 495
 	HEXDUMP
 	BLKDROP 9
-	.loc Elector.Update.tsol, 431
+	.loc Elector.Update.tsol, 496
 	FALSE
 	.loc Elector.Update.tsol, 0
 }
 IFJMP
-.loc Elector.Update.tsol, 640
+.loc Elector.Update.tsol, 706
 PUSH S5
 INDEX 6
 PUSHCONT {
-	.loc Elector.Update.tsol, 642
+	.loc Elector.Update.tsol, 708
 	BLKDROP 8
 	FALSE
 	.loc Elector.Update.tsol, 0
 }
 IFJMP
-.loc Elector.Update.tsol, 644
+.loc Elector.Update.tsol, 710
 BLKPUSH 4, 3
 PUSH S11
 PUSHCONT {
@@ -2477,7 +2747,7 @@ PUSHCONT {
 	NEWDICT
 	PUSHINT 0
 	DUP
-	.loc Elector.Update.tsol, 484
+	.loc Elector.Update.tsol, 550
 	PUSHINT 16
 	CONFIGPARAM
 	DUP
@@ -2488,21 +2758,21 @@ PUSHCONT {
 	}
 	IFNOT
 	DROP
-	.loc Elector.Update.tsol, 485
+	.loc Elector.Update.tsol, 551
 	DUP
 	CTOS
 	LDU 16
 	LDU 16
 	PLDU 16
 	NIP
-	.loc Elector.Update.tsol, 486
+	.loc Elector.Update.tsol, 552
 	PUSHINT 1
 	MAX
-	.loc Elector.Update.tsol, 487
+	.loc Elector.Update.tsol, 553
 	PUSHINT 0
-	.loc Elector.Update.tsol, 488
+	.loc Elector.Update.tsol, 554
 	NEWDICT
-	.loc Elector.Update.tsol, 489
+	.loc Elector.Update.tsol, 555
 	PUSH S10
 	GETGLOB 10
 	PUSHINT 32
@@ -2518,13 +2788,14 @@ IFREFELSEREF
 		LDI 1
 		LDI 1
 		LDI 1
-		LDU 256
-		LDU 32
-		ROLLREV 10
-		TUPLE 10
+		ROLLREV 8
+		TUPLE 8
 		SWAP
+		LDU 32
+		LDU 256
+		LDU 64
 		ENDS
-		PAIR
+		TUPLE 5
 }
 {
 		NEWDICT
@@ -2532,13 +2803,15 @@ IFREFELSEREF
 		BLKPUSH 3, 0
 		NEWDICT
 		PUSHINT 0
-		BLKPUSH 4, 0
-		TUPLE 10
-		PAIR
+		BLKPUSH 2, 0
+		TUPLE 8
+		PUSHINT 0
+		BLKPUSH 2, 0
+		TUPLE 5
 }
 	SECOND
 	INDEX 4
-	.loc Elector.Update.tsol, 490
+	.loc Elector.Update.tsol, 556
 	BLKPUSH 2, 0
 	PUSHPOW2 8
 	DICTUMIN
@@ -2563,9 +2836,9 @@ IFREFELSE {
 		NOT
 	}
 	PUSHCONT {
-		.loc Elector.Update.tsol, 491
+		.loc Elector.Update.tsol, 557
 		UNTUPLE 5
-		.loc Elector.Update.tsol, 492
+		.loc Elector.Update.tsol, 558
 		ROT
 		PUSH S20
 		MIN
@@ -2600,7 +2873,7 @@ IFREFELSE {
 		PUSHINT 416
 		DICTSETB
 		POP S4
-		.loc Elector.Update.tsol, 494
+		.loc Elector.Update.tsol, 560
 		PUSH S4
 		INC
 		POP S5
@@ -2627,15 +2900,15 @@ IFREFELSE {
 	}
 	WHILE
 	BLKDROP 4
-	.loc Elector.Update.tsol, 496
+	.loc Elector.Update.tsol, 562
 	PUSH2 S2, S4
 	MIN
 	POP S3
-	.loc Elector.Update.tsol, 497
+	.loc Elector.Update.tsol, 563
 	PUSH2 S2, S3
 	LESS
 	PUSHCONT {
-		.loc Elector.Update.tsol, 500
+		.loc Elector.Update.tsol, 566
 		NEWDICT
 		PUSHINT 0
 		NEWDICT
@@ -2649,9 +2922,9 @@ IFREFELSE {
 		.loc Elector.Update.tsol, 0
 	}
 	IFJMP
-	.loc Elector.Update.tsol, 502
+	.loc Elector.Update.tsol, 568
 	NULL
-	.loc Elector.Update.tsol, 503
+	.loc Elector.Update.tsol, 569
 	PUSH2 S2, S2
 	PUSHINT 416
 	DICTMIN
@@ -2679,12 +2952,12 @@ IFREFELSE {
 		NOT
 	}
 	PUSHCONT {
-		.loc Elector.Update.tsol, 504
+		.loc Elector.Update.tsol, 570
 		OVER
 		FIRST
 		PUSH S20
 		MIN
-		.loc Elector.Update.tsol, 505
+		.loc Elector.Update.tsol, 571
 		OVER
 		FIRST
 		ROLL 3
@@ -2720,54 +2993,54 @@ IFREFELSE {
 	}
 	WHILE
 	BLKDROP 4
-	.loc Elector.Update.tsol, 515
+	.loc Elector.Update.tsol, 581
 	PUSHINT 0
 	BLKPUSH 2, 0
-	.loc Elector.Update.tsol, 518
+	.loc Elector.Update.tsol, 584
 	PUSH S3
-	.loc Elector.Update.tsol, 520
+	.loc Elector.Update.tsol, 586
 	PUSHINT 0
-	.loc Elector.Update.tsol, 521
+	.loc Elector.Update.tsol, 587
 	NEWDICT
-	.loc Elector.Update.tsol, 522
+	.loc Elector.Update.tsol, 588
 	PUSHINT 0
-	.loc Elector.Update.tsol, 524
+	.loc Elector.Update.tsol, 590
 	PUSHINT 1
 	PUSHCONT {
 		PUSH2 S0, S11
 		LEQ
 	}
 	PUSHCONT {
-		.loc Elector.Update.tsol, 525
+		.loc Elector.Update.tsol, 591
 		PUSH2 S4, S4
 		ISNULL
 		THROWIF 63
-		.loc Elector.Update.tsol, 526
+		.loc Elector.Update.tsol, 592
 		DUP
 		FIRST
-		.loc Elector.Update.tsol, 527
+		.loc Elector.Update.tsol, 593
 		DUP
 		PUSH S27
 		LESS
 		PUSHCONT {
-			.loc Elector.Update.tsol, 528
+			.loc Elector.Update.tsol, 594
 			DROP2
 			RETALT
 			.loc Elector.Update.tsol, 0
 		}
 		IFJMP
-		.loc Elector.Update.tsol, 530
+		.loc Elector.Update.tsol, 596
 		OVER
 		SECOND
-		.loc Elector.Update.tsol, 531
+		.loc Elector.Update.tsol, 597
 		PUSH S2
 		INDEX 4
 		POP S8
-		.loc Elector.Update.tsol, 533
+		.loc Elector.Update.tsol, 599
 		PUSH2 S6, S1
 		ADD
 		POP S7
-		.loc Elector.Update.tsol, 534
+		.loc Elector.Update.tsol, 600
 		OVER
 		PUSHPOW2 16
 		MUL
@@ -2775,7 +3048,7 @@ IFREFELSE {
 		MUL
 		OVER
 		DIV
-		.loc Elector.Update.tsol, 535
+		.loc Elector.Update.tsol, 601
 		BLKPUSH 2, 2
 		PAIR
 		PUSH3 S7, S1, S5
@@ -2801,14 +3074,14 @@ IFREFELSE {
 		PUSHINT 272
 		DICTSETB
 		POP S7
-		.loc Elector.Update.tsol, 537
+		.loc Elector.Update.tsol, 603
 		PUSHCONT {
 			PUSH S6
 			DICTEMPTY
 			NOT
 		}
 		PUSHCONT {
-			.loc Elector.Update.tsol, 538
+			.loc Elector.Update.tsol, 604
 			PUSH S6
 			PUSHINT 272
 			DICTMAX
@@ -2829,7 +3102,7 @@ IFREFELSE {
 			ISNULL
 			THROWIF 63
 			UNPAIR
-			.loc Elector.Update.tsol, 539
+			.loc Elector.Update.tsol, 605
 			SWAP
 			FIRST
 			PUSH S4
@@ -2837,19 +3110,19 @@ IFREFELSE {
 			MUL
 			LESS
 			PUSHCONT {
-				.loc Elector.Update.tsol, 540
+				.loc Elector.Update.tsol, 606
 				DROP
 				RETALT
 				.loc Elector.Update.tsol, 0
 			}
 			IFJMP
-			.loc Elector.Update.tsol, 542
+			.loc Elector.Update.tsol, 608
 			DUP
 			FIRST
 			PUSH S9
 			SUBR
 			POP S9
-			.loc Elector.Update.tsol, 543
+			.loc Elector.Update.tsol, 609
 			PUSH S7
 			PUSHINT 272
 			DICTREMMAX
@@ -2868,7 +3141,7 @@ IFREFELSE {
 			}
 			DROP
 			POP S8
-			.loc Elector.Update.tsol, 544
+			.loc Elector.Update.tsol, 610
 			SECOND
 			PUSH S6
 			ADD
@@ -2876,27 +3149,27 @@ IFREFELSE {
 			.loc Elector.Update.tsol, 0
 		}
 		WHILEBRK
-		.loc Elector.Update.tsol, 547
+		.loc Elector.Update.tsol, 613
 		DROP2
 		PUSH3 S5, S0, S3
 		MUL
 		RSHIFT 16
 		UFITS 128
 		ADD
-		.loc Elector.Update.tsol, 548
+		.loc Elector.Update.tsol, 614
 		PUSH2 S3, S15
 		EQUAL
 		PUSH2 S1, S10
 		GREATER
 		OR
 		PUSHCONT {
-			.loc Elector.Update.tsol, 549
+			.loc Elector.Update.tsol, 615
 			DUP
 			POP S10
-			.loc Elector.Update.tsol, 550
+			.loc Elector.Update.tsol, 616
 			PUSH S3
 			POP S9
-			.loc Elector.Update.tsol, 551
+			.loc Elector.Update.tsol, 617
 			OVER
 			POP S11
 			.loc Elector.Update.tsol, 0
@@ -2904,13 +3177,13 @@ IFREFELSE {
 		IF
 		.loc Elector.Update.tsol, 0
 		BLKDROP 3
-		.loc Elector.Update.tsol, 524
+		.loc Elector.Update.tsol, 590
 		INC
 		.loc Elector.Update.tsol, 0
 	}
 	WHILEBRK
 	BLKDROP 4
-	.loc Elector.Update.tsol, 555
+	.loc Elector.Update.tsol, 621
 	OVER
 	EQINT 0
 	PUSH S3
@@ -2919,7 +3192,7 @@ IFREFELSE {
 	LESS
 	OR
 	PUSHCONT {
-		.loc Elector.Update.tsol, 558
+		.loc Elector.Update.tsol, 624
 		NEWDICT
 		PUSHINT 0
 		NEWDICT
@@ -2933,22 +3206,22 @@ IFREFELSE {
 		.loc Elector.Update.tsol, 0
 	}
 	IFJMP
-	.loc Elector.Update.tsol, 564
+	.loc Elector.Update.tsol, 630
 	PUSH S2
-	.loc Elector.Update.tsol, 565
+	.loc Elector.Update.tsol, 631
 	PUSHINT 0
 	POP S4
-	.loc Elector.Update.tsol, 566
+	.loc Elector.Update.tsol, 632
 	PUSH S5
 	POP S2
-	.loc Elector.Update.tsol, 567
+	.loc Elector.Update.tsol, 633
 	PUSH S2
 	PUSHCONT {
-		.loc Elector.Update.tsol, 568
+		.loc Elector.Update.tsol, 634
 		PUSH2 S1, S1
 		ISNULL
 		THROWIF 63
-		.loc Elector.Update.tsol, 569
+		.loc Elector.Update.tsol, 635
 		DUP
 		FIRST
 		PUSH2 S6, S1
@@ -2959,38 +3232,38 @@ IFREFELSE {
 		PUSH S5
 		ADD
 		POP S5
-		.loc Elector.Update.tsol, 570
+		.loc Elector.Update.tsol, 636
 		INDEX 4
 		POP S2
 		.loc Elector.Update.tsol, 0
 	}
 	REPEAT
-	.loc Elector.Update.tsol, 572
+	.loc Elector.Update.tsol, 638
 	PUSH S3
 	SUB
 	ABS
 	PUSHINT 1000000000
 	LEQ
 	THROWIFNOT 666
-	.loc Elector.Update.tsol, 576
+	.loc Elector.Update.tsol, 642
 	DROP
 	PUSHINT 0
 	BLKPUSH 2, 0
-	.loc Elector.Update.tsol, 579
+	.loc Elector.Update.tsol, 645
 	NEWDICT
 	DUP
-	.loc Elector.Update.tsol, 581
+	.loc Elector.Update.tsol, 647
 	GETGLOB 11
-	.loc Elector.Update.tsol, 582
+	.loc Elector.Update.tsol, 648
 	PUSHCONT {
-		.loc Elector.Update.tsol, 583
+		.loc Elector.Update.tsol, 649
 		PUSH2 S9, S9
 		ISNULL
 		THROWIF 63
 		UNTUPLE 5
-		.loc Elector.Update.tsol, 584
+		.loc Elector.Update.tsol, 650
 		POP S14
-		.loc Elector.Update.tsol, 586
+		.loc Elector.Update.tsol, 652
 		PUSH2 S1, S14
 		PUSHPOW2 8
 		DICTUGET
@@ -3004,49 +3277,49 @@ IFREFELSE {
 			ENDS
 			TUPLE 5
 		}
-		.loc Elector.Update.tsol, 587
+		.loc Elector.Update.tsol, 653
 		DUP
 		ISNULL
 		THROWIF 61
-		.loc Elector.Update.tsol, 588
+		.loc Elector.Update.tsol, 654
 		DUP
 		ISNULL
 		THROWIF 63
 		INDEX 3
-		.loc Elector.Update.tsol, 589
+		.loc Elector.Update.tsol, 655
 		PUSH2 S10, S11
 		LESS
 		PUSHCONT {
-			.loc Elector.Update.tsol, 591
+			.loc Elector.Update.tsol, 657
 			BLKPUSH 2, 4
 			PUSH S15
 			MUL
 			RSHIFT 16
 			MIN
-			.loc Elector.Update.tsol, 592
+			.loc Elector.Update.tsol, 658
 			PUSH2 S5, S0
 			SUB
 			POP S6
-			.loc Elector.Update.tsol, 593
+			.loc Elector.Update.tsol, 659
 			DUP
 			LSHIFT 60
 			PUSH S14
 			DIV
-			.loc Elector.Update.tsol, 594
+			.loc Elector.Update.tsol, 660
 			PUSH2 S11, S1
 			ADD
 			POP S12
-			.loc Elector.Update.tsol, 595
+			.loc Elector.Update.tsol, 661
 			PUSH2 S10, S0
 			ADD
 			POP S11
-			.loc Elector.Update.tsol, 596
+			.loc Elector.Update.tsol, 662
 			NEWC
-			.loc Elector.Update.tsol, 597
+			.loc Elector.Update.tsol, 663
 			PUSH S4
 			GTINT 0
 			PUSHCONT {
-				.loc Elector.Update.tsol, 598
+				.loc Elector.Update.tsol, 664
 				PUSHINT 115
 				PUSHINT 2390828938
 				PUSH2 S7, S3
@@ -3060,7 +3333,7 @@ IFREFELSE {
 				STU 256
 			}
 			PUSHCONT {
-				.loc Elector.Update.tsol, 601
+				.loc Elector.Update.tsol, 667
 				PUSHINT 83
 				PUSHINT 2390828938
 				PUSH2 S7, S3
@@ -3072,14 +3345,14 @@ IFREFELSE {
 				STU 64
 			}
 			IFELSE
-			.loc Elector.Update.tsol, 604
+			.loc Elector.Update.tsol, 670
 			ENDC
 			CTOS
 			PUSH2 S13, S10
 			PUSHINT 16
 			DICTUSET
 			POP S10
-			.loc Elector.Update.tsol, 605
+			.loc Elector.Update.tsol, 671
 			PUXC S2, S-1
 			UFITS 64
 			ROT
@@ -3105,11 +3378,11 @@ IFREFELSE {
 			.loc Elector.Update.tsol, 0
 		}
 		IF
-		.loc Elector.Update.tsol, 607
+		.loc Elector.Update.tsol, 673
 		PUSH S4
 		GTINT 0
 		PUSHCONT {
-			.loc Elector.Update.tsol, 610
+			.loc Elector.Update.tsol, 676
 			PUSH S4
 			UFITS 120
 			PUSH3 S1, S6, S1
@@ -3134,7 +3407,7 @@ IFREFELSE {
 			.loc Elector.Update.tsol, 0
 		}
 		IF
-		.loc Elector.Update.tsol, 612
+		.loc Elector.Update.tsol, 678
 		BLKDROP 5
 		PUSH S5
 		INC
@@ -3144,14 +3417,14 @@ IFREFELSE {
 		ISNULL
 	}
 	UNTIL
-	.loc Elector.Update.tsol, 614
+	.loc Elector.Update.tsol, 680
 	SETGLOB 11
-	.loc Elector.Update.tsol, 615
+	.loc Elector.Update.tsol, 681
 	PUSH S3
 	ROLL 7
 	EQUAL
 	THROWIFNOT 49
-	.loc Elector.Update.tsol, 616
+	.loc Elector.Update.tsol, 682
 	XCHG S2
 	UFITS 64
 	SWAP
@@ -3162,23 +3435,23 @@ IFREFELSE {
 	BLKSWX
 	PUSHINT 18
 	DROPX
-	.loc Elector.Update.tsol, 476
+	.loc Elector.Update.tsol, 542
 }
 CALLX
-.loc Elector.Update.tsol, 654
+.loc Elector.Update.tsol, 720
 DUP
 EQINT 0
 PUXC S11, S-1
 SETINDEX 5
 POP S11
-.loc Elector.Update.tsol, 655
+.loc Elector.Update.tsol, 721
 PUSH S10
 INDEX 5
 NOT
 PUXC S11, S-1
 SETINDEX 6
 POP S11
-.loc Elector.Update.tsol, 656
+.loc Elector.Update.tsol, 722
 PUSH2 S10, S12
 GETGLOB 10
 DUP2
@@ -3195,13 +3468,14 @@ IFREFELSEREF
 	LDI 1
 	LDI 1
 	LDI 1
-	LDU 256
-	LDU 32
-	ROLLREV 10
-	TUPLE 10
+	ROLLREV 8
+	TUPLE 8
 	SWAP
+	LDU 32
+	LDU 256
+	LDU 64
 	ENDS
-	PAIR
+	TUPLE 5
 }
 {
 	NEWDICT
@@ -3209,20 +3483,22 @@ IFREFELSEREF
 	BLKPUSH 3, 0
 	NEWDICT
 	PUSHINT 0
-	BLKPUSH 4, 0
-	TUPLE 10
-	PAIR
+	BLKPUSH 2, 0
+	TUPLE 8
+	PUSHINT 0
+	BLKPUSH 2, 0
+	TUPLE 5
 }
 ROLL 3
 SETINDEX 1
 CALLREF {
-	UNPAIR
-	SWAP
+	UNTUPLE 5
+	REVERSE 5, 0
 	NEWC
 	STDICT
 	SWAP
-	UNTUPLE 10
-	REVERSE 11, 0
+	UNTUPLE 8
+	REVERSE 9, 0
 	STU 32
 	STU 32
 	SWAP
@@ -3233,30 +3509,31 @@ CALLREF {
 	STI 1
 	STI 1
 	STI 1
-	STU 256
 	STU 32
+	STU 256
+	STU 64
 }
 ROTREV
 PUSHINT 32
 DICTISETB
 SETGLOB 10
-.loc Elector.Update.tsol, 657
+.loc Elector.Update.tsol, 723
 DUP
 PUSHCONT {
-	.loc Elector.Update.tsol, 659
+	.loc Elector.Update.tsol, 725
 	PUSHINT 4
-	.loc Elector.Update.tsol, 430
+	.loc Elector.Update.tsol, 495
 	HEXDUMP
 	BLKDROP 14
-	.loc Elector.Update.tsol, 431
+	.loc Elector.Update.tsol, 496
 	FALSE
 	.loc Elector.Update.tsol, 0
 }
 IFNOTJMP
-.loc Elector.Update.tsol, 661
+.loc Elector.Update.tsol, 727
 ROLL 10
 FIRST
-.loc Elector.Update.tsol, 99
+.loc Elector.Update.tsol, 102
 PUSHINT 15
 CONFIGPARAM
 PUSHCONT {
@@ -3276,49 +3553,35 @@ IFELSE
 DROP
 .loc Elector.Update.tsol, 0
 BLKDROP2 1, 2
-.loc Elector.Update.tsol, 666
+.loc Elector.Update.tsol, 732
 NOW
 ROT
 ADD
 ADDCONST -60
 PUSH S3
 MAX
-.loc Elector.Update.tsol, 667
-PUSHINT 16
-CONFIGPARAM
-DUP
-PUSHCONT {
-	PUSHREF {
-	}
-	SWAP
-}
-IFNOT
-DROP
-.loc Elector.Update.tsol, 668
-CTOS
-LDU 16
-PLDU 16
-NIP
-.loc Elector.Update.tsol, 672
-PUSH S9
-ROLL 9
-PUSH2 S7, S2
-MIN
-ROLL 8
-PUSH2 S5, S7
+.loc Elector.Update.tsol, 735
+PUSHINT 18
+PUSH3 S1, S1, S3
 ADD
-PUSH S6
+ROLL 7
+ROLL 10
+PUSH S11
+TUPLE 6
+.loc Elector.Update.tsol, 745
 NEWC
-STSLICECONST x12
+SWAP
+UNTUPLE 6
+REVERSE 7, 0
+STU 8
 STU 32
 STU 32
-STU 16
 STU 16
 STU 64
 STDICT
-.loc Elector.Update.tsol, 680
+.loc Elector.Update.tsol, 746
 ENDC
-.loc Elector.Update.tsol, 682
+.loc Elector.Update.tsol, 748
 PUSHINT 0
 CONFIGPARAM
 DUP
@@ -3329,13 +3592,12 @@ PUSHCONT {
 }
 IFNOT
 DROP
-.loc Elector.Update.tsol, 683
+.loc Elector.Update.tsol, 749
 CTOS
 PLDU 256
-.loc Elector.Update.tsol, 684
-PUSH2 S1, S6
-PUSH S18
-.loc Elector.Update.tsol, 143
+.loc Elector.Update.tsol, 750
+PUSH3 S1, S5, S15
+.loc Elector.Update.tsol, 169
 ROLL 3
 PUSHINT -1
 NEWC
@@ -3344,7 +3606,7 @@ STI 8
 STU 256
 ENDC
 CTOS
-.loc Elector.Update.tsol, 144
+.loc Elector.Update.tsol, 170
 SWAP
 ROLLREV 3
 NEWC
@@ -3358,11 +3620,11 @@ STI 32
 ENDC
 PUSHINT 1
 SENDRAWMSG
-.loc Elector.Update.tsol, 687
-ROT
-ROLL 4
+.loc Elector.Update.tsol, 753
+SWAP
+ROLL 3
 ADD
-PUSH S3
+PUSH S2
 ADD
 PUSHINT 0
 BLKPUSH 2, 0
@@ -3373,25 +3635,24 @@ NEWDICT
 TUPLE 7
 SWAP
 SETINDEX 0
-.loc Elector.Update.tsol, 688
-ROLL 3
+.loc Elector.Update.tsol, 754
+ROT
 SETINDEX 1
-.loc Elector.Update.tsol, 689
+.loc Elector.Update.tsol, 755
 SWAP
 HASHCU
 SETINDEX 2
-.loc Elector.Update.tsol, 690
-ROLL 4
-SETINDEX 3
-.loc Elector.Update.tsol, 691
+.loc Elector.Update.tsol, 756
 ROLL 3
+SETINDEX 3
+.loc Elector.Update.tsol, 757
+ROT
 UFITS 120
 SETINDEX 4
-.loc Elector.Update.tsol, 693
+.loc Elector.Update.tsol, 758
+PUSH S9
 GETGLOB 10
-ROLL 11
-TUCK
-OVER
+DUP2
 PUSHINT 32
 DICTIGET
 IFREFELSEREF
@@ -3405,13 +3666,14 @@ IFREFELSEREF
 	LDI 1
 	LDI 1
 	LDI 1
-	LDU 256
-	LDU 32
-	ROLLREV 10
-	TUPLE 10
+	ROLLREV 8
+	TUPLE 8
 	SWAP
+	LDU 32
+	LDU 256
+	LDU 64
 	ENDS
-	PAIR
+	TUPLE 5
 }
 {
 	NEWDICT
@@ -3419,15 +3681,16 @@ IFREFELSEREF
 	BLKPUSH 3, 0
 	NEWDICT
 	PUSHINT 0
-	BLKPUSH 4, 0
-	TUPLE 10
-	PAIR
+	BLKPUSH 2, 0
+	TUPLE 8
+	PUSHINT 0
+	BLKPUSH 2, 0
+	TUPLE 5
 }
 DUP
 FIRST
-ROLL 6
-SWAP
-ROLL 5
+BLKSWAP 2, 4
+XCHG S1, S2
 CALLREF {
 	UNTUPLE 7
 	REVERSE 7, 0
@@ -3447,13 +3710,13 @@ PUSHINT 32
 DICTUSETB
 SETINDEX 0
 CALLREF {
-	UNPAIR
-	SWAP
+	UNTUPLE 5
+	REVERSE 5, 0
 	NEWC
 	STDICT
 	SWAP
-	UNTUPLE 10
-	REVERSE 11, 0
+	UNTUPLE 8
+	REVERSE 9, 0
 	STU 32
 	STU 32
 	SWAP
@@ -3464,30 +3727,26 @@ CALLREF {
 	STI 1
 	STI 1
 	STI 1
-	STU 256
 	STU 32
+	STU 256
+	STU 64
 }
 ROTREV
 PUSHINT 32
 DICTISETB
 SETGLOB 10
-.loc Elector.Update.tsol, 695
+.loc Elector.Update.tsol, 760
 NEWDICT
-.loc Elector.Update.tsol, 696
-SETGLOB 15
-.loc Elector.Update.tsol, 697
+.loc Elector.Update.tsol, 761
+SETGLOB 13
+.loc Elector.Update.tsol, 762
 NEWDICT
-.loc Elector.Update.tsol, 698
-DUP
-SETGLOB 16
-.loc Elector.Update.tsol, 699
-SETGLOB 17
-.loc Elector.Update.tsol, 701
+.loc Elector.Update.tsol, 763
+SETGLOB 14
+.loc Elector.Update.tsol, 765
 PUSHINT 0
-BLKPUSH 2, 0
-.loc Elector.Update.tsol, 704
-ROLL 4
-DUP
+.loc Elector.Update.tsol, 766
+XCPU S1, S0
 PUSHINT 16
 DICTUMIN
 PUSHCONT {
@@ -3505,49 +3764,32 @@ PUSHCONT {
 	NOT
 }
 PUSHCONT {
-	.loc Elector.Update.tsol, 705
+	.loc Elector.Update.tsol, 767
 	BLKPUSH 2, 0
-	.loc Elector.Update.tsol, 950
+	.loc Elector.Update.tsol, 1025
 	LDU 8
 	POP S2
-	.loc Elector.Update.tsol, 951
+	.loc Elector.Update.tsol, 1026
 	DUP
 	EQINT 83
 	SWAP
 	EQINT 115
 	OR
 	THROWIFNOT 131
-	.loc Elector.Update.tsol, 952
+	.loc Elector.Update.tsol, 1027
 	LDU 32
 	LDU 256
 	PLDU 64
-	.loc Elector.Update.tsol, 953
+	.loc Elector.Update.tsol, 1028
 	ROT
 	PUSHINT 2390828938
 	EQUAL
 	THROWIFNOT 131
-	.loc Elector.Update.tsol, 954
+	.loc Elector.Update.tsol, 1029
 	NIP
-	.loc Elector.Update.tsol, 706
-	PUSH2 S5, S8
-	LESS
-	PUSHCONT {
-		.loc Elector.Update.tsol, 707
-		PUSH2 S7, S0
-		ADD
-		POP S8
-	}
-	PUSHCONT {
-		.loc Elector.Update.tsol, 709
-		PUSH2 S6, S0
-		ADD
-		POP S7
-	}
-	IFELSE
-	.loc Elector.Update.tsol, 711
-	DROP
-	PUSH S4
-	INC
+	.loc Elector.Update.tsol, 768
+	PUSH S5
+	ADD
 	POP S5
 	.loc Elector.Update.tsol, 0
 	PUSH2 S2, S3
@@ -3565,14 +3807,76 @@ PUSHCONT {
 	BLKDROP2 3, 3
 }
 WHILE
-BLKDROP 5
-.loc Elector.Update.tsol, 713
-SWAP
-SETGLOB 13
-.loc Elector.Update.tsol, 714
-SETGLOB 14
-.loc Elector.Update.tsol, 716
-BLKDROP 7
+BLKDROP 4
+.loc Elector.Update.tsol, 770
+GETGLOB 10
+ROLL 8
+TUCK
+OVER
+PUSHINT 32
+DICTIGET
+IFREFELSEREF
+{
+	LDDICT
+	LDU 32
+	LDU 32
+	LDVARUINT16
+	LDVARUINT16
+	LDDICT
+	LDI 1
+	LDI 1
+	LDI 1
+	ROLLREV 8
+	TUPLE 8
+	SWAP
+	LDU 32
+	LDU 256
+	LDU 64
+	ENDS
+	TUPLE 5
+}
+{
+	NEWDICT
+	PUSHINT 0
+	BLKPUSH 3, 0
+	NEWDICT
+	PUSHINT 0
+	BLKPUSH 2, 0
+	TUPLE 8
+	PUSHINT 0
+	BLKPUSH 2, 0
+	TUPLE 5
+}
+ROLL 3
+SETINDEX 4
+CALLREF {
+	UNTUPLE 5
+	REVERSE 5, 0
+	NEWC
+	STDICT
+	SWAP
+	UNTUPLE 8
+	REVERSE 9, 0
+	STU 32
+	STU 32
+	SWAP
+	STVARUINT16
+	SWAP
+	STVARUINT16
+	STDICT
+	STI 1
+	STI 1
+	STI 1
+	STU 32
+	STU 256
+	STU 64
+}
+ROTREV
+PUSHINT 32
+DICTISETB
+SETGLOB 10
+.loc Elector.Update.tsol, 772
+BLKDROP 6
 TRUE
 .loc Elector.Update.tsol, 0
 
@@ -3581,106 +3885,57 @@ TRUE
 CALL $update_active_vset_id_f30acacd_internal_macro$
 
 .macro update_active_vset_id_f30acacd_internal_macro
-.loc Elector.Update.tsol, 719
+.loc Elector.Update.tsol, 775
 PUSHINT 0
-.loc Elector.Update.tsol, 720
-PUSHINT 100
-CONFIGPARAM
+.loc Elector.Update.tsol, 777
+OVER
+CALLREF {
+	CALL $Common_no_obj_getValidatorSetsByChain_d29f0692_macro$
+}
+.loc Elector.Update.tsol, 779
 DUP
+ISNULL
 PUSHCONT {
-	PUSHREF {
-	}
-	SWAP
-}
-IFNOT
-DROP
-.loc Elector.Update.tsol, 722
-DUP
-CTOS
-PLDDICT
-.loc Elector.Update.tsol, 726
-PUSH2 S3, S0
-PUSHINT 32
-DICTIGET
-IFREFELSEREF
-{
-	LDU 8
-	LDU 32
-	LDU 32
-	LDU 16
-	LDU 16
-	LDU 64
-	LDDICT
-	ENDS
-	TUPLE 7
-}
-{
-	PUSHINT 0
-	BLKPUSH 5, 0
-	NEWDICT
-	TUPLE 7
-}
-NEWC
-SWAP
-UNTUPLE 7
-REVERSE 8, 0
-STU 8
-STU 32
-STU 32
-STU 16
-STU 16
-STU 64
-STDICT
-.loc Elector.Update.tsol, 728
-DUP
-ENDC
-HASHCU
-.loc Elector.Update.tsol, 729
-PUSH2 S0, S5
-GETGLOB 10
-PUSHINT 32
-DICTIGET
-IFREFELSEREF
-{
-	LDDICT
-	LDU 32
-	LDU 32
-	LDVARUINT16
-	LDVARUINT16
-	LDDICT
-	LDI 1
-	LDI 1
-	LDI 1
-	LDU 256
-	LDU 32
-	ROLLREV 10
-	TUPLE 10
-	SWAP
-	ENDS
-	PAIR
-}
-{
-	NEWDICT
-	PUSHINT 0
-	BLKPUSH 3, 0
-	NEWDICT
-	PUSHINT 0
-	BLKPUSH 4, 0
-	TUPLE 10
-	PAIR
-}
-SECOND
-INDEX 8
-EQUAL
-PUSHCONT {
-	.loc Elector.Update.tsol, 731
-	BLKDROP 6
+	.loc Elector.Update.tsol, 781
+	BLKDROP 3
 	FALSE
 	.loc Elector.Update.tsol, 0
 }
 IFJMP
-.loc Elector.Update.tsol, 734
-PUSH S5
+.loc Elector.Update.tsol, 783
+BLKPUSH 2, 0
+ISNULL
+THROWIF 63
+SECOND
+ISNULL
+PUSHCONT {
+	.loc Elector.Update.tsol, 784
+	BLKDROP 3
+	FALSE
+	.loc Elector.Update.tsol, 0
+}
+IFJMP
+.loc Elector.Update.tsol, 787
+BLKPUSH 2, 0
+ISNULL
+THROWIF 63
+SECOND
+DUP
+ISNULL
+THROWIF 63
+.loc Elector.Update.tsol, 790
+NEWC
+OVER
+UNTUPLE 6
+REVERSE 7, 0
+STU 8
+STU 32
+STU 32
+STU 16
+STU 64
+STDICT
+.loc Elector.Update.tsol, 791
+PUSH S4
 GETGLOB 10
 PUSHINT 32
 DICTIGET
@@ -3695,13 +3950,14 @@ IFREFELSEREF
 	LDI 1
 	LDI 1
 	LDI 1
-	LDU 256
-	LDU 32
-	ROLLREV 10
-	TUPLE 10
+	ROLLREV 8
+	TUPLE 8
 	SWAP
+	LDU 32
+	LDU 256
+	LDU 64
 	ENDS
-	PAIR
+	TUPLE 5
 }
 {
 	NEWDICT
@@ -3709,17 +3965,106 @@ IFREFELSEREF
 	BLKPUSH 3, 0
 	NEWDICT
 	PUSHINT 0
-	BLKPUSH 4, 0
-	TUPLE 10
-	PAIR
+	BLKPUSH 2, 0
+	TUPLE 8
+	PUSHINT 0
+	BLKPUSH 2, 0
+	TUPLE 5
 }
 SECOND
-INDEX 9
-.loc Elector.Update.tsol, 735
+.loc Elector.Update.tsol, 793
+OVER
+ENDC
+HASHCU
+.loc Elector.Update.tsol, 794
+PUSH2 S0, S6
+GETGLOB 10
+PUSHINT 32
+DICTIGET
+IFREFELSEREF
+{
+	LDDICT
+	LDU 32
+	LDU 32
+	LDVARUINT16
+	LDVARUINT16
+	LDDICT
+	LDI 1
+	LDI 1
+	LDI 1
+	ROLLREV 8
+	TUPLE 8
+	SWAP
+	LDU 32
+	LDU 256
+	LDU 64
+	ENDS
+	TUPLE 5
+}
+{
+	NEWDICT
+	PUSHINT 0
+	BLKPUSH 3, 0
+	NEWDICT
+	PUSHINT 0
+	BLKPUSH 2, 0
+	TUPLE 8
+	PUSHINT 0
+	BLKPUSH 2, 0
+	TUPLE 5
+}
+INDEX 3
+EQUAL
+PUSHCONT {
+	.loc Elector.Update.tsol, 796
+	BLKDROP 7
+	FALSE
+	.loc Elector.Update.tsol, 0
+}
+IFJMP
+.loc Elector.Update.tsol, 799
+PUSH S6
+GETGLOB 10
+PUSHINT 32
+DICTIGET
+IFREFELSEREF
+{
+	LDDICT
+	LDU 32
+	LDU 32
+	LDVARUINT16
+	LDVARUINT16
+	LDDICT
+	LDI 1
+	LDI 1
+	LDI 1
+	ROLLREV 8
+	TUPLE 8
+	SWAP
+	LDU 32
+	LDU 256
+	LDU 64
+	ENDS
+	TUPLE 5
+}
+{
+	NEWDICT
+	PUSHINT 0
+	BLKPUSH 3, 0
+	NEWDICT
+	PUSHINT 0
+	BLKPUSH 2, 0
+	TUPLE 8
+	PUSHINT 0
+	BLKPUSH 2, 0
+	TUPLE 5
+}
+THIRD
+.loc Elector.Update.tsol, 800
 DUP
 PUSHCONT {
-	.loc Elector.Update.tsol, 738
-	PUSH2 S0, S6
+	.loc Elector.Update.tsol, 803
+	PUSH2 S0, S7
 	GETGLOB 10
 	PUSHINT 32
 	DICTIGET
@@ -3734,13 +4079,14 @@ IFREFELSEREF
 		LDI 1
 		LDI 1
 		LDI 1
-		LDU 256
-		LDU 32
-		ROLLREV 10
-		TUPLE 10
+		ROLLREV 8
+		TUPLE 8
 		SWAP
+		LDU 32
+		LDU 256
+		LDU 64
 		ENDS
-		PAIR
+		TUPLE 5
 }
 {
 		NEWDICT
@@ -3748,9 +4094,11 @@ IFREFELSEREF
 		BLKPUSH 3, 0
 		NEWDICT
 		PUSHINT 0
-		BLKPUSH 4, 0
-		TUPLE 10
-		PAIR
+		BLKPUSH 2, 0
+		TUPLE 8
+		PUSHINT 0
+		BLKPUSH 2, 0
+		TUPLE 5
 }
 	FIRST
 	PUSHINT 32
@@ -3767,18 +4115,18 @@ IFREFELSEREF
 		ENDS
 		TUPLE 7
 	}
-	.loc Elector.Update.tsol, 739
+	.loc Elector.Update.tsol, 804
 	DUP
 	ISNULL
 	PUSHCONT {
-		.loc Elector.Update.tsol, 740
+		.loc Elector.Update.tsol, 805
 		BLKPUSH 2, 0
 		ISNULL
 		THROWIF 63
-		.loc Elector.Update.tsol, 742
+		.loc Elector.Update.tsol, 807
 		DUP
 		THIRD
-		PUSH S9
+		PUSH S10
 		GETGLOB 10
 		PUSHINT 32
 		DICTIGET
@@ -3793,13 +4141,14 @@ IFREFELSEREF
 			LDI 1
 			LDI 1
 			LDI 1
-			LDU 256
-			LDU 32
-			ROLLREV 10
-			TUPLE 10
+			ROLLREV 8
+			TUPLE 8
 			SWAP
+			LDU 32
+			LDU 256
+			LDU 64
 			ENDS
-			PAIR
+			TUPLE 5
 }
 {
 			NEWDICT
@@ -3807,22 +4156,23 @@ IFREFELSEREF
 			BLKPUSH 3, 0
 			NEWDICT
 			PUSHINT 0
-			BLKPUSH 4, 0
-			TUPLE 10
-			PAIR
+			BLKPUSH 2, 0
+			TUPLE 8
+			PUSHINT 0
+			BLKPUSH 2, 0
+			TUPLE 5
 }
-		SECOND
-		INDEX 8
+		INDEX 3
 		EQUAL
 		THROWIFNOT 57
-		.loc Elector.Update.tsol, 743
+		.loc Elector.Update.tsol, 808
 		NOW
 		OVER
 		SECOND
 		ADD
 		SETINDEX 0
-		.loc Elector.Update.tsol, 746
-		PUSH S8
+		.loc Elector.Update.tsol, 810
+		PUSH S9
 		GETGLOB 10
 		DUP2
 		PUSHINT 32
@@ -3838,13 +4188,14 @@ IFREFELSEREF
 			LDI 1
 			LDI 1
 			LDI 1
-			LDU 256
-			LDU 32
-			ROLLREV 10
-			TUPLE 10
+			ROLLREV 8
+			TUPLE 8
 			SWAP
+			LDU 32
+			LDU 256
+			LDU 64
 			ENDS
-			PAIR
+			TUPLE 5
 }
 {
 			NEWDICT
@@ -3852,9 +4203,11 @@ IFREFELSEREF
 			BLKPUSH 3, 0
 			NEWDICT
 			PUSHINT 0
-			BLKPUSH 4, 0
-			TUPLE 10
-			PAIR
+			BLKPUSH 2, 0
+			TUPLE 8
+			PUSHINT 0
+			BLKPUSH 2, 0
+			TUPLE 5
 }
 		DUP
 		FIRST
@@ -3879,13 +4232,13 @@ IFREFELSEREF
 		DICTUSETB
 		SETINDEX 0
 		CALLREF {
-			UNPAIR
-			SWAP
+			UNTUPLE 5
+			REVERSE 5, 0
 			NEWC
 			STDICT
 			SWAP
-			UNTUPLE 10
-			REVERSE 11, 0
+			UNTUPLE 8
+			REVERSE 9, 0
 			STU 32
 			STU 32
 			SWAP
@@ -3896,8 +4249,9 @@ IFREFELSEREF
 			STI 1
 			STI 1
 			STI 1
-			STU 256
 			STU 32
+			STU 256
+			STU 64
 		}
 		ROTREV
 		PUSHINT 32
@@ -3910,8 +4264,8 @@ IFREFELSEREF
 	DROP
 }
 IF
-.loc Elector.Update.tsol, 752
-PUSH S6
+.loc Elector.Update.tsol, 815
+PUSH S7
 GETGLOB 10
 PUSHINT 32
 DICTIGET
@@ -3926,13 +4280,14 @@ IFREFELSEREF
 	LDI 1
 	LDI 1
 	LDI 1
-	LDU 256
-	LDU 32
-	ROLLREV 10
-	TUPLE 10
+	ROLLREV 8
+	TUPLE 8
 	SWAP
+	LDU 32
+	LDU 256
+	LDU 64
 	ENDS
-	PAIR
+	TUPLE 5
 }
 {
 	NEWDICT
@@ -3940,9 +4295,11 @@ IFREFELSEREF
 	BLKPUSH 3, 0
 	NEWDICT
 	PUSHINT 0
-	BLKPUSH 4, 0
-	TUPLE 10
-	PAIR
+	BLKPUSH 2, 0
+	TUPLE 8
+	PUSHINT 0
+	BLKPUSH 2, 0
+	TUPLE 5
 }
 FIRST
 PUSHINT 32
@@ -3961,42 +4318,42 @@ IFREF {
 	TUPLE 7
 	PAIR
 }
-.loc Elector.Update.tsol, 753
+.loc Elector.Update.tsol, 816
 PUSHCONT {
 	DUP
 	ISNULL
 	NOT
 }
 PUSHCONT {
-	.loc Elector.Update.tsol, 754
+	.loc Elector.Update.tsol, 817
 	BLKPUSH 2, 0
 	ISNULL
 	THROWIF 63
 	UNPAIR
-	.loc Elector.Update.tsol, 755
+	.loc Elector.Update.tsol, 818
 	DUP
 	THIRD
 	PUSH S5
 	EQUAL
 	PUSHCONT {
-		.loc Elector.Update.tsol, 757
+		.loc Elector.Update.tsol, 820
 		GETGLOB 12
 		RSHIFT 3
-		.loc Elector.Update.tsol, 758
+		.loc Elector.Update.tsol, 821
 		DUP
 		UFITS 120
 		GETGLOB 12
 		SUBR
 		SETGLOB 12
-		.loc Elector.Update.tsol, 759
+		.loc Elector.Update.tsol, 822
 		UFITS 120
 		XCPU S1, S0
 		INDEX 5
 		ROT
 		ADD
 		SETINDEX 5
-		.loc Elector.Update.tsol, 762
-		PUSH S9
+		.loc Elector.Update.tsol, 824
+		PUSH S10
 		GETGLOB 10
 		DUP2
 		PUSHINT 32
@@ -4012,13 +4369,14 @@ IFREFELSEREF
 			LDI 1
 			LDI 1
 			LDI 1
-			LDU 256
-			LDU 32
-			ROLLREV 10
-			TUPLE 10
+			ROLLREV 8
+			TUPLE 8
 			SWAP
+			LDU 32
+			LDU 256
+			LDU 64
 			ENDS
-			PAIR
+			TUPLE 5
 }
 {
 			NEWDICT
@@ -4026,9 +4384,11 @@ IFREFELSEREF
 			BLKPUSH 3, 0
 			NEWDICT
 			PUSHINT 0
-			BLKPUSH 4, 0
-			TUPLE 10
-			PAIR
+			BLKPUSH 2, 0
+			TUPLE 8
+			PUSHINT 0
+			BLKPUSH 2, 0
+			TUPLE 5
 }
 		DUP
 		FIRST
@@ -4053,13 +4413,13 @@ IFREFELSEREF
 		DICTUSETB
 		SETINDEX 0
 		CALLREF {
-			UNPAIR
-			SWAP
+			UNTUPLE 5
+			REVERSE 5, 0
 			NEWC
 			STDICT
 			SWAP
-			UNTUPLE 10
-			REVERSE 11, 0
+			UNTUPLE 8
+			REVERSE 9, 0
 			STU 32
 			STU 32
 			SWAP
@@ -4070,21 +4430,22 @@ IFREFELSEREF
 			STI 1
 			STI 1
 			STI 1
-			STU 256
 			STU 32
+			STU 256
+			STU 64
 		}
 		ROTREV
 		PUSHINT 32
 		DICTISETB
 		SETGLOB 10
-		.loc Elector.Update.tsol, 764
+		.loc Elector.Update.tsol, 826
 		RETALT
 		.loc Elector.Update.tsol, 0
 	}
 	IFJMP
-	.loc Elector.Update.tsol, 768
+	.loc Elector.Update.tsol, 829
 	DROP
-	PUSH S8
+	PUSH S9
 	GETGLOB 10
 	PUSHINT 32
 	DICTIGET
@@ -4099,13 +4460,14 @@ IFREFELSEREF
 		LDI 1
 		LDI 1
 		LDI 1
-		LDU 256
-		LDU 32
-		ROLLREV 10
-		TUPLE 10
+		ROLLREV 8
+		TUPLE 8
 		SWAP
+		LDU 32
+		LDU 256
+		LDU 64
 		ENDS
-		PAIR
+		TUPLE 5
 }
 {
 		NEWDICT
@@ -4113,9 +4475,11 @@ IFREFELSEREF
 		BLKPUSH 3, 0
 		NEWDICT
 		PUSHINT 0
-		BLKPUSH 4, 0
-		TUPLE 10
-		PAIR
+		BLKPUSH 2, 0
+		TUPLE 8
+		PUSHINT 0
+		BLKPUSH 2, 0
+		TUPLE 5
 }
 	FIRST
 	PUSHINT 32
@@ -4138,57 +4502,11 @@ IFREFELSEREF
 	.loc Elector.Update.tsol, 0
 }
 WHILEBRK
-.loc Elector.Update.tsol, 770
+.loc Elector.Update.tsol, 832
 DUP
 ISNULL
 PUSHCONT {
-	.loc Elector.Update.tsol, 774
-	PUSH S7
-	GETGLOB 10
-	DUP2
-	PUSHINT 32
-	DICTIGET
-IFREFELSEREF
-{
-		LDDICT
-		LDU 32
-		LDU 32
-		LDVARUINT16
-		LDVARUINT16
-		LDDICT
-		LDI 1
-		LDI 1
-		LDI 1
-		LDU 256
-		LDU 32
-		ROLLREV 10
-		TUPLE 10
-		SWAP
-		ENDS
-		PAIR
-}
-{
-		NEWDICT
-		PUSHINT 0
-		BLKPUSH 3, 0
-		NEWDICT
-		PUSHINT 0
-		BLKPUSH 4, 0
-		TUPLE 10
-		PAIR
-}
-	DUP
-	SECOND
-	PUSHINT 0
-}
-PUSHCONT {
-	.loc Elector.Update.tsol, 771
-	BLKPUSH 2, 0
-	ISNULL
-	THROWIF 63
-	UNPAIR
-	DROP
-	.loc Elector.Update.tsol, 772
+	.loc Elector.Update.tsol, 836
 	PUSH S8
 	GETGLOB 10
 	DUP2
@@ -4205,13 +4523,14 @@ IFREFELSEREF
 		LDI 1
 		LDI 1
 		LDI 1
-		LDU 256
-		LDU 32
-		ROLLREV 10
-		TUPLE 10
+		ROLLREV 8
+		TUPLE 8
 		SWAP
+		LDU 32
+		LDU 256
+		LDU 64
 		ENDS
-		PAIR
+		TUPLE 5
 }
 {
 		NEWDICT
@@ -4219,25 +4538,71 @@ IFREFELSEREF
 		BLKPUSH 3, 0
 		NEWDICT
 		PUSHINT 0
-		BLKPUSH 4, 0
-		TUPLE 10
-		PAIR
+		BLKPUSH 2, 0
+		TUPLE 8
+		PUSHINT 0
+		BLKPUSH 2, 0
+		TUPLE 5
 }
-	DUP
-	SECOND
-	ROLL 4
+	PUSHINT 0
+}
+PUSHCONT {
+	.loc Elector.Update.tsol, 833
+	BLKPUSH 2, 0
+	ISNULL
+	THROWIF 63
+	UNPAIR
+	DROP
+	.loc Elector.Update.tsol, 834
+	PUSH S9
+	GETGLOB 10
+	DUP2
+	PUSHINT 32
+	DICTIGET
+IFREFELSEREF
+{
+		LDDICT
+		LDU 32
+		LDU 32
+		LDVARUINT16
+		LDVARUINT16
+		LDDICT
+		LDI 1
+		LDI 1
+		LDI 1
+		ROLLREV 8
+		TUPLE 8
+		SWAP
+		LDU 32
+		LDU 256
+		LDU 64
+		ENDS
+		TUPLE 5
+}
+{
+		NEWDICT
+		PUSHINT 0
+		BLKPUSH 3, 0
+		NEWDICT
+		PUSHINT 0
+		BLKPUSH 2, 0
+		TUPLE 8
+		PUSHINT 0
+		BLKPUSH 2, 0
+		TUPLE 5
+}
+	ROLL 3
 }
 IFELSE
-SETINDEX 9
-SETINDEX 1
+SETINDEX 2
 CALLREF {
-	UNPAIR
-	SWAP
+	UNTUPLE 5
+	REVERSE 5, 0
 	NEWC
 	STDICT
 	SWAP
-	UNTUPLE 10
-	REVERSE 11, 0
+	UNTUPLE 8
+	REVERSE 9, 0
 	STU 32
 	STU 32
 	SWAP
@@ -4248,17 +4613,18 @@ CALLREF {
 	STI 1
 	STI 1
 	STI 1
-	STU 256
 	STU 32
+	STU 256
+	STU 64
 }
 ROTREV
 PUSHINT 32
 DICTISETB
 SETGLOB 10
-.loc Elector.Update.tsol, 776
+.loc Elector.Update.tsol, 838
 DROP2
 GETGLOB 10
-ROLL 6
+ROLL 7
 TUCK
 OVER
 PUSHINT 32
@@ -4274,13 +4640,14 @@ IFREFELSEREF
 	LDI 1
 	LDI 1
 	LDI 1
-	LDU 256
-	LDU 32
-	ROLLREV 10
-	TUPLE 10
+	ROLLREV 8
+	TUPLE 8
 	SWAP
+	LDU 32
+	LDU 256
+	LDU 64
 	ENDS
-	PAIR
+	TUPLE 5
 }
 {
 	NEWDICT
@@ -4288,23 +4655,22 @@ IFREFELSEREF
 	BLKPUSH 3, 0
 	NEWDICT
 	PUSHINT 0
-	BLKPUSH 4, 0
-	TUPLE 10
-	PAIR
+	BLKPUSH 2, 0
+	TUPLE 8
+	PUSHINT 0
+	BLKPUSH 2, 0
+	TUPLE 5
 }
-DUP
-SECOND
-ROLL 4
-SETINDEX 8
-SETINDEX 1
+ROLL 3
+SETINDEX 3
 CALLREF {
-	UNPAIR
-	SWAP
+	UNTUPLE 5
+	REVERSE 5, 0
 	NEWC
 	STDICT
 	SWAP
-	UNTUPLE 10
-	REVERSE 11, 0
+	UNTUPLE 8
+	REVERSE 9, 0
 	STU 32
 	STU 32
 	SWAP
@@ -4315,15 +4681,16 @@ CALLREF {
 	STI 1
 	STI 1
 	STI 1
-	STU 256
 	STU 32
+	STU 256
+	STU 64
 }
 ROTREV
 PUSHINT 32
 DICTISETB
 SETGLOB 10
-.loc Elector.Update.tsol, 777
-BLKDROP 4
+.loc Elector.Update.tsol, 839
+BLKDROP 5
 TRUE
 .loc Elector.Update.tsol, 0
 
@@ -4332,7 +4699,7 @@ TRUE
 CALL $validator_set_installed_5127c547_internal_macro$
 
 .macro validator_set_installed_5127c547_internal_macro
-.loc Elector.Update.tsol, 781
+.loc Elector.Update.tsol, 843
 DUP
 GETGLOB 10
 PUSHINT 32
@@ -4348,13 +4715,14 @@ IFREFELSEREF
 	LDI 1
 	LDI 1
 	LDI 1
-	LDU 256
-	LDU 32
-	ROLLREV 10
-	TUPLE 10
+	ROLLREV 8
+	TUPLE 8
 	SWAP
+	LDU 32
+	LDU 256
+	LDU 64
 	ENDS
-	PAIR
+	TUPLE 5
 }
 {
 	NEWDICT
@@ -4362,20 +4730,22 @@ IFREFELSEREF
 	BLKPUSH 3, 0
 	NEWDICT
 	PUSHINT 0
-	BLKPUSH 4, 0
-	TUPLE 10
-	PAIR
+	BLKPUSH 2, 0
+	TUPLE 8
+	PUSHINT 0
+	BLKPUSH 2, 0
+	TUPLE 5
 }
 SECOND
 INDEX 6
 PUSHCONT {
-	.loc Elector.Update.tsol, 783
+	.loc Elector.Update.tsol, 845
 	DROP
 	FALSE
 	.loc Elector.Update.tsol, 0
 }
 IFNOTJMP
-.loc Elector.Update.tsol, 787
+.loc Elector.Update.tsol, 848
 DUP
 GETGLOB 10
 PUSHINT 32
@@ -4391,13 +4761,14 @@ IFREFELSEREF
 	LDI 1
 	LDI 1
 	LDI 1
-	LDU 256
-	LDU 32
-	ROLLREV 10
-	TUPLE 10
+	ROLLREV 8
+	TUPLE 8
 	SWAP
+	LDU 32
+	LDU 256
+	LDU 64
 	ENDS
-	PAIR
+	TUPLE 5
 }
 {
 	NEWDICT
@@ -4405,9 +4776,11 @@ IFREFELSEREF
 	BLKPUSH 3, 0
 	NEWDICT
 	PUSHINT 0
-	BLKPUSH 4, 0
-	TUPLE 10
-	PAIR
+	BLKPUSH 2, 0
+	TUPLE 8
+	PUSHINT 0
+	BLKPUSH 2, 0
+	TUPLE 5
 }
 INDEX2 1, 0
 OVER
@@ -4425,13 +4798,14 @@ IFREFELSEREF
 	LDI 1
 	LDI 1
 	LDI 1
-	LDU 256
-	LDU 32
-	ROLLREV 10
-	TUPLE 10
+	ROLLREV 8
+	TUPLE 8
 	SWAP
+	LDU 32
+	LDU 256
+	LDU 64
 	ENDS
-	PAIR
+	TUPLE 5
 }
 {
 	NEWDICT
@@ -4439,9 +4813,11 @@ IFREFELSEREF
 	BLKPUSH 3, 0
 	NEWDICT
 	PUSHINT 0
-	BLKPUSH 4, 0
-	TUPLE 10
-	PAIR
+	BLKPUSH 2, 0
+	TUPLE 8
+	PUSHINT 0
+	BLKPUSH 2, 0
+	TUPLE 5
 }
 FIRST
 PUSHINT 32
@@ -4458,58 +4834,126 @@ IFREF {
 	ENDS
 	TUPLE 7
 }
-.loc Elector.Update.tsol, 788
+.loc Elector.Update.tsol, 849
 DUP
 ISNULL
 PUSHCONT {
-	.loc Elector.Update.tsol, 790
+	.loc Elector.Update.tsol, 851
 	DROP2
 	FALSE
 	.loc Elector.Update.tsol, 0
 }
 IFJMP
-.loc Elector.Update.tsol, 792
+.loc Elector.Update.tsol, 853
 DUP
 ISNULL
 THROWIF 63
-.loc Elector.Update.tsol, 794
-PUSHINT 34
-CONFIGPARAM
-DUP
-PUSHCONT {
-	PUSHREF {
-	}
-	SWAP
+.loc Elector.Update.tsol, 855
+OVER
+CALLREF {
+	CALL $Common_no_obj_getValidatorSetsByChain_d29f0692_macro$
 }
-IFNOT
-.loc Elector.Update.tsol, 795
-PUSHINT 36
-CONFIGPARAM
+.loc Elector.Update.tsol, 856
 DUP
+ISNULL
 PUSHCONT {
-	PUSHREF {
-	}
-	SWAP
+	.loc Elector.Update.tsol, 858
+	BLKDROP 3
+	FALSE
+	.loc Elector.Update.tsol, 0
 }
-IFNOT
-.loc Elector.Update.tsol, 796
-SWAP2
-SWAP
-HASHCU
-PUSH S4
-THIRD
-EQUAL
-AND
-XCHG S2
-HASHCU
-ROLL 3
-THIRD
-EQUAL
-AND
-OR
+IFJMP
+.loc Elector.Update.tsol, 860
+DUP
+ISNULL
+THROWIF 63
+.loc Elector.Update.tsol, 862
+NEWC
+.loc Elector.Update.tsol, 863
+OVER
+SECOND
+ISNULL
 PUSHCONT {
-	.loc Elector.Update.tsol, 799
+	.loc Elector.Update.tsol, 864
+	OVER
+	SECOND
 	DUP
+	ISNULL
+	THROWIF 63
+	UNTUPLE 6
+	REVERSE 7, 0
+	STU 8
+	STU 32
+	STU 32
+	STU 16
+	STU 64
+	STDICT
+	.loc Elector.Update.tsol, 0
+}
+IFNOT
+.loc Elector.Update.tsol, 867
+NEWC
+.loc Elector.Update.tsol, 868
+PUSH S2
+INDEX 3
+ISNULL
+PUSHCONT {
+	.loc Elector.Update.tsol, 869
+	PUSH S2
+	INDEX 3
+	DUP
+	ISNULL
+	THROWIF 63
+	UNTUPLE 6
+	REVERSE 7, 0
+	STU 8
+	STU 32
+	STU 32
+	STU 16
+	STU 64
+	STDICT
+	.loc Elector.Update.tsol, 0
+}
+IFNOT
+.loc Elector.Update.tsol, 873
+PUSH S2
+SECOND
+ISNULL
+NOT
+DUP
+PUSHCONT {
+	DROP
+	OVER
+	ENDC
+	HASHCU
+	PUSH S4
+	THIRD
+	EQUAL
+}
+IF
+DUP
+PUSHCONT {
+	DROP
+	PUSH S2
+	INDEX 3
+	ISNULL
+	NOT
+	DUP
+	PUSHCONT {
+		DROP
+		DUP
+		ENDC
+		HASHCU
+		PUSH S4
+		THIRD
+		EQUAL
+	}
+	IF
+}
+IFNOT
+PUSHCONT {
+	.loc Elector.Update.tsol, 876
+	PUSH S4
 	GETGLOB 10
 	DUP2
 	PUSHINT 32
@@ -4525,13 +4969,14 @@ IFREFELSEREF
 		LDI 1
 		LDI 1
 		LDI 1
-		LDU 256
-		LDU 32
-		ROLLREV 10
-		TUPLE 10
+		ROLLREV 8
+		TUPLE 8
 		SWAP
+		LDU 32
+		LDU 256
+		LDU 64
 		ENDS
-		PAIR
+		TUPLE 5
 }
 {
 		NEWDICT
@@ -4539,9 +4984,11 @@ IFREFELSEREF
 		BLKPUSH 3, 0
 		NEWDICT
 		PUSHINT 0
-		BLKPUSH 4, 0
-		TUPLE 10
-		PAIR
+		BLKPUSH 2, 0
+		TUPLE 8
+		PUSHINT 0
+		BLKPUSH 2, 0
+		TUPLE 5
 }
 	DUP
 	SECOND
@@ -4549,13 +4996,13 @@ IFREFELSEREF
 	SETINDEX 7
 	SETINDEX 1
 	CALLREF {
-		UNPAIR
-		SWAP
+		UNTUPLE 5
+		REVERSE 5, 0
 		NEWC
 		STDICT
 		SWAP
-		UNTUPLE 10
-		REVERSE 11, 0
+		UNTUPLE 8
+		REVERSE 9, 0
 		STU 32
 		STU 32
 		SWAP
@@ -4566,16 +5013,17 @@ IFREFELSEREF
 		STI 1
 		STI 1
 		STI 1
-		STU 256
 		STU 32
+		STU 256
+		STU 64
 	}
 	ROTREV
 	PUSHINT 32
 	DICTISETB
 	DUP
 	SETGLOB 10
-	.loc Elector.Update.tsol, 801
-	PUXC S1, S-1
+	.loc Elector.Update.tsol, 878
+	PUXC S5, S-1
 	DUP2
 	PUSHINT 32
 	DICTIGET
@@ -4590,13 +5038,14 @@ IFREFELSEREF
 		LDI 1
 		LDI 1
 		LDI 1
-		LDU 256
-		LDU 32
-		ROLLREV 10
-		TUPLE 10
+		ROLLREV 8
+		TUPLE 8
 		SWAP
+		LDU 32
+		LDU 256
+		LDU 64
 		ENDS
-		PAIR
+		TUPLE 5
 }
 {
 		NEWDICT
@@ -4604,25 +5053,27 @@ IFREFELSEREF
 		BLKPUSH 3, 0
 		NEWDICT
 		PUSHINT 0
-		BLKPUSH 4, 0
-		TUPLE 10
-		PAIR
+		BLKPUSH 2, 0
+		TUPLE 8
+		PUSHINT 0
+		BLKPUSH 2, 0
+		TUPLE 5
 }
 	PUSHINT 0
 	BLKPUSH 3, 0
 	NEWDICT
 	PUSHINT 0
-	BLKPUSH 4, 0
-	TUPLE 10
+	BLKPUSH 2, 0
+	TUPLE 8
 	SETINDEX 1
 	CALLREF {
-		UNPAIR
-		SWAP
+		UNTUPLE 5
+		REVERSE 5, 0
 		NEWC
 		STDICT
 		SWAP
-		UNTUPLE 10
-		REVERSE 11, 0
+		UNTUPLE 8
+		REVERSE 9, 0
 		STU 32
 		STU 32
 		SWAP
@@ -4633,25 +5084,27 @@ IFREFELSEREF
 		STI 1
 		STI 1
 		STI 1
-		STU 256
 		STU 32
+		STU 256
+		STU 64
 	}
 	ROTREV
 	PUSHINT 32
 	DICTISETB
 	SETGLOB 10
-	.loc Elector.Update.tsol, 802
+	.loc Elector.Update.tsol, 879
+	ROLL 4
 	CALLREF {
 		CALL $update_active_vset_id_f30acacd_internal_macro$
 	}
-	DROP
-	.loc Elector.Update.tsol, 803
+	BLKDROP 5
+	.loc Elector.Update.tsol, 880
 	TRUE
 	.loc Elector.Update.tsol, 0
 }
 IFJMP
-.loc Elector.Update.tsol, 805
-DROP
+.loc Elector.Update.tsol, 882
+BLKDROP 5
 FALSE
 .loc Elector.Update.tsol, 0
 
@@ -4660,7 +5113,7 @@ FALSE
 CALL $check_unfreeze_f3540bfa_internal_macro$
 
 .macro check_unfreeze_f3540bfa_internal_macro
-.loc Elector.Update.tsol, 811
+.loc Elector.Update.tsol, 887
 DUP
 GETGLOB 10
 PUSHINT 32
@@ -4676,13 +5129,14 @@ IFREFELSEREF
 	LDI 1
 	LDI 1
 	LDI 1
-	LDU 256
-	LDU 32
-	ROLLREV 10
-	TUPLE 10
+	ROLLREV 8
+	TUPLE 8
 	SWAP
+	LDU 32
+	LDU 256
+	LDU 64
 	ENDS
-	PAIR
+	TUPLE 5
 }
 {
 	NEWDICT
@@ -4690,9 +5144,11 @@ IFREFELSEREF
 	BLKPUSH 3, 0
 	NEWDICT
 	PUSHINT 0
-	BLKPUSH 4, 0
-	TUPLE 10
-	PAIR
+	BLKPUSH 2, 0
+	TUPLE 8
+	PUSHINT 0
+	BLKPUSH 2, 0
+	TUPLE 5
 }
 FIRST
 PUSHINT 32
@@ -4711,19 +5167,19 @@ IFREF {
 	TUPLE 7
 	PAIR
 }
-.loc Elector.Update.tsol, 812
+.loc Elector.Update.tsol, 888
 PUSHCONT {
 	DUP
 	ISNULL
 	NOT
 }
 PUSHCONT {
-	.loc Elector.Update.tsol, 813
+	.loc Elector.Update.tsol, 889
 	BLKPUSH 2, 0
 	ISNULL
 	THROWIF 63
 	UNPAIR
-	.loc Elector.Update.tsol, 814
+	.loc Elector.Update.tsol, 891
 	FIRST
 	NOW
 	LEQ
@@ -4745,13 +5201,14 @@ IFREFELSEREF
 			LDI 1
 			LDI 1
 			LDI 1
-			LDU 256
-			LDU 32
-			ROLLREV 10
-			TUPLE 10
+			ROLLREV 8
+			TUPLE 8
 			SWAP
+			LDU 32
+			LDU 256
+			LDU 64
 			ENDS
-			PAIR
+			TUPLE 5
 }
 {
 			NEWDICT
@@ -4759,17 +5216,18 @@ IFREFELSEREF
 			BLKPUSH 3, 0
 			NEWDICT
 			PUSHINT 0
-			BLKPUSH 4, 0
-			TUPLE 10
-			PAIR
+			BLKPUSH 2, 0
+			TUPLE 8
+			PUSHINT 0
+			BLKPUSH 2, 0
+			TUPLE 5
 }
-		SECOND
-		INDEX 9
+		THIRD
 		NEQ
 	}
 	IF
 	PUSHCONT {
-		.loc Elector.Update.tsol, 816
+		.loc Elector.Update.tsol, 893
 		PUSH S2
 		CALLREF {
 			CALL $unfreeze_all_4c140ed0_internal_macro$
@@ -4778,12 +5236,12 @@ IFREFELSEREF
 		GETGLOB 12
 		ADD
 		SETGLOB 12
-		.loc Elector.Update.tsol, 818
+		.loc Elector.Update.tsol, 895
 		RETALT
 		.loc Elector.Update.tsol, 0
 	}
 	IFJMP
-	.loc Elector.Update.tsol, 822
+	.loc Elector.Update.tsol, 897
 	PUSH S2
 	GETGLOB 10
 	PUSHINT 32
@@ -4799,13 +5257,14 @@ IFREFELSEREF
 		LDI 1
 		LDI 1
 		LDI 1
-		LDU 256
-		LDU 32
-		ROLLREV 10
-		TUPLE 10
+		ROLLREV 8
+		TUPLE 8
 		SWAP
+		LDU 32
+		LDU 256
+		LDU 64
 		ENDS
-		PAIR
+		TUPLE 5
 }
 {
 		NEWDICT
@@ -4813,9 +5272,11 @@ IFREFELSEREF
 		BLKPUSH 3, 0
 		NEWDICT
 		PUSHINT 0
-		BLKPUSH 4, 0
-		TUPLE 10
-		PAIR
+		BLKPUSH 2, 0
+		TUPLE 8
+		PUSHINT 0
+		BLKPUSH 2, 0
+		TUPLE 5
 }
 	FIRST
 	PUSHINT 32
@@ -4846,26 +5307,37 @@ DROP2
 CALL $announce_new_elections_78458639_internal_macro$
 
 .macro announce_new_elections_78458639_internal_macro
-.loc Elector.Update.tsol, 827
-PUSHINT 36
-CONFIGPARAM
+.loc Elector.Update.tsol, 903
 DUP
-PUSHCONT {
-	PUSHREF {
-	}
-	SWAP
+CALLREF {
+	CALL $Common_no_obj_getValidatorSetsByChain_d29f0692_macro$
 }
-IFNOT
-NIP
-.loc Elector.Update.tsol, 828
+.loc Elector.Update.tsol, 905
+DUP
+ISNULL
 PUSHCONT {
-	.loc Elector.Update.tsol, 830
-	DROP
+	.loc Elector.Update.tsol, 906
+	DROP2
 	FALSE
 	.loc Elector.Update.tsol, 0
 }
 IFJMP
-.loc Elector.Update.tsol, 832
+.loc Elector.Update.tsol, 908
+DUP
+ISNULL
+THROWIF 63
+.loc Elector.Update.tsol, 909
+DUP
+INDEX 3
+ISNULL
+PUSHCONT {
+	.loc Elector.Update.tsol, 911
+	DROP2
+	FALSE
+	.loc Elector.Update.tsol, 0
+}
+IFNOTJMP
+.loc Elector.Update.tsol, 913
 PUSHINT 1
 CONFIGPARAM
 DUP
@@ -4876,44 +5348,38 @@ PUSHCONT {
 }
 IFNOT
 DROP
-.loc Elector.Update.tsol, 833
+.loc Elector.Update.tsol, 914
 CTOS
 PLDU 256
-.loc Elector.Update.tsol, 834
+.loc Elector.Update.tsol, 915
 MYADDR
 REWRITESTDADDR
-.loc Elector.Update.tsol, 835
+.loc Elector.Update.tsol, 916
 SWAP
 NEQINT -1
 XCHG S2
 NEQ
 OR
 PUSHCONT {
-	.loc Elector.Update.tsol, 837
-	DROP
-	FALSE
-	.loc Elector.Update.tsol, 0
-}
-IFJMP
-.loc Elector.Update.tsol, 839
-PUSHINT 34
-CONFIGPARAM
-DUP
-PUSHCONT {
-	PUSHREF {
-	}
-	SWAP
-}
-IFNOT
-.loc Elector.Update.tsol, 840
-PUSHCONT {
-	.loc Elector.Update.tsol, 841
+	.loc Elector.Update.tsol, 918
 	DROP2
 	FALSE
 	.loc Elector.Update.tsol, 0
 }
-IFNOTJMP
-.loc Elector.Update.tsol, 99
+IFJMP
+.loc Elector.Update.tsol, 920
+SECOND
+.loc Elector.Update.tsol, 922
+DUP
+ISNULL
+PUSHCONT {
+	.loc Elector.Update.tsol, 923
+	DROP2
+	FALSE
+	.loc Elector.Update.tsol, 0
+}
+IFJMP
+.loc Elector.Update.tsol, 102
 PUSHINT 15
 CONFIGPARAM
 PUSHCONT {
@@ -4931,41 +5397,41 @@ PUSHCONT {
 }
 IFELSE
 DROP2
-.loc Elector.Update.tsol, 101
+.loc Elector.Update.tsol, 104
 BLKDROP2 1, 2
-.loc Elector.Update.tsol, 844
+.loc Elector.Update.tsol, 927
 ROT
-CTOS
-LDU 40
-PLDU 32
-NIP
-.loc Elector.Update.tsol, 845
+DUP
+ISNULL
+THROWIF 63
+THIRD
+.loc Elector.Update.tsol, 929
 NOW
-.loc Elector.Update.tsol, 846
+.loc Elector.Update.tsol, 930
 XCPU S1, S3
 SUB
-.loc Elector.Update.tsol, 847
+.loc Elector.Update.tsol, 931
 DUP2
 LESS
 PUSHCONT {
-	.loc Elector.Update.tsol, 849
+	.loc Elector.Update.tsol, 933
 	BLKDROP 5
 	FALSE
 	.loc Elector.Update.tsol, 0
 }
 IFJMP
-.loc Elector.Update.tsol, 852
+.loc Elector.Update.tsol, 936
 DUP2
 SUB
 LESSINT 60
 PUSHCONT {
-	.loc Elector.Update.tsol, 854
+	.loc Elector.Update.tsol, 938
 	DUP
 	POP S2
 	.loc Elector.Update.tsol, 0
 }
 IF
-.loc Elector.Update.tsol, 857
+.loc Elector.Update.tsol, 941
 DROP
 PUSHINT 17
 CONFIGPARAM
@@ -4984,15 +5450,15 @@ PUSHCONT {
 }
 IFELSE
 BLKDROP 4
-.loc Elector.Update.tsol, 859
+.loc Elector.Update.tsol, 943
 SWAP
 ROLL 3
 ADD
-.loc Elector.Update.tsol, 861
+.loc Elector.Update.tsol, 945
 DUP
 ROLL 3
 SUB
-.loc Elector.Update.tsol, 864
+.loc Elector.Update.tsol, 948
 ROT
 UFITS 120
 PUSHINT 0
@@ -5000,12 +5466,8 @@ NEWDICT
 FALSE
 DUP
 TRUE
-PUSHREF {
-}
-HASHCU
-PUSHINT 0
-TUPLE 10
-.loc Elector.Update.tsol, 876
+TUPLE 8
+.loc Elector.Update.tsol, 958
 SWAP
 GETGLOB 10
 DUP2
@@ -5022,13 +5484,14 @@ IFREFELSEREF
 	LDI 1
 	LDI 1
 	LDI 1
-	LDU 256
-	LDU 32
-	ROLLREV 10
-	TUPLE 10
+	ROLLREV 8
+	TUPLE 8
 	SWAP
+	LDU 32
+	LDU 256
+	LDU 64
 	ENDS
-	PAIR
+	TUPLE 5
 }
 {
 	NEWDICT
@@ -5036,20 +5499,22 @@ IFREFELSEREF
 	BLKPUSH 3, 0
 	NEWDICT
 	PUSHINT 0
-	BLKPUSH 4, 0
-	TUPLE 10
-	PAIR
+	BLKPUSH 2, 0
+	TUPLE 8
+	PUSHINT 0
+	BLKPUSH 2, 0
+	TUPLE 5
 }
 ROLL 3
 SETINDEX 1
 CALLREF {
-	UNPAIR
-	SWAP
+	UNTUPLE 5
+	REVERSE 5, 0
 	NEWC
 	STDICT
 	SWAP
-	UNTUPLE 10
-	REVERSE 11, 0
+	UNTUPLE 8
+	REVERSE 9, 0
 	STU 32
 	STU 32
 	SWAP
@@ -5060,14 +5525,15 @@ CALLREF {
 	STI 1
 	STI 1
 	STI 1
-	STU 256
 	STU 32
+	STU 256
+	STU 64
 }
 ROTREV
 PUSHINT 32
 DICTISETB
 SETGLOB 10
-.loc Elector.Update.tsol, 877
+.loc Elector.Update.tsol, 959
 TRUE
 .loc Elector.Update.tsol, 0
 
@@ -5083,7 +5549,7 @@ PUSHREFSLICE {
 }
 SETGLOB 9
 PUSHCONT {
-	.loc Elector.Update.tsol, 881
+	.loc Elector.Update.tsol, 963
 	DROP
 	GETGLOB 10
 	DUP
@@ -5105,13 +5571,14 @@ IFREFELSE {
 		LDI 1
 		LDI 1
 		LDI 1
-		LDU 256
-		LDU 32
-		ROLLREV 10
-		TUPLE 10
+		ROLLREV 8
+		TUPLE 8
 		SWAP
+		LDU 32
+		LDU 256
+		LDU 64
 		ENDS
-		PAIR
+		TUPLE 5
 }
 	FALSE ; decl return flag
 	PUSHCONT {
@@ -5120,31 +5587,31 @@ IFREFELSE {
 		NOT
 	}
 	PUSHCONT {
-		.loc Elector.Update.tsol, 883
+		.loc Elector.Update.tsol, 965
 		OVER
 		SECOND
 		INDEX 7
 		PUSHCONT {
-			.loc Elector.Update.tsol, 885
+			.loc Elector.Update.tsol, 967
 			PUSH S2
 			CALLREF {
 				CALL $conduct_elections_ec3c98f3_internal_macro$
 			}
 			PUSHCONT {
-				.loc Elector.Update.tsol, 888
+				.loc Elector.Update.tsol, 970
 				BLKDROP 5
 				PUSHINT 4
 				RETALT
 				.loc Elector.Update.tsol, 0
 			}
 			IFJMP
-			.loc Elector.Update.tsol, 890
+			.loc Elector.Update.tsol, 972
 			PUSH S2
 			CALLREF {
 				CALL $validator_set_installed_5127c547_internal_macro$
 			}
 			PUSHCONT {
-				.loc Elector.Update.tsol, 892
+				.loc Elector.Update.tsol, 974
 				BLKDROP 5
 				PUSHINT 4
 				RETALT
@@ -5154,13 +5621,13 @@ IFREFELSE {
 			.loc Elector.Update.tsol, 0
 		}
 		PUSHCONT {
-			.loc Elector.Update.tsol, 895
+			.loc Elector.Update.tsol, 977
 			PUSH S2
 			CALLREF {
 				CALL $announce_new_elections_78458639_internal_macro$
 			}
 			PUSHCONT {
-				.loc Elector.Update.tsol, 897
+				.loc Elector.Update.tsol, 979
 				BLKDROP 5
 				PUSHINT 4
 				RETALT
@@ -5170,20 +5637,20 @@ IFREFELSE {
 			.loc Elector.Update.tsol, 0
 		}
 		IFELSE
-		.loc Elector.Update.tsol, 900
+		.loc Elector.Update.tsol, 982
 		PUSH S2
 		CALLREF {
 			CALL $update_active_vset_id_f30acacd_internal_macro$
 		}
 		PUSHCONT {
-			.loc Elector.Update.tsol, 902
+			.loc Elector.Update.tsol, 984
 			BLKDROP 5
 			PUSHINT 4
 			RETALT
 			.loc Elector.Update.tsol, 0
 		}
 		IFJMP
-		.loc Elector.Update.tsol, 904
+		.loc Elector.Update.tsol, 986
 		PUSH S2
 		CALLREF {
 			CALL $check_unfreeze_f3540bfa_internal_macro$
@@ -5208,13 +5675,14 @@ IFREFELSE {
 			LDI 1
 			LDI 1
 			LDI 1
-			LDU 256
-			LDU 32
-			ROLLREV 10
-			TUPLE 10
+			ROLLREV 8
+			TUPLE 8
 			SWAP
+			LDU 32
+			LDU 256
+			LDU 64
 			ENDS
-			PAIR
+			TUPLE 5
 }
 		POP S4
 		POP S4
@@ -5223,7 +5691,7 @@ IFREFELSE {
 	WHILEBRK
 	IFRET
 	BLKDROP 4
-	.loc Elector.Update.tsol, 880
+	.loc Elector.Update.tsol, 962
 }
 CALLX
 .loc Elector.Update.tsol, 0
@@ -5240,7 +5708,7 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Elector.Update.tsol, 957
+.loc Elector.Update.tsol, 1032
 OVER
 PUSHCONT {
 	LDU 256
@@ -5277,34 +5745,23 @@ THROW 0
 CALL $report_fdf16703_internal_macro$
 
 .macro report_fdf16703_internal_macro
-.loc Elector.Update.tsol, 957
+.loc Elector.Update.tsol, 1032
 DEPTH
 ADDCONST -5
 PICK
 EQINT -1
 THROWIFNOT 71
-.loc Elector.Update.tsol, 966
-CALLREF {
-	CALL $get_current_vset_cb181528_internal_macro$
-}
-DROP2
-.loc Elector.Update.tsol, 967
+.loc Elector.Update.tsol, 1040
 DUP
-CTOS
-LDU 8
-LDU 32
-LDU 32
-LDU 16
-LDU 16
-LDU 64
-PLDDICT
-TUPLE 7
-.loc Elector.Update.tsol, 968
+CALLREF {
+	CALL $get_current_vset_f0cade92_internal_macro$
+}
+.loc Elector.Update.tsol, 1041
 DUP
 FIRST
 EQINT 18
 THROWIFNOT 131
-.loc Elector.Update.tsol, 971
+.loc Elector.Update.tsol, 1044
 DUP
 SECOND
 NOW
@@ -5315,47 +5772,47 @@ THIRD
 LESS
 AND
 THROWIFNOT 139
-.loc Elector.Update.tsol, 974
-PUSH2 S6, S7
+.loc Elector.Update.tsol, 1047
+PUSH2 S5, S6
 NEWC
 STU 256
 STU 256
-.loc Elector.Update.tsol, 976
-PUSH3 S4, S5, S6
+.loc Elector.Update.tsol, 1049
+PUSH3 S3, S4, S5
 NEWC
 STU 256
 STU 256
 STU 8
-.loc Elector.Update.tsol, 977
+.loc Elector.Update.tsol, 1052
+ACCEPT
+.loc Elector.Update.tsol, 1053
 DUP
 ENDC
 CTOS
 PUSH S2
 ENDC
 CTOS
-PUSH S9
+PUSH S8
 CHKSIGNS
 THROWIFNOT 34
-.loc Elector.Update.tsol, 980
-ACCEPT
-.loc Elector.Update.tsol, 983
-PUSH S7
-GETGLOB 15
+.loc Elector.Update.tsol, 1056
+PUSH S6
+GETGLOB 13
 PUSHPOW2 8
 DICTUGET
 NULLSWAPIFNOT
 NIP
 NOT
 PUSHINT 137
-.loc Elector.Update.tsol, 943
+.loc Elector.Update.tsol, 1018
 SWAP
 PUSHCONT {
-	.loc Elector.Update.tsol, 944
+	.loc Elector.Update.tsol, 1019
 	CALLREF {
 		CALL $c7_to_c4$
 	}
 	COMMIT
-	.loc Elector.Update.tsol, 945
+	.loc Elector.Update.tsol, 1020
 	DUP
 	PUSHINT 2
 	MAX
@@ -5365,24 +5822,24 @@ PUSHCONT {
 IFNOT
 .loc Elector.Update.tsol, 0
 DROP
-.loc Elector.Update.tsol, 986
-PUSH S6
-GETGLOB 15
+.loc Elector.Update.tsol, 1059
+PUSH S5
+GETGLOB 13
 PUSHPOW2 8
 DICTUGET
 NULLSWAPIFNOT
 NIP
 NOT
 PUSHINT 138
-.loc Elector.Update.tsol, 943
+.loc Elector.Update.tsol, 1018
 SWAP
 PUSHCONT {
-	.loc Elector.Update.tsol, 944
+	.loc Elector.Update.tsol, 1019
 	CALLREF {
 		CALL $c7_to_c4$
 	}
 	COMMIT
-	.loc Elector.Update.tsol, 945
+	.loc Elector.Update.tsol, 1020
 	DUP
 	PUSHINT 2
 	MAX
@@ -5392,11 +5849,11 @@ PUSHCONT {
 IFNOT
 .loc Elector.Update.tsol, 0
 DROP
-.loc Elector.Update.tsol, 989
+.loc Elector.Update.tsol, 1062
 PUSHINT 0
 PUSH2 S0, S3
-.loc Elector.Update.tsol, 991
-INDEX 6
+.loc Elector.Update.tsol, 1064
+INDEX 5
 DUP
 PUSHINT 16
 DICTUMIN
@@ -5415,39 +5872,39 @@ PUSHCONT {
 	NOT
 }
 PUSHCONT {
-	.loc Elector.Update.tsol, 992
+	.loc Elector.Update.tsol, 1065
 	BLKPUSH 2, 0
-	.loc Elector.Update.tsol, 950
+	.loc Elector.Update.tsol, 1025
 	LDU 8
 	POP S2
-	.loc Elector.Update.tsol, 951
+	.loc Elector.Update.tsol, 1026
 	DUP
 	EQINT 83
 	SWAP
 	EQINT 115
 	OR
 	THROWIFNOT 131
-	.loc Elector.Update.tsol, 952
+	.loc Elector.Update.tsol, 1027
 	LDU 32
 	LDU 256
 	PLDU 64
-	.loc Elector.Update.tsol, 953
+	.loc Elector.Update.tsol, 1028
 	ROT
 	PUSHINT 2390828938
 	EQUAL
 	THROWIFNOT 131
-	.loc Elector.Update.tsol, 993
-	XCPU S1, S15
+	.loc Elector.Update.tsol, 1066
+	XCPU S1, S14
 	EQUAL
 	PUSHCONT {
-		.loc Elector.Update.tsol, 994
+		.loc Elector.Update.tsol, 1067
 		POP S6
-		.loc Elector.Update.tsol, 995
+		.loc Elector.Update.tsol, 1068
 		RETALT
 		.loc Elector.Update.tsol, 0
 	}
 	IFJMP
-	.loc Elector.Update.tsol, 997
+	.loc Elector.Update.tsol, 1070
 	DROP
 	PUSH S4
 	INC
@@ -5469,15 +5926,15 @@ PUSHCONT {
 }
 WHILEBRK
 BLKDROP 4
-.loc Elector.Update.tsol, 999
+.loc Elector.Update.tsol, 1072
 OVER
 GTINT 0
 THROWIFNOT 135
-.loc Elector.Update.tsol, 1002
+.loc Elector.Update.tsol, 1075
 PUSHINT 0
 PUSH2 S0, S5
-.loc Elector.Update.tsol, 1004
-INDEX 6
+.loc Elector.Update.tsol, 1077
+INDEX 5
 DUP
 PUSHINT 16
 DICTUMIN
@@ -5496,44 +5953,44 @@ PUSHCONT {
 	NOT
 }
 PUSHCONT {
-	.loc Elector.Update.tsol, 1005
+	.loc Elector.Update.tsol, 1078
 	BLKPUSH 2, 0
-	.loc Elector.Update.tsol, 950
+	.loc Elector.Update.tsol, 1025
 	LDU 8
 	POP S2
-	.loc Elector.Update.tsol, 951
+	.loc Elector.Update.tsol, 1026
 	DUP
 	EQINT 83
 	OVER
 	EQINT 115
 	OR
 	THROWIFNOT 131
-	.loc Elector.Update.tsol, 952
+	.loc Elector.Update.tsol, 1027
 	SWAP
 	LDU 32
 	LDU 256
 	PLDU 64
-	.loc Elector.Update.tsol, 953
+	.loc Elector.Update.tsol, 1028
 	DROP
 	SWAP
 	PUSHINT 2390828938
 	EQUAL
 	THROWIFNOT 131
-	.loc Elector.Update.tsol, 954
+	.loc Elector.Update.tsol, 1029
 	NIP
-	.loc Elector.Update.tsol, 1006
-	PUSH S15
+	.loc Elector.Update.tsol, 1079
+	PUSH S14
 	EQUAL
 	PUSHCONT {
-		.loc Elector.Update.tsol, 1007
+		.loc Elector.Update.tsol, 1080
 		TRUE
 		POP S5
-		.loc Elector.Update.tsol, 1008
+		.loc Elector.Update.tsol, 1081
 		RETALT
 		.loc Elector.Update.tsol, 0
 	}
 	IFJMP
-	.loc Elector.Update.tsol, 1010
+	.loc Elector.Update.tsol, 1083
 	PUSH S5
 	INC
 	POP S6
@@ -5554,10 +6011,10 @@ PUSHCONT {
 }
 WHILEBRK
 BLKDROP 4
-.loc Elector.Update.tsol, 1012
+.loc Elector.Update.tsol, 1085
 DUP
 THROWIFNOT 133
-.loc Elector.Update.tsol, 1014
+.loc Elector.Update.tsol, 1087
 PUSHINT 16
 CONFIGPARAM
 DUP
@@ -5568,1860 +6025,1012 @@ PUSHCONT {
 }
 IFNOT
 DROP
-.loc Elector.Update.tsol, 1015
+.loc Elector.Update.tsol, 1088
 DUP
 CTOS
 LDU 16
 LDU 16
 PLDU 16
 BLKDROP2 2, 1
-.loc Elector.Update.tsol, 1016
-PUSH2 S4, S8
-INDEX 4
-LESS
+.loc Elector.Update.tsol, 1091
+PUSH2 S10, S11
+GETGLOB 14
+PUSHPOW2 8
+DICTUGET
 PUSHCONT {
-	.loc Elector.Update.tsol, 1017
-	PUSH2 S11, S12
-	GETGLOB 16
-	PUSHPOW2 8
-	DICTUGET
-	PUSHCONT {
-		PLDDICT
-	}
-	PUSHCONT {
-		NEWDICT
-	}
-	IFELSE
-	PUSHINT 8
-	DICTUGET
-IFREFELSEREF
-{
-		LDU 64
-		LDDICT
-		ENDS
-		PAIR
-}
-{
-		PUSHINT 0
-		NEWDICT
-		PAIR
-}
-	.loc Elector.Update.tsol, 1018
-	PUSH2 S14, S0
-	SECOND
-	PUSHPOW2 8
-	DICTUGET
-	NULLSWAPIFNOT
-	PUSHCONT {
-		PLDU 64
-	}
-	IF
-	.loc Elector.Update.tsol, 1020
-	DUP
-	ISNULL
-	PUSHINT 140
-	.loc Elector.Update.tsol, 943
-	SWAP
-	PUSHCONT {
-		.loc Elector.Update.tsol, 944
-		CALLREF {
-			CALL $c7_to_c4$
-		}
-		COMMIT
-		.loc Elector.Update.tsol, 945
-		DUP
-		PUSHINT 2
-		MAX
-		THROWANY
-		.loc Elector.Update.tsol, 0
-	}
-	IFNOT
-	.loc Elector.Update.tsol, 0
-	DROP
-	.loc Elector.Update.tsol, 1022
-	PUSH3 S7, S1, S1
-	FIRST
-	ROT
-	ADD
-	SETINDEX 0
-	POP S2
-	.loc Elector.Update.tsol, 1023
-	PUSH3 S7, S1, S1
-	SECOND
-	PUSH S18
-	SWAP
-	ROLL 3
-	NEWC
-	STU 64
-	ROTREV
-	PUSHPOW2 8
-	DICTUSETB
-	SETINDEX 1
-	POP S2
-	.loc Elector.Update.tsol, 1024
-	PUSH2 S1, S14
-	GETGLOB 16
-	DUP2
-	PUSHPOW2 8
-	DICTUGET
-	PUSHCONT {
-		PLDDICT
-	}
-	PUSHCONT {
-		NEWDICT
-	}
-	IFELSE
-	PUSH S17
-	SWAP
-	ROLL 4
-	CALLREF {
-		UNPAIR
-		SWAP
-		NEWC
-		STU 64
-		STDICT
-	}
-	ROTREV
-	PUSHINT 8
-	DICTUSETB
-	NEWC
-	STDICT
-	ROTREV
-	PUSHPOW2 8
-	DICTUSETB
-	SETGLOB 16
-	.loc Elector.Update.tsol, 1025
-	CALLREF {
-		CALL $c7_to_c4$
-	}
-	COMMIT
-	.loc Elector.Update.tsol, 1027
-	OVER
-	FIRST
-	GETGLOB 13
-	PUSHINT 2
-	PUSHINT 3
-	MULDIV
-	GEQ
-	PUSHCONT {
-		.loc Elector.Update.tsol, 1030
-		PUSH S10
-		INDEX 4
-		PUSH S3
-		GREATER
-		THROWIFNOT 141
-		.loc Elector.Update.tsol, 1031
-		PUSH S14
-		GETGLOB 15
-		NEWC
-		STONE
-		ROTREV
-		PUSHPOW2 8
-		DICTUSETB
-		SETGLOB 15
-		.loc Elector.Update.tsol, 1032
-		PUSH3 S14, S5, S12
-		.loc Elector.Update.tsol, 1080
-		CALLREF {
-			CALL $get_current_vset_cb181528_internal_macro$
-		}
-		.loc Elector.Update.tsol, 1081
-		PUSH S2
-		CTOS
-		LDU 8
-		LDU 32
-		LDU 32
-		LDU 16
-		LDU 16
-		LDU 64
-		PLDDICT
-		TUPLE 7
-		.loc Elector.Update.tsol, 1083
-		PUSHINT 16
-		CONFIGPARAM
-		DUP
-		PUSHCONT {
-			PUSHREF {
-			}
-			SWAP
-		}
-		IFNOT
-		DROP
-		.loc Elector.Update.tsol, 1084
-		DUP
-		CTOS
-		LDU 16
-		LDU 16
-		PLDU 16
-		BLKDROP2 2, 1
-		.loc Elector.Update.tsol, 1085
-		PUSH S2
-		INDEX 3
-		OVER
-		GREATER
-		THROWIFNOT 141
-		.loc Elector.Update.tsol, 1087
-		FALSE
-		DUP
-		.loc Elector.Update.tsol, 1089
-		PUSHCONT {
-			.loc Elector.Update.tsol, 1091
-			PUSH2 S9, S2
-			LESS
-			PUSHCONT {
-				.loc Elector.Update.tsol, 1092
-				PUSH S2
-				DEC
-				POP S3
-				.loc Elector.Update.tsol, 1093
-				PUSH S10
-				GETGLOB 16
-				CALLREF {
-					CALL $update_reports_014af5da_internal_macro$
-				}
-				SETGLOB 16
-			}
-			PUSHCONT {
-				.loc Elector.Update.tsol, 1095
-				PUSH S10
-				GETGLOB 17
-				CALLREF {
-					CALL $update_reports_014af5da_internal_macro$
-				}
-				SETGLOB 17
-			}
-			IFELSE
-			.loc Elector.Update.tsol, 1098
-			NEWDICT
-			.loc Elector.Update.tsol, 1099
-			PUSHINT 0
-			BLKPUSH 2, 0
-			.loc Elector.Update.tsol, 1101
-			POP S10
-			.loc Elector.Update.tsol, 1102
-			PUSHINT 0
-			POP S4
-			.loc Elector.Update.tsol, 1103
-			PUSH2 S8, S8
-			PUSHINT 16
-			DICTUMIN
-			PUSHCONT {
-				DUP
-				ROT
-			}
-			PUSHCONT {
-				NULL
-				BLKPUSH 2, 0
-			}
-			IFELSE
-			PUSHCONT {
-				PUSH S2
-				ISNULL
-				NOT
-			}
-			PUSHCONT {
-				.loc Elector.Update.tsol, 1104
-				BLKPUSH 2, 0
-				.loc Elector.Update.tsol, 950
-				LDU 8
-				POP S2
-				.loc Elector.Update.tsol, 951
-				DUP
-				EQINT 83
-				SWAP
-				EQINT 115
-				OR
-				THROWIFNOT 131
-				.loc Elector.Update.tsol, 952
-				LDU 32
-				LDU 256
-				PLDU 64
-				.loc Elector.Update.tsol, 953
-				ROT
-				PUSHINT 2390828938
-				EQUAL
-				THROWIFNOT 131
-				.loc Elector.Update.tsol, 1106
-				SWAP
-				GETGLOB 15
-				PUSHPOW2 8
-				DICTUGET
-				NULLSWAPIFNOT
-				NIP
-				PUSHCONT {
-					.loc Elector.Update.tsol, 1107
-					PUSH3 S1, S8, S7
-					PUSHINT 16
-					DICTUSET
-					POP S8
-					.loc Elector.Update.tsol, 1108
-					PUSH2 S14, S0
-					ADD
-					POP S15
-					.loc Elector.Update.tsol, 1109
-					PUSH2 S8, S12
-					INDEX 4
-					LESS
-					PUSHCONT {
-						.loc Elector.Update.tsol, 1110
-						PUSH2 S6, S0
-						ADD
-						POP S7
-					}
-					PUSHCONT {
-						.loc Elector.Update.tsol, 1112
-						PUSH2 S5, S0
-						ADD
-						POP S6
-					}
-					IFELSE
-					.loc Elector.Update.tsol, 1114
-					PUSH S8
-					INC
-					POP S9
-					.loc Elector.Update.tsol, 0
-				}
-				IFNOT
-				.loc Elector.Update.tsol, 0
-				DROP
-				PUSH2 S2, S3
-				PUSHINT 16
-				DICTUGETNEXT
-				PUSHCONT {
-					DUP
-					ROT
-				}
-				PUSHCONT {
-					NULL
-					BLKPUSH 2, 0
-				}
-				IFELSE
-				BLKDROP2 3, 3
-			}
-			WHILE
-			BLKDROP 4
-			.loc Elector.Update.tsol, 1117
-			PUSH2 S3, S5
-			GEQ
-			THROWIFNOT 141
-			.loc Elector.Update.tsol, 1118
-			OVER
-			SETGLOB 13
-			.loc Elector.Update.tsol, 1119
-			DUP
-			SETGLOB 14
-			.loc Elector.Update.tsol, 1121
-			PUSHINT 0
-			POP S4
-			.loc Elector.Update.tsol, 1122
-			GETGLOB 16
-			.loc Elector.Update.tsol, 1123
-			GETGLOB 13
-			PUSHINT 2
-			PUSHINT 3
-			MULDIV
-			.loc Elector.Update.tsol, 1125
-			PUSH2 S4, S4
-			PUSHINT 16
-			DICTUMIN
-			PUSHCONT {
-				DUP
-				ROT
-			}
-			PUSHCONT {
-				NULL
-				BLKPUSH 2, 0
-			}
-			IFELSE
-			PUSHCONT {
-				PUSH S2
-				ISNULL
-				NOT
-			}
-			PUSHCONT {
-				PUSHCONT {
-					.loc Elector.Update.tsol, 1126
-					LDU 8
-					LDU 32
-					LDU 256
-					LDU 64
-					LDU 256
-					ROLLREV 5
-					TUPLE 5
-					.loc Elector.Update.tsol, 1127
-					DUP
-					FIRST
-					NEQINT 83
-					THROWIFNOT 131
-					.loc Elector.Update.tsol, 1128
-					PUSH2 S10, S12
-					EQUAL
-					PUSHCONT {
-						.loc Elector.Update.tsol, 1129
-						GETGLOB 14
-						PUSHINT 1
-						PUSHINT 3
-						MULDIV
-						POP S6
-						.loc Elector.Update.tsol, 1131
-						GETGLOB 17
-						POP S7
-						.loc Elector.Update.tsol, 0
-					}
-					IF
-					.loc Elector.Update.tsol, 1133
-					DUP
-					THIRD
-					PUSH S7
-					PUSHPOW2 8
-					DICTUGET
-					PUSHCONT {
-						PLDDICT
-					}
-					PUSHCONT {
-						NEWDICT
-					}
-					IFELSE
-					SINGLE
-					.loc Elector.Update.tsol, 1134
-					DUP
-					ISNULL
-					PUSHCONT {
-						.loc Elector.Update.tsol, 1135
-						BLKPUSH 2, 0
-						ISNULL
-						THROWIF 63
-						UNSINGLE
-						DUP
-						PUSHINT 8
-						DICTUMIN
-						PUSHCONT {
-							NULL
-							BLKPUSH 2, 0
-						}
-IFREFELSE {
-							DUP
-							ROT
-							LDU 64
-							LDDICT
-							ENDS
-							PAIR
-}
-						PUSHCONT {
-							PUSH S2
-							ISNULL
-							NOT
-						}
-						PUSHCONT {
-							.loc Elector.Update.tsol, 1137
-							DUP
-							FIRST
-							PUSH S11
-							GEQ
-							PUSHCONT {
-								.loc Elector.Update.tsol, 1138
-								GETGLOB 15
-								PUSH S6
-								THIRD
-								SWAP
-								NEWC
-								STONE
-								ROTREV
-								PUSHPOW2 8
-								DICTUSETB
-								SETGLOB 15
-								.loc Elector.Update.tsol, 1139
-								TRUE
-								POP S17
-								.loc Elector.Update.tsol, 1140
-								PUSH S5
-								THIRD
-								POP S26
-								.loc Elector.Update.tsol, 1141
-								PUSH S15
-								POP S25
-								.loc Elector.Update.tsol, 1142
-								PUSH S14
-								POP S21
-								.loc Elector.Update.tsol, 1143
-								RETALT
-								.loc Elector.Update.tsol, 0
-							}
-							IFJMP
-							.loc Elector.Update.tsol, 0
-							PUSH2 S2, S3
-							PUSHINT 8
-							DICTUGETNEXT
-							PUSHCONT {
-								NULL
-								BLKPUSH 2, 0
-							}
-IFREFELSE {
-								DUP
-								ROT
-								LDU 64
-								LDDICT
-								ENDS
-								PAIR
-}
-							BLKDROP2 3, 3
-						}
-						WHILEBRK
-						BLKDROP 4
-						.loc Elector.Update.tsol, 0
-					}
-					IFNOT
-					.loc Elector.Update.tsol, 1147
-					DROP2
-					PUSH S10
-					IFRET
-					.loc Elector.Update.tsol, 1150
-					PUSH S9
-					INC
-					POP S10
-					.loc Elector.Update.tsol, 0
-				}
-				CALLX
-				PUSH2 S2, S3
-				PUSHINT 16
-				DICTUGETNEXT
-				PUSHCONT {
-					DUP
-					ROT
-				}
-				PUSHCONT {
-					NULL
-					BLKPUSH 2, 0
-				}
-				IFELSE
-				BLKDROP2 3, 3
-			}
-			WHILE
-			BLKDROP 8
-			.loc Elector.Update.tsol, 1152
-			POP S6
-			.loc Elector.Update.tsol, 0
-			OVER
-			NOT
-		}
-		UNTIL
-		.loc Elector.Update.tsol, 1155
-		PUSHINT 0
-		BLKPUSH 5, 0
-		NEWDICT
-		TUPLE 7
-		.loc Elector.Update.tsol, 1156
-		PUSHINT 18
-		SETINDEX 0
-		.loc Elector.Update.tsol, 1157
-		NOW
-		ADDCONST 60
-		SETINDEX 1
-		.loc Elector.Update.tsol, 1158
-		PUSH S5
-		THIRD
-		SETINDEX 2
-		.loc Elector.Update.tsol, 1159
-		ROLL 7
-		SETINDEX 5
-		.loc Elector.Update.tsol, 1160
-		OVER
-		SETINDEX 3
-		.loc Elector.Update.tsol, 1161
-		SWAP
-		ROLL 5
-		INDEX 4
-		MIN
-		SETINDEX 4
-		.loc Elector.Update.tsol, 1162
-		ROLL 4
-		SETINDEX 6
-		.loc Elector.Update.tsol, 1165
-		NEWC
-		SWAP
-		UNTUPLE 7
-		REVERSE 8, 0
-		STU 8
-		STU 32
-		STU 32
-		STU 16
-		STU 16
-		STU 64
-		STDICT
-		.loc Elector.Update.tsol, 1166
-		ENDC
-		.loc Elector.Update.tsol, 1168
-		PUSH S5
-		GETGLOB 10
-		PUSHINT 32
-		DICTIGET
-IFREFELSEREF
-{
-			LDDICT
-			LDU 32
-			LDU 32
-			LDVARUINT16
-			LDVARUINT16
-			LDDICT
-			LDI 1
-			LDI 1
-			LDI 1
-			LDU 256
-			LDU 32
-			ROLLREV 10
-			TUPLE 10
-			SWAP
-			ENDS
-			PAIR
-}
-{
-			NEWDICT
-			PUSHINT 0
-			BLKPUSH 3, 0
-			NEWDICT
-			PUSHINT 0
-			BLKPUSH 4, 0
-			TUPLE 10
-			PAIR
-}
-		SECOND
-		INDEX 9
-		.loc Elector.Update.tsol, 1169
-		PUSH2 S0, S6
-		GETGLOB 10
-		PUSHINT 32
-		DICTIGET
-IFREFELSEREF
-{
-			LDDICT
-			LDU 32
-			LDU 32
-			LDVARUINT16
-			LDVARUINT16
-			LDDICT
-			LDI 1
-			LDI 1
-			LDI 1
-			LDU 256
-			LDU 32
-			ROLLREV 10
-			TUPLE 10
-			SWAP
-			ENDS
-			PAIR
-}
-{
-			NEWDICT
-			PUSHINT 0
-			BLKPUSH 3, 0
-			NEWDICT
-			PUSHINT 0
-			BLKPUSH 4, 0
-			TUPLE 10
-			PAIR
-}
-		FIRST
-		PUSHINT 32
-		DICTUGET
-		NULLSWAPIFNOT
-		IFREF {
-			LDU 32
-			LDU 32
-			LDU 256
-			LDDICT
-			LDVARUINT16
-			LDVARUINT16
-			LDDICT
-			ENDS
-			TUPLE 7
-		}
-		.loc Elector.Update.tsol, 1170
-		DUP
-		ISNULL
-		THROWIF 136
-		.loc Elector.Update.tsol, 1171
-		DUP
-		ISNULL
-		THROWIF 63
-		.loc Elector.Update.tsol, 1173
-		PUSH S2
-		HASHCU
-		.loc Elector.Update.tsol, 1174
-		PUSH2 S0, S8
-		GETGLOB 10
-		DUP2
-		PUSHINT 32
-		DICTIGET
-IFREFELSEREF
-{
-			LDDICT
-			LDU 32
-			LDU 32
-			LDVARUINT16
-			LDVARUINT16
-			LDDICT
-			LDI 1
-			LDI 1
-			LDI 1
-			LDU 256
-			LDU 32
-			ROLLREV 10
-			TUPLE 10
-			SWAP
-			ENDS
-			PAIR
-}
-{
-			NEWDICT
-			PUSHINT 0
-			BLKPUSH 3, 0
-			NEWDICT
-			PUSHINT 0
-			BLKPUSH 4, 0
-			TUPLE 10
-			PAIR
-}
-		DUP
-		SECOND
-		ROLL 4
-		SETINDEX 8
-		SETINDEX 1
-		CALLREF {
-			UNPAIR
-			SWAP
-			NEWC
-			STDICT
-			SWAP
-			UNTUPLE 10
-			REVERSE 11, 0
-			STU 32
-			STU 32
-			SWAP
-			STVARUINT16
-			SWAP
-			STVARUINT16
-			STDICT
-			STI 1
-			STI 1
-			STI 1
-			STU 256
-			STU 32
-		}
-		ROTREV
-		PUSHINT 32
-		DICTISETB
-		SETGLOB 10
-		.loc Elector.Update.tsol, 1175
-		SETINDEX 2
-		.loc Elector.Update.tsol, 1176
-		PUSH2 S9, S0
-		INDEX 3
-		PUSHPOW2 8
-		DICTUGET
-		NULLSWAPIFNOT
-		IFREF {
-			LDU 256
-			LDU 64
-			LDVARUINT16
-			LDI 1
-			ENDS
-			TUPLE 4
-		}
-		.loc Elector.Update.tsol, 1177
-		DUP
-		ISNULL
-		PUSHCONT {
-			.loc Elector.Update.tsol, 1178
-			BLKPUSH 2, 0
-			ISNULL
-			THROWIF 63
-			.loc Elector.Update.tsol, 1179
-			TRUE
-			SETINDEX 3
-			.loc Elector.Update.tsol, 1180
-			PUSH3 S0, S2, S2
-			INDEX 3
-			PUXC S14, S-1
-			ROLL 3
-			CALLREF {
-				UNTUPLE 4
-				REVERSE 4, 0
-				NEWC
-				STU 256
-				STU 64
-				SWAP
-				STVARUINT16
-				STI 1
-			}
-			ROTREV
-			PUSHPOW2 8
-			DICTUSETB
-			SETINDEX 3
-			POP S3
-			.loc Elector.Update.tsol, 1181
-			DUP
-			THIRD
-			PUSH2 S3, S3
-			INDEX 5
-			ROT
-			ADD
-			SETINDEX 5
-			POP S3
-			.loc Elector.Update.tsol, 1182
-			THIRD
-			PUSH2 S2, S2
-			INDEX 4
-			ROT
-			SUB
-			SETINDEX 4
-			POP S2
-			.loc Elector.Update.tsol, 0
-		}
-		IFNOT
-		.loc Elector.Update.tsol, 1186
-		DROP
-		GETGLOB 10
-		ROLL 8
-		TUCK
-		OVER
-		PUSHINT 32
-		DICTIGET
-IFREFELSEREF
-{
-			LDDICT
-			LDU 32
-			LDU 32
-			LDVARUINT16
-			LDVARUINT16
-			LDDICT
-			LDI 1
-			LDI 1
-			LDI 1
-			LDU 256
-			LDU 32
-			ROLLREV 10
-			TUPLE 10
-			SWAP
-			ENDS
-			PAIR
-}
-{
-			NEWDICT
-			PUSHINT 0
-			BLKPUSH 3, 0
-			NEWDICT
-			PUSHINT 0
-			BLKPUSH 4, 0
-			TUPLE 10
-			PAIR
-}
-		DUP
-		FIRST
-		PUXC S5, S-1
-		ROLL 5
-		CALLREF {
-			UNTUPLE 7
-			REVERSE 7, 0
-			NEWC
-			STU 32
-			STU 32
-			STU 256
-			STDICT
-			SWAP
-			STVARUINT16
-			SWAP
-			STVARUINT16
-			STDICT
-		}
-		ROTREV
-		PUSHINT 32
-		DICTUSETB
-		SETINDEX 0
-		CALLREF {
-			UNPAIR
-			SWAP
-			NEWC
-			STDICT
-			SWAP
-			UNTUPLE 10
-			REVERSE 11, 0
-			STU 32
-			STU 32
-			SWAP
-			STVARUINT16
-			SWAP
-			STVARUINT16
-			STDICT
-			STI 1
-			STI 1
-			STI 1
-			STU 256
-			STU 32
-		}
-		ROTREV
-		PUSHINT 32
-		DICTISETB
-		SETGLOB 10
-		.loc Elector.Update.tsol, 1188
-		PUSHINT 0
-		CONFIGPARAM
-		DUP
-		PUSHCONT {
-			PUSHREF {
-			}
-			SWAP
-		}
-		IFNOT
-		DROP
-		.loc Elector.Update.tsol, 1189
-		CTOS
-		PLDU 256
-		PUSHINT -1
-		NEWC
-		STSLICECONST x9_
-		STI 8
-		STU 256
-		ENDC
-		CTOS
-		.loc Elector.Update.tsol, 1190
-		NEWC
-		STSLICECONST x62_
-		STSLICE
-		PUSHINT 12720910251328179000044872783962527403085238168343381
-		STUR 175
-		STU 64
-		STREF
-		ENDC
-		PUSHINT 1
-		SENDRAWMSG
-		.loc Elector.Update.tsol, 0
-		BLKDROP 6
-	}
-	IF
+	PLDDICT
 }
 PUSHCONT {
-	.loc Elector.Update.tsol, 1035
-	PUSH2 S11, S12
-	GETGLOB 17
-	PUSHPOW2 8
-	DICTUGET
-	PUSHCONT {
-		PLDDICT
-	}
-	PUSHCONT {
-		NEWDICT
-	}
-	IFELSE
-	PUSHINT 8
-	DICTUGET
-IFREFELSEREF
-{
-		LDU 64
-		LDDICT
-		ENDS
-		PAIR
-}
-{
-		PUSHINT 0
-		NEWDICT
-		PAIR
-}
-	.loc Elector.Update.tsol, 1036
-	PUSH2 S14, S0
-	SECOND
-	PUSHPOW2 8
-	DICTUGET
-	NULLSWAPIFNOT
-	PUSHCONT {
-		PLDU 64
-	}
-	IF
-	.loc Elector.Update.tsol, 1038
-	DUP
-	ISNULL
-	PUSHINT 140
-	.loc Elector.Update.tsol, 943
-	SWAP
-	PUSHCONT {
-		.loc Elector.Update.tsol, 944
-		CALLREF {
-			CALL $c7_to_c4$
-		}
-		COMMIT
-		.loc Elector.Update.tsol, 945
-		DUP
-		PUSHINT 2
-		MAX
-		THROWANY
-		.loc Elector.Update.tsol, 0
-	}
-	IFNOT
-	.loc Elector.Update.tsol, 0
-	DROP
-	.loc Elector.Update.tsol, 1040
-	PUSH3 S7, S1, S1
-	FIRST
-	ROT
-	ADD
-	SETINDEX 0
-	POP S2
-	.loc Elector.Update.tsol, 1041
-	PUSH3 S7, S1, S1
-	SECOND
-	PUSH S18
-	SWAP
-	ROLL 3
-	NEWC
-	STU 64
-	ROTREV
-	PUSHPOW2 8
-	DICTUSETB
-	SETINDEX 1
-	POP S2
-	.loc Elector.Update.tsol, 1042
-	PUSH2 S1, S14
-	GETGLOB 17
-	DUP2
-	PUSHPOW2 8
-	DICTUGET
-	PUSHCONT {
-		PLDDICT
-	}
-	PUSHCONT {
-		NEWDICT
-	}
-	IFELSE
-	PUSH S17
-	SWAP
-	ROLL 4
-	CALLREF {
-		UNPAIR
-		SWAP
-		NEWC
-		STU 64
-		STDICT
-	}
-	ROTREV
-	PUSHINT 8
-	DICTUSETB
-	NEWC
-	STDICT
-	ROTREV
-	PUSHPOW2 8
-	DICTUSETB
-	SETGLOB 17
-	.loc Elector.Update.tsol, 1043
-	CALLREF {
-		CALL $c7_to_c4$
-	}
-	COMMIT
-	.loc Elector.Update.tsol, 1045
-	OVER
-	FIRST
-	GETGLOB 14
-	PUSHINT 1
-	PUSHINT 3
-	MULDIV
-	GEQ
-	PUSHCONT {
-		.loc Elector.Update.tsol, 1048
-		PUSH S10
-		INDEX 3
-		PUSH S3
-		GREATER
-		THROWIFNOT 141
-		.loc Elector.Update.tsol, 1049
-		PUSH S14
-		GETGLOB 15
-		NEWC
-		STONE
-		ROTREV
-		PUSHPOW2 8
-		DICTUSETB
-		SETGLOB 15
-		.loc Elector.Update.tsol, 1050
-		PUSH3 S14, S5, S12
-		.loc Elector.Update.tsol, 1080
-		CALLREF {
-			CALL $get_current_vset_cb181528_internal_macro$
-		}
-		.loc Elector.Update.tsol, 1081
-		PUSH S2
-		CTOS
-		LDU 8
-		LDU 32
-		LDU 32
-		LDU 16
-		LDU 16
-		LDU 64
-		PLDDICT
-		TUPLE 7
-		.loc Elector.Update.tsol, 1083
-		PUSHINT 16
-		CONFIGPARAM
-		DUP
-		PUSHCONT {
-			PUSHREF {
-			}
-			SWAP
-		}
-		IFNOT
-		DROP
-		.loc Elector.Update.tsol, 1084
-		DUP
-		CTOS
-		LDU 16
-		LDU 16
-		PLDU 16
-		BLKDROP2 2, 1
-		.loc Elector.Update.tsol, 1085
-		PUSH S2
-		INDEX 3
-		OVER
-		GREATER
-		THROWIFNOT 141
-		.loc Elector.Update.tsol, 1087
-		FALSE
-		DUP
-		.loc Elector.Update.tsol, 1089
-		PUSHCONT {
-			.loc Elector.Update.tsol, 1091
-			PUSH2 S9, S2
-			LESS
-			PUSHCONT {
-				.loc Elector.Update.tsol, 1092
-				PUSH S2
-				DEC
-				POP S3
-				.loc Elector.Update.tsol, 1093
-				PUSH S10
-				GETGLOB 16
-				CALLREF {
-					CALL $update_reports_014af5da_internal_macro$
-				}
-				SETGLOB 16
-			}
-			PUSHCONT {
-				.loc Elector.Update.tsol, 1095
-				PUSH S10
-				GETGLOB 17
-				CALLREF {
-					CALL $update_reports_014af5da_internal_macro$
-				}
-				SETGLOB 17
-			}
-			IFELSE
-			.loc Elector.Update.tsol, 1098
-			NEWDICT
-			.loc Elector.Update.tsol, 1099
-			PUSHINT 0
-			BLKPUSH 2, 0
-			.loc Elector.Update.tsol, 1101
-			POP S10
-			.loc Elector.Update.tsol, 1102
-			PUSHINT 0
-			POP S4
-			.loc Elector.Update.tsol, 1103
-			PUSH2 S8, S8
-			PUSHINT 16
-			DICTUMIN
-			PUSHCONT {
-				DUP
-				ROT
-			}
-			PUSHCONT {
-				NULL
-				BLKPUSH 2, 0
-			}
-			IFELSE
-			PUSHCONT {
-				PUSH S2
-				ISNULL
-				NOT
-			}
-			PUSHCONT {
-				.loc Elector.Update.tsol, 1104
-				BLKPUSH 2, 0
-				.loc Elector.Update.tsol, 950
-				LDU 8
-				POP S2
-				.loc Elector.Update.tsol, 951
-				DUP
-				EQINT 83
-				SWAP
-				EQINT 115
-				OR
-				THROWIFNOT 131
-				.loc Elector.Update.tsol, 952
-				LDU 32
-				LDU 256
-				PLDU 64
-				.loc Elector.Update.tsol, 953
-				ROT
-				PUSHINT 2390828938
-				EQUAL
-				THROWIFNOT 131
-				.loc Elector.Update.tsol, 1106
-				SWAP
-				GETGLOB 15
-				PUSHPOW2 8
-				DICTUGET
-				NULLSWAPIFNOT
-				NIP
-				PUSHCONT {
-					.loc Elector.Update.tsol, 1107
-					PUSH3 S1, S8, S7
-					PUSHINT 16
-					DICTUSET
-					POP S8
-					.loc Elector.Update.tsol, 1108
-					PUSH2 S14, S0
-					ADD
-					POP S15
-					.loc Elector.Update.tsol, 1109
-					PUSH2 S8, S12
-					INDEX 4
-					LESS
-					PUSHCONT {
-						.loc Elector.Update.tsol, 1110
-						PUSH2 S6, S0
-						ADD
-						POP S7
-					}
-					PUSHCONT {
-						.loc Elector.Update.tsol, 1112
-						PUSH2 S5, S0
-						ADD
-						POP S6
-					}
-					IFELSE
-					.loc Elector.Update.tsol, 1114
-					PUSH S8
-					INC
-					POP S9
-					.loc Elector.Update.tsol, 0
-				}
-				IFNOT
-				.loc Elector.Update.tsol, 0
-				DROP
-				PUSH2 S2, S3
-				PUSHINT 16
-				DICTUGETNEXT
-				PUSHCONT {
-					DUP
-					ROT
-				}
-				PUSHCONT {
-					NULL
-					BLKPUSH 2, 0
-				}
-				IFELSE
-				BLKDROP2 3, 3
-			}
-			WHILE
-			BLKDROP 4
-			.loc Elector.Update.tsol, 1117
-			PUSH2 S3, S5
-			GEQ
-			THROWIFNOT 141
-			.loc Elector.Update.tsol, 1118
-			OVER
-			SETGLOB 13
-			.loc Elector.Update.tsol, 1119
-			DUP
-			SETGLOB 14
-			.loc Elector.Update.tsol, 1121
-			PUSHINT 0
-			POP S4
-			.loc Elector.Update.tsol, 1122
-			GETGLOB 16
-			.loc Elector.Update.tsol, 1123
-			GETGLOB 13
-			PUSHINT 2
-			PUSHINT 3
-			MULDIV
-			.loc Elector.Update.tsol, 1125
-			PUSH2 S4, S4
-			PUSHINT 16
-			DICTUMIN
-			PUSHCONT {
-				DUP
-				ROT
-			}
-			PUSHCONT {
-				NULL
-				BLKPUSH 2, 0
-			}
-			IFELSE
-			PUSHCONT {
-				PUSH S2
-				ISNULL
-				NOT
-			}
-			PUSHCONT {
-				PUSHCONT {
-					.loc Elector.Update.tsol, 1126
-					LDU 8
-					LDU 32
-					LDU 256
-					LDU 64
-					LDU 256
-					ROLLREV 5
-					TUPLE 5
-					.loc Elector.Update.tsol, 1127
-					DUP
-					FIRST
-					NEQINT 83
-					THROWIFNOT 131
-					.loc Elector.Update.tsol, 1128
-					PUSH2 S10, S12
-					EQUAL
-					PUSHCONT {
-						.loc Elector.Update.tsol, 1129
-						GETGLOB 14
-						PUSHINT 1
-						PUSHINT 3
-						MULDIV
-						POP S6
-						.loc Elector.Update.tsol, 1131
-						GETGLOB 17
-						POP S7
-						.loc Elector.Update.tsol, 0
-					}
-					IF
-					.loc Elector.Update.tsol, 1133
-					DUP
-					THIRD
-					PUSH S7
-					PUSHPOW2 8
-					DICTUGET
-					PUSHCONT {
-						PLDDICT
-					}
-					PUSHCONT {
-						NEWDICT
-					}
-					IFELSE
-					SINGLE
-					.loc Elector.Update.tsol, 1134
-					DUP
-					ISNULL
-					PUSHCONT {
-						.loc Elector.Update.tsol, 1135
-						BLKPUSH 2, 0
-						ISNULL
-						THROWIF 63
-						UNSINGLE
-						DUP
-						PUSHINT 8
-						DICTUMIN
-						PUSHCONT {
-							NULL
-							BLKPUSH 2, 0
-						}
-IFREFELSE {
-							DUP
-							ROT
-							LDU 64
-							LDDICT
-							ENDS
-							PAIR
-}
-						PUSHCONT {
-							PUSH S2
-							ISNULL
-							NOT
-						}
-						PUSHCONT {
-							.loc Elector.Update.tsol, 1137
-							DUP
-							FIRST
-							PUSH S11
-							GEQ
-							PUSHCONT {
-								.loc Elector.Update.tsol, 1138
-								GETGLOB 15
-								PUSH S6
-								THIRD
-								SWAP
-								NEWC
-								STONE
-								ROTREV
-								PUSHPOW2 8
-								DICTUSETB
-								SETGLOB 15
-								.loc Elector.Update.tsol, 1139
-								TRUE
-								POP S17
-								.loc Elector.Update.tsol, 1140
-								PUSH S5
-								THIRD
-								POP S26
-								.loc Elector.Update.tsol, 1141
-								PUSH S15
-								POP S25
-								.loc Elector.Update.tsol, 1142
-								PUSH S14
-								POP S21
-								.loc Elector.Update.tsol, 1143
-								RETALT
-								.loc Elector.Update.tsol, 0
-							}
-							IFJMP
-							.loc Elector.Update.tsol, 0
-							PUSH2 S2, S3
-							PUSHINT 8
-							DICTUGETNEXT
-							PUSHCONT {
-								NULL
-								BLKPUSH 2, 0
-							}
-IFREFELSE {
-								DUP
-								ROT
-								LDU 64
-								LDDICT
-								ENDS
-								PAIR
-}
-							BLKDROP2 3, 3
-						}
-						WHILEBRK
-						BLKDROP 4
-						.loc Elector.Update.tsol, 0
-					}
-					IFNOT
-					.loc Elector.Update.tsol, 1147
-					DROP2
-					PUSH S10
-					IFRET
-					.loc Elector.Update.tsol, 1150
-					PUSH S9
-					INC
-					POP S10
-					.loc Elector.Update.tsol, 0
-				}
-				CALLX
-				PUSH2 S2, S3
-				PUSHINT 16
-				DICTUGETNEXT
-				PUSHCONT {
-					DUP
-					ROT
-				}
-				PUSHCONT {
-					NULL
-					BLKPUSH 2, 0
-				}
-				IFELSE
-				BLKDROP2 3, 3
-			}
-			WHILE
-			BLKDROP 8
-			.loc Elector.Update.tsol, 1152
-			POP S6
-			.loc Elector.Update.tsol, 0
-			OVER
-			NOT
-		}
-		UNTIL
-		.loc Elector.Update.tsol, 1155
-		PUSHINT 0
-		BLKPUSH 5, 0
-		NEWDICT
-		TUPLE 7
-		.loc Elector.Update.tsol, 1156
-		PUSHINT 18
-		SETINDEX 0
-		.loc Elector.Update.tsol, 1157
-		NOW
-		ADDCONST 60
-		SETINDEX 1
-		.loc Elector.Update.tsol, 1158
-		PUSH S5
-		THIRD
-		SETINDEX 2
-		.loc Elector.Update.tsol, 1159
-		ROLL 7
-		SETINDEX 5
-		.loc Elector.Update.tsol, 1160
-		OVER
-		SETINDEX 3
-		.loc Elector.Update.tsol, 1161
-		SWAP
-		ROLL 5
-		INDEX 4
-		MIN
-		SETINDEX 4
-		.loc Elector.Update.tsol, 1162
-		ROLL 4
-		SETINDEX 6
-		.loc Elector.Update.tsol, 1165
-		NEWC
-		SWAP
-		UNTUPLE 7
-		REVERSE 8, 0
-		STU 8
-		STU 32
-		STU 32
-		STU 16
-		STU 16
-		STU 64
-		STDICT
-		.loc Elector.Update.tsol, 1166
-		ENDC
-		.loc Elector.Update.tsol, 1168
-		PUSH S5
-		GETGLOB 10
-		PUSHINT 32
-		DICTIGET
-IFREFELSEREF
-{
-			LDDICT
-			LDU 32
-			LDU 32
-			LDVARUINT16
-			LDVARUINT16
-			LDDICT
-			LDI 1
-			LDI 1
-			LDI 1
-			LDU 256
-			LDU 32
-			ROLLREV 10
-			TUPLE 10
-			SWAP
-			ENDS
-			PAIR
-}
-{
-			NEWDICT
-			PUSHINT 0
-			BLKPUSH 3, 0
-			NEWDICT
-			PUSHINT 0
-			BLKPUSH 4, 0
-			TUPLE 10
-			PAIR
-}
-		SECOND
-		INDEX 9
-		.loc Elector.Update.tsol, 1169
-		PUSH2 S0, S6
-		GETGLOB 10
-		PUSHINT 32
-		DICTIGET
-IFREFELSEREF
-{
-			LDDICT
-			LDU 32
-			LDU 32
-			LDVARUINT16
-			LDVARUINT16
-			LDDICT
-			LDI 1
-			LDI 1
-			LDI 1
-			LDU 256
-			LDU 32
-			ROLLREV 10
-			TUPLE 10
-			SWAP
-			ENDS
-			PAIR
-}
-{
-			NEWDICT
-			PUSHINT 0
-			BLKPUSH 3, 0
-			NEWDICT
-			PUSHINT 0
-			BLKPUSH 4, 0
-			TUPLE 10
-			PAIR
-}
-		FIRST
-		PUSHINT 32
-		DICTUGET
-		NULLSWAPIFNOT
-		IFREF {
-			LDU 32
-			LDU 32
-			LDU 256
-			LDDICT
-			LDVARUINT16
-			LDVARUINT16
-			LDDICT
-			ENDS
-			TUPLE 7
-		}
-		.loc Elector.Update.tsol, 1170
-		DUP
-		ISNULL
-		THROWIF 136
-		.loc Elector.Update.tsol, 1171
-		DUP
-		ISNULL
-		THROWIF 63
-		.loc Elector.Update.tsol, 1173
-		PUSH S2
-		HASHCU
-		.loc Elector.Update.tsol, 1174
-		PUSH2 S0, S8
-		GETGLOB 10
-		DUP2
-		PUSHINT 32
-		DICTIGET
-IFREFELSEREF
-{
-			LDDICT
-			LDU 32
-			LDU 32
-			LDVARUINT16
-			LDVARUINT16
-			LDDICT
-			LDI 1
-			LDI 1
-			LDI 1
-			LDU 256
-			LDU 32
-			ROLLREV 10
-			TUPLE 10
-			SWAP
-			ENDS
-			PAIR
-}
-{
-			NEWDICT
-			PUSHINT 0
-			BLKPUSH 3, 0
-			NEWDICT
-			PUSHINT 0
-			BLKPUSH 4, 0
-			TUPLE 10
-			PAIR
-}
-		DUP
-		SECOND
-		ROLL 4
-		SETINDEX 8
-		SETINDEX 1
-		CALLREF {
-			UNPAIR
-			SWAP
-			NEWC
-			STDICT
-			SWAP
-			UNTUPLE 10
-			REVERSE 11, 0
-			STU 32
-			STU 32
-			SWAP
-			STVARUINT16
-			SWAP
-			STVARUINT16
-			STDICT
-			STI 1
-			STI 1
-			STI 1
-			STU 256
-			STU 32
-		}
-		ROTREV
-		PUSHINT 32
-		DICTISETB
-		SETGLOB 10
-		.loc Elector.Update.tsol, 1175
-		SETINDEX 2
-		.loc Elector.Update.tsol, 1176
-		PUSH2 S9, S0
-		INDEX 3
-		PUSHPOW2 8
-		DICTUGET
-		NULLSWAPIFNOT
-		IFREF {
-			LDU 256
-			LDU 64
-			LDVARUINT16
-			LDI 1
-			ENDS
-			TUPLE 4
-		}
-		.loc Elector.Update.tsol, 1177
-		DUP
-		ISNULL
-		PUSHCONT {
-			.loc Elector.Update.tsol, 1178
-			BLKPUSH 2, 0
-			ISNULL
-			THROWIF 63
-			.loc Elector.Update.tsol, 1179
-			TRUE
-			SETINDEX 3
-			.loc Elector.Update.tsol, 1180
-			PUSH3 S0, S2, S2
-			INDEX 3
-			PUXC S14, S-1
-			ROLL 3
-			CALLREF {
-				UNTUPLE 4
-				REVERSE 4, 0
-				NEWC
-				STU 256
-				STU 64
-				SWAP
-				STVARUINT16
-				STI 1
-			}
-			ROTREV
-			PUSHPOW2 8
-			DICTUSETB
-			SETINDEX 3
-			POP S3
-			.loc Elector.Update.tsol, 1181
-			DUP
-			THIRD
-			PUSH2 S3, S3
-			INDEX 5
-			ROT
-			ADD
-			SETINDEX 5
-			POP S3
-			.loc Elector.Update.tsol, 1182
-			THIRD
-			PUSH2 S2, S2
-			INDEX 4
-			ROT
-			SUB
-			SETINDEX 4
-			POP S2
-			.loc Elector.Update.tsol, 0
-		}
-		IFNOT
-		.loc Elector.Update.tsol, 1186
-		DROP
-		GETGLOB 10
-		ROLL 8
-		TUCK
-		OVER
-		PUSHINT 32
-		DICTIGET
-IFREFELSEREF
-{
-			LDDICT
-			LDU 32
-			LDU 32
-			LDVARUINT16
-			LDVARUINT16
-			LDDICT
-			LDI 1
-			LDI 1
-			LDI 1
-			LDU 256
-			LDU 32
-			ROLLREV 10
-			TUPLE 10
-			SWAP
-			ENDS
-			PAIR
-}
-{
-			NEWDICT
-			PUSHINT 0
-			BLKPUSH 3, 0
-			NEWDICT
-			PUSHINT 0
-			BLKPUSH 4, 0
-			TUPLE 10
-			PAIR
-}
-		DUP
-		FIRST
-		PUXC S5, S-1
-		ROLL 5
-		CALLREF {
-			UNTUPLE 7
-			REVERSE 7, 0
-			NEWC
-			STU 32
-			STU 32
-			STU 256
-			STDICT
-			SWAP
-			STVARUINT16
-			SWAP
-			STVARUINT16
-			STDICT
-		}
-		ROTREV
-		PUSHINT 32
-		DICTUSETB
-		SETINDEX 0
-		CALLREF {
-			UNPAIR
-			SWAP
-			NEWC
-			STDICT
-			SWAP
-			UNTUPLE 10
-			REVERSE 11, 0
-			STU 32
-			STU 32
-			SWAP
-			STVARUINT16
-			SWAP
-			STVARUINT16
-			STDICT
-			STI 1
-			STI 1
-			STI 1
-			STU 256
-			STU 32
-		}
-		ROTREV
-		PUSHINT 32
-		DICTISETB
-		SETGLOB 10
-		.loc Elector.Update.tsol, 1188
-		PUSHINT 0
-		CONFIGPARAM
-		DUP
-		PUSHCONT {
-			PUSHREF {
-			}
-			SWAP
-		}
-		IFNOT
-		DROP
-		.loc Elector.Update.tsol, 1189
-		CTOS
-		PLDU 256
-		PUSHINT -1
-		NEWC
-		STSLICECONST x9_
-		STI 8
-		STU 256
-		ENDC
-		CTOS
-		.loc Elector.Update.tsol, 1190
-		NEWC
-		STSLICECONST x62_
-		STSLICE
-		PUSHINT 12720910251328179000044872783962527403085238168343381
-		STUR 175
-		STU 64
-		STREF
-		ENDC
-		PUSHINT 1
-		SENDRAWMSG
-		.loc Elector.Update.tsol, 0
-		BLKDROP 6
-	}
-	IF
+	NEWDICT
 }
 IFELSE
+PUSHINT 8
+DICTUGET
+IFREFELSEREF
+{
+	LDU 64
+	LDDICT
+	ENDS
+	PAIR
+}
+{
+	PUSHINT 0
+	NEWDICT
+	PAIR
+}
+.loc Elector.Update.tsol, 1092
+PUSH2 S13, S0
+SECOND
+PUSHPOW2 8
+DICTUGET
+NULLSWAPIFNOT
+PUSHCONT {
+	PLDU 64
+}
+IF
+.loc Elector.Update.tsol, 1094
+DUP
+ISNULL
+PUSHINT 140
+.loc Elector.Update.tsol, 1018
+SWAP
+PUSHCONT {
+	.loc Elector.Update.tsol, 1019
+	CALLREF {
+		CALL $c7_to_c4$
+	}
+	COMMIT
+	.loc Elector.Update.tsol, 1020
+	DUP
+	PUSHINT 2
+	MAX
+	THROWANY
+	.loc Elector.Update.tsol, 0
+}
+IFNOT
 .loc Elector.Update.tsol, 0
-PUSHINT 18
+DROP
+.loc Elector.Update.tsol, 1096
+PUSH3 S7, S1, S1
+FIRST
+ROT
+ADD
+SETINDEX 0
+POP S2
+.loc Elector.Update.tsol, 1097
+PUSH3 S7, S1, S1
+SECOND
+PUSH S17
+SWAP
+ROLL 3
+NEWC
+STU 64
+ROTREV
+PUSHPOW2 8
+DICTUSETB
+SETINDEX 1
+POP S2
+.loc Elector.Update.tsol, 1098
+PUSH2 S1, S13
+GETGLOB 14
+DUP2
+PUSHPOW2 8
+DICTUGET
+PUSHCONT {
+	PLDDICT
+}
+PUSHCONT {
+	NEWDICT
+}
+IFELSE
+PUSH S16
+SWAP
+ROLL 4
+CALLREF {
+	UNPAIR
+	SWAP
+	NEWC
+	STU 64
+	STDICT
+}
+ROTREV
+PUSHINT 8
+DICTUSETB
+NEWC
+STDICT
+ROTREV
+PUSHPOW2 8
+DICTUSETB
+SETGLOB 14
+.loc Elector.Update.tsol, 1099
+CALLREF {
+	CALL $c7_to_c4$
+}
+COMMIT
+.loc Elector.Update.tsol, 1103
+OVER
+FIRST
+PUSH S12
+GETGLOB 10
+PUSHINT 32
+DICTIGET
+IFREFELSEREF
+{
+	LDDICT
+	LDU 32
+	LDU 32
+	LDVARUINT16
+	LDVARUINT16
+	LDDICT
+	LDI 1
+	LDI 1
+	LDI 1
+	ROLLREV 8
+	TUPLE 8
+	SWAP
+	LDU 32
+	LDU 256
+	LDU 64
+	ENDS
+	TUPLE 5
+}
+{
+	NEWDICT
+	PUSHINT 0
+	BLKPUSH 3, 0
+	NEWDICT
+	PUSHINT 0
+	BLKPUSH 2, 0
+	TUPLE 8
+	PUSHINT 0
+	BLKPUSH 2, 0
+	TUPLE 5
+}
+INDEX 4
+PUSHINT 2
+PUSHINT 3
+MULDIV
+GEQ
+PUSHCONT {
+	.loc Elector.Update.tsol, 1107
+	PUSH S13
+	GETGLOB 13
+	NEWC
+	STONE
+	ROTREV
+	PUSHPOW2 8
+	DICTUSETB
+	SETGLOB 13
+	.loc Elector.Update.tsol, 1108
+	PUSH3 S13, S5, S11
+	.loc Elector.Update.tsol, 1137
+	DUP
+	CALLREF {
+		CALL $get_current_vset_f0cade92_internal_macro$
+	}
+	.loc Elector.Update.tsol, 1138
+	DUP
+	INDEX 5
+	.loc Elector.Update.tsol, 1139
+	PUSHINT 0
+	.loc Elector.Update.tsol, 1141
+	PUSHINT 16
+	CONFIGPARAM
+	DUP
+	PUSHCONT {
+		PUSHREF {
+		}
+		SWAP
+	}
+	IFNOT
+	DROP
+	.loc Elector.Update.tsol, 1142
+	DUP
+	CTOS
+	LDU 16
+	LDU 16
+	PLDU 16
+	BLKDROP2 2, 1
+	.loc Elector.Update.tsol, 1143
+	PUSH S4
+	INDEX 3
+	OVER
+	GREATER
+	THROWIFNOT 141
+	.loc Elector.Update.tsol, 1145
+	FALSE
+	DUP
+	.loc Elector.Update.tsol, 1147
+	PUSHCONT {
+		.loc Elector.Update.tsol, 1149
+		PUSH2 S8, S2
+		LESS
+		PUSHCONT {
+			.loc Elector.Update.tsol, 1150
+			PUSH S2
+			DEC
+			POP S3
+			.loc Elector.Update.tsol, 1151
+		}
+		IF
+		PUSH S9
+		GETGLOB 14
+		CALLREF {
+			CALL $update_reports_014af5da_internal_macro$
+		}
+		SETGLOB 14
+		.loc Elector.Update.tsol, 1156
+		NEWDICT
+		.loc Elector.Update.tsol, 1158
+		PUSHINT 0
+		POP S6
+		.loc Elector.Update.tsol, 1160
+		PUSH2 S6, S6
+		PUSHINT 16
+		DICTUMIN
+		PUSHCONT {
+			DUP
+			ROT
+		}
+		PUSHCONT {
+			NULL
+			BLKPUSH 2, 0
+		}
+		IFELSE
+		PUSHCONT {
+			PUSH S2
+			ISNULL
+			NOT
+		}
+		PUSHCONT {
+			.loc Elector.Update.tsol, 1161
+			BLKPUSH 2, 0
+			.loc Elector.Update.tsol, 1025
+			LDU 8
+			POP S2
+			.loc Elector.Update.tsol, 1026
+			DUP
+			EQINT 83
+			SWAP
+			EQINT 115
+			OR
+			THROWIFNOT 131
+			.loc Elector.Update.tsol, 1027
+			LDU 32
+			LDU 256
+			PLDU 64
+			.loc Elector.Update.tsol, 1028
+			ROT
+			PUSHINT 2390828938
+			EQUAL
+			THROWIFNOT 131
+			.loc Elector.Update.tsol, 1163
+			SWAP
+			GETGLOB 13
+			PUSHPOW2 8
+			DICTUGET
+			NULLSWAPIFNOT
+			NIP
+			PUSHCONT {
+				.loc Elector.Update.tsol, 1164
+				PUSH3 S1, S6, S5
+				PUSHINT 16
+				DICTUSET
+				POP S6
+				.loc Elector.Update.tsol, 1165
+				PUSH2 S10, S0
+				ADD
+				POP S11
+				.loc Elector.Update.tsol, 1166
+				PUSH S6
+				INC
+				POP S7
+				.loc Elector.Update.tsol, 0
+			}
+			IFNOT
+			.loc Elector.Update.tsol, 0
+			DROP
+			PUSH2 S2, S3
+			PUSHINT 16
+			DICTUGETNEXT
+			PUSHCONT {
+				DUP
+				ROT
+			}
+			PUSHCONT {
+				NULL
+				BLKPUSH 2, 0
+			}
+			IFELSE
+			BLKDROP2 3, 3
+		}
+		WHILE
+		BLKDROP 4
+		.loc Elector.Update.tsol, 1169
+		PUSH2 S1, S3
+		GEQ
+		THROWIFNOT 141
+		.loc Elector.Update.tsol, 1172
+		PUSH2 S5, S8
+		GETGLOB 10
+		DUP2
+		PUSHINT 32
+		DICTIGET
+IFREFELSEREF
+{
+			LDDICT
+			LDU 32
+			LDU 32
+			LDVARUINT16
+			LDVARUINT16
+			LDDICT
+			LDI 1
+			LDI 1
+			LDI 1
+			ROLLREV 8
+			TUPLE 8
+			SWAP
+			LDU 32
+			LDU 256
+			LDU 64
+			ENDS
+			TUPLE 5
+}
+{
+			NEWDICT
+			PUSHINT 0
+			BLKPUSH 3, 0
+			NEWDICT
+			PUSHINT 0
+			BLKPUSH 2, 0
+			TUPLE 8
+			PUSHINT 0
+			BLKPUSH 2, 0
+			TUPLE 5
+}
+		ROLL 3
+		SETINDEX 4
+		CALLREF {
+			UNTUPLE 5
+			REVERSE 5, 0
+			NEWC
+			STDICT
+			SWAP
+			UNTUPLE 8
+			REVERSE 9, 0
+			STU 32
+			STU 32
+			SWAP
+			STVARUINT16
+			SWAP
+			STVARUINT16
+			STDICT
+			STI 1
+			STI 1
+			STI 1
+			STU 32
+			STU 256
+			STU 64
+		}
+		ROTREV
+		PUSHINT 32
+		DICTISETB
+		SETGLOB 10
+		.loc Elector.Update.tsol, 1173
+		PUSHINT 0
+		POP S2
+		.loc Elector.Update.tsol, 1176
+		GETGLOB 14
+		.loc Elector.Update.tsol, 1177
+		PUSH S9
+		GETGLOB 10
+		PUSHINT 32
+		DICTIGET
+IFREFELSEREF
+{
+			LDDICT
+			LDU 32
+			LDU 32
+			LDVARUINT16
+			LDVARUINT16
+			LDDICT
+			LDI 1
+			LDI 1
+			LDI 1
+			ROLLREV 8
+			TUPLE 8
+			SWAP
+			LDU 32
+			LDU 256
+			LDU 64
+			ENDS
+			TUPLE 5
+}
+{
+			NEWDICT
+			PUSHINT 0
+			BLKPUSH 3, 0
+			NEWDICT
+			PUSHINT 0
+			BLKPUSH 2, 0
+			TUPLE 8
+			PUSHINT 0
+			BLKPUSH 2, 0
+			TUPLE 5
+}
+		INDEX 4
+		PUSHINT 2
+		PUSHINT 3
+		MULDIV
+		.loc Elector.Update.tsol, 1178
+		PUSH2 S2, S2
+		PUSHINT 16
+		DICTUMIN
+		PUSHCONT {
+			DUP
+			ROT
+		}
+		PUSHCONT {
+			NULL
+			BLKPUSH 2, 0
+		}
+		IFELSE
+		PUSHCONT {
+			PUSH S2
+			ISNULL
+			NOT
+		}
+		PUSHCONT {
+			PUSHCONT {
+				.loc Elector.Update.tsol, 1179
+				LDU 8
+				LDU 32
+				LDU 256
+				LDU 64
+				LDU 256
+				ROLLREV 5
+				TUPLE 5
+				.loc Elector.Update.tsol, 1180
+				DUP
+				FIRST
+				NEQINT 83
+				THROWIFNOT 131
+				.loc Elector.Update.tsol, 1181
+				DUP
+				THIRD
+				PUSH S7
+				PUSHPOW2 8
+				DICTUGET
+				PUSHCONT {
+					PLDDICT
+				}
+				PUSHCONT {
+					NEWDICT
+				}
+				IFELSE
+				SINGLE
+				.loc Elector.Update.tsol, 1182
+				DUP
+				ISNULL
+				PUSHCONT {
+					.loc Elector.Update.tsol, 1183
+					BLKPUSH 2, 0
+					ISNULL
+					THROWIF 63
+					UNSINGLE
+					DUP
+					PUSHINT 8
+					DICTUMIN
+					PUSHCONT {
+						NULL
+						BLKPUSH 2, 0
+					}
+IFREFELSE {
+						DUP
+						ROT
+						LDU 64
+						LDDICT
+						ENDS
+						PAIR
+}
+					PUSHCONT {
+						PUSH S2
+						ISNULL
+						NOT
+					}
+					PUSHCONT {
+						.loc Elector.Update.tsol, 1185
+						DUP
+						FIRST
+						PUSH S11
+						GEQ
+						PUSHCONT {
+							.loc Elector.Update.tsol, 1186
+							GETGLOB 13
+							PUSH S6
+							THIRD
+							SWAP
+							NEWC
+							STONE
+							ROTREV
+							PUSHPOW2 8
+							DICTUSETB
+							SETGLOB 13
+							.loc Elector.Update.tsol, 1187
+							TRUE
+							POP S15
+							.loc Elector.Update.tsol, 1188
+							PUSH S5
+							THIRD
+							POP S23
+							.loc Elector.Update.tsol, 1189
+							PUSH S13
+							POP S22
+							.loc Elector.Update.tsol, 1190
+							PUSH S12
+							POP S19
+							.loc Elector.Update.tsol, 1191
+							RETALT
+							.loc Elector.Update.tsol, 0
+						}
+						IFJMP
+						.loc Elector.Update.tsol, 0
+						PUSH2 S2, S3
+						PUSHINT 8
+						DICTUGETNEXT
+						PUSHCONT {
+							NULL
+							BLKPUSH 2, 0
+						}
+IFREFELSE {
+							DUP
+							ROT
+							LDU 64
+							LDDICT
+							ENDS
+							PAIR
+}
+						BLKDROP2 3, 3
+					}
+					WHILEBRK
+					BLKDROP 4
+					.loc Elector.Update.tsol, 0
+				}
+				IFNOT
+				.loc Elector.Update.tsol, 1195
+				DROP2
+				PUSH S8
+				IFRET
+				.loc Elector.Update.tsol, 1198
+				PUSH S7
+				INC
+				POP S8
+				.loc Elector.Update.tsol, 0
+			}
+			CALLX
+			PUSH2 S2, S3
+			PUSHINT 16
+			DICTUGETNEXT
+			PUSHCONT {
+				DUP
+				ROT
+			}
+			PUSHCONT {
+				NULL
+				BLKPUSH 2, 0
+			}
+			IFELSE
+			BLKDROP2 3, 3
+		}
+		WHILE
+		BLKDROP 6
+		.loc Elector.Update.tsol, 1200
+		POP S6
+		.loc Elector.Update.tsol, 0
+		OVER
+		NOT
+	}
+	UNTIL
+	.loc Elector.Update.tsol, 1203
+	PUSHINT 0
+	BLKPUSH 4, 0
+	NEWDICT
+	TUPLE 6
+	.loc Elector.Update.tsol, 1204
+	PUSHINT 18
+	SETINDEX 0
+	.loc Elector.Update.tsol, 1205
+	NOW
+	ADDCONST 60
+	SETINDEX 1
+	.loc Elector.Update.tsol, 1206
+	ROLL 7
+	THIRD
+	SETINDEX 2
+	.loc Elector.Update.tsol, 1207
+	ROLL 5
+	SETINDEX 4
+	.loc Elector.Update.tsol, 1208
+	SWAP
+	SETINDEX 3
+	.loc Elector.Update.tsol, 1209
+	ROLL 4
+	SETINDEX 5
+	.loc Elector.Update.tsol, 1212
+	NEWC
+	SWAP
+	UNTUPLE 6
+	REVERSE 7, 0
+	STU 8
+	STU 32
+	STU 32
+	STU 16
+	STU 64
+	STDICT
+	.loc Elector.Update.tsol, 1213
+	ENDC
+	.loc Elector.Update.tsol, 1215
+	PUSH S4
+	GETGLOB 10
+	PUSHINT 32
+	DICTIGET
+IFREFELSEREF
+{
+		LDDICT
+		LDU 32
+		LDU 32
+		LDVARUINT16
+		LDVARUINT16
+		LDDICT
+		LDI 1
+		LDI 1
+		LDI 1
+		ROLLREV 8
+		TUPLE 8
+		SWAP
+		LDU 32
+		LDU 256
+		LDU 64
+		ENDS
+		TUPLE 5
+}
+{
+		NEWDICT
+		PUSHINT 0
+		BLKPUSH 3, 0
+		NEWDICT
+		PUSHINT 0
+		BLKPUSH 2, 0
+		TUPLE 8
+		PUSHINT 0
+		BLKPUSH 2, 0
+		TUPLE 5
+}
+	THIRD
+	.loc Elector.Update.tsol, 1216
+	PUSH2 S0, S5
+	GETGLOB 10
+	PUSHINT 32
+	DICTIGET
+IFREFELSEREF
+{
+		LDDICT
+		LDU 32
+		LDU 32
+		LDVARUINT16
+		LDVARUINT16
+		LDDICT
+		LDI 1
+		LDI 1
+		LDI 1
+		ROLLREV 8
+		TUPLE 8
+		SWAP
+		LDU 32
+		LDU 256
+		LDU 64
+		ENDS
+		TUPLE 5
+}
+{
+		NEWDICT
+		PUSHINT 0
+		BLKPUSH 3, 0
+		NEWDICT
+		PUSHINT 0
+		BLKPUSH 2, 0
+		TUPLE 8
+		PUSHINT 0
+		BLKPUSH 2, 0
+		TUPLE 5
+}
+	FIRST
+	PUSHINT 32
+	DICTUGET
+	NULLSWAPIFNOT
+	IFREF {
+		LDU 32
+		LDU 32
+		LDU 256
+		LDDICT
+		LDVARUINT16
+		LDVARUINT16
+		LDDICT
+		ENDS
+		TUPLE 7
+	}
+	.loc Elector.Update.tsol, 1217
+	DUP
+	ISNULL
+	THROWIF 136
+	.loc Elector.Update.tsol, 1218
+	DUP
+	ISNULL
+	THROWIF 63
+	.loc Elector.Update.tsol, 1220
+	PUSH S2
+	HASHCU
+	.loc Elector.Update.tsol, 1221
+	PUSH2 S0, S7
+	GETGLOB 10
+	DUP2
+	PUSHINT 32
+	DICTIGET
+IFREFELSEREF
+{
+		LDDICT
+		LDU 32
+		LDU 32
+		LDVARUINT16
+		LDVARUINT16
+		LDDICT
+		LDI 1
+		LDI 1
+		LDI 1
+		ROLLREV 8
+		TUPLE 8
+		SWAP
+		LDU 32
+		LDU 256
+		LDU 64
+		ENDS
+		TUPLE 5
+}
+{
+		NEWDICT
+		PUSHINT 0
+		BLKPUSH 3, 0
+		NEWDICT
+		PUSHINT 0
+		BLKPUSH 2, 0
+		TUPLE 8
+		PUSHINT 0
+		BLKPUSH 2, 0
+		TUPLE 5
+}
+	ROLL 3
+	SETINDEX 3
+	CALLREF {
+		UNTUPLE 5
+		REVERSE 5, 0
+		NEWC
+		STDICT
+		SWAP
+		UNTUPLE 8
+		REVERSE 9, 0
+		STU 32
+		STU 32
+		SWAP
+		STVARUINT16
+		SWAP
+		STVARUINT16
+		STDICT
+		STI 1
+		STI 1
+		STI 1
+		STU 32
+		STU 256
+		STU 64
+	}
+	ROTREV
+	PUSHINT 32
+	DICTISETB
+	SETGLOB 10
+	.loc Elector.Update.tsol, 1222
+	SETINDEX 2
+	.loc Elector.Update.tsol, 1223
+	PUSH2 S8, S0
+	INDEX 3
+	PUSHPOW2 8
+	DICTUGET
+	NULLSWAPIFNOT
+	IFREF {
+		LDU 256
+		LDU 64
+		LDVARUINT16
+		LDI 1
+		ENDS
+		TUPLE 4
+	}
+	.loc Elector.Update.tsol, 1224
+	DUP
+	ISNULL
+	PUSHCONT {
+		.loc Elector.Update.tsol, 1225
+		BLKPUSH 2, 0
+		ISNULL
+		THROWIF 63
+		.loc Elector.Update.tsol, 1226
+		TRUE
+		SETINDEX 3
+		.loc Elector.Update.tsol, 1227
+		PUSH3 S0, S2, S2
+		INDEX 3
+		PUXC S13, S-1
+		ROLL 3
+		CALLREF {
+			UNTUPLE 4
+			REVERSE 4, 0
+			NEWC
+			STU 256
+			STU 64
+			SWAP
+			STVARUINT16
+			STI 1
+		}
+		ROTREV
+		PUSHPOW2 8
+		DICTUSETB
+		SETINDEX 3
+		POP S3
+		.loc Elector.Update.tsol, 1228
+		DUP
+		THIRD
+		PUSH2 S3, S3
+		INDEX 5
+		ROT
+		ADD
+		SETINDEX 5
+		POP S3
+		.loc Elector.Update.tsol, 1229
+		THIRD
+		PUSH2 S2, S2
+		INDEX 4
+		ROT
+		SUB
+		SETINDEX 4
+		POP S2
+		.loc Elector.Update.tsol, 0
+	}
+	IFNOT
+	.loc Elector.Update.tsol, 1233
+	DROP
+	PUSH S6
+	GETGLOB 10
+	DUP2
+	PUSHINT 32
+	DICTIGET
+IFREFELSEREF
+{
+		LDDICT
+		LDU 32
+		LDU 32
+		LDVARUINT16
+		LDVARUINT16
+		LDDICT
+		LDI 1
+		LDI 1
+		LDI 1
+		ROLLREV 8
+		TUPLE 8
+		SWAP
+		LDU 32
+		LDU 256
+		LDU 64
+		ENDS
+		TUPLE 5
+}
+{
+		NEWDICT
+		PUSHINT 0
+		BLKPUSH 3, 0
+		NEWDICT
+		PUSHINT 0
+		BLKPUSH 2, 0
+		TUPLE 8
+		PUSHINT 0
+		BLKPUSH 2, 0
+		TUPLE 5
+}
+	DUP
+	FIRST
+	PUXC S5, S-1
+	ROLL 5
+	CALLREF {
+		UNTUPLE 7
+		REVERSE 7, 0
+		NEWC
+		STU 32
+		STU 32
+		STU 256
+		STDICT
+		SWAP
+		STVARUINT16
+		SWAP
+		STVARUINT16
+		STDICT
+	}
+	ROTREV
+	PUSHINT 32
+	DICTUSETB
+	SETINDEX 0
+	CALLREF {
+		UNTUPLE 5
+		REVERSE 5, 0
+		NEWC
+		STDICT
+		SWAP
+		UNTUPLE 8
+		REVERSE 9, 0
+		STU 32
+		STU 32
+		SWAP
+		STVARUINT16
+		SWAP
+		STVARUINT16
+		STDICT
+		STI 1
+		STI 1
+		STI 1
+		STU 32
+		STU 256
+		STU 64
+	}
+	ROTREV
+	PUSHINT 32
+	DICTISETB
+	SETGLOB 10
+	.loc Elector.Update.tsol, 1234
+	PUSHINT 0
+	CONFIGPARAM
+	DUP
+	PUSHCONT {
+		PUSHREF {
+		}
+		SWAP
+	}
+	IFNOT
+	DROP
+	.loc Elector.Update.tsol, 1235
+	CTOS
+	PLDU 256
+	PUSHINT -1
+	NEWC
+	STSLICECONST x9_
+	STI 8
+	STU 256
+	ENDC
+	CTOS
+	.loc Elector.Update.tsol, 1236
+	ROLL 6
+	ROLLREV 3
+	NEWC
+	STSLICECONST x62_
+	STSLICE
+	PUSHINT 12720910251328179000044872783962527403085238168343381
+	STUR 175
+	STU 64
+	STREF
+	STI 32
+	ENDC
+	PUSHINT 1
+	SENDRAWMSG
+	.loc Elector.Update.tsol, 0
+	BLKDROP 5
+}
+IF
+.loc Elector.Update.tsol, 0
+PUSHINT 17
 DROPX
 
 .globl	update_reports_014af5da_internal
@@ -7429,9 +7038,9 @@ DROPX
 CALL $update_reports_014af5da_internal_macro$
 
 .macro update_reports_014af5da_internal_macro
-.loc Elector.Update.tsol, 1057
+.loc Elector.Update.tsol, 1114
 PUSH3 S0, S0, S0
-.loc Elector.Update.tsol, 1058
+.loc Elector.Update.tsol, 1115
 PUSHPOW2 8
 DICTUMIN
 PUSHCONT {
@@ -7450,7 +7059,7 @@ PUSHCONT {
 	NOT
 }
 PUSHCONT {
-	.loc Elector.Update.tsol, 1059
+	.loc Elector.Update.tsol, 1116
 	BLKPUSH 2, 0
 	PUSHINT 8
 	DICTUMIN
@@ -7472,7 +7081,7 @@ IFREFELSE {
 		NOT
 	}
 	PUSHCONT {
-		.loc Elector.Update.tsol, 1060
+		.loc Elector.Update.tsol, 1117
 		DUP
 		SECOND
 		DUP
@@ -7494,18 +7103,18 @@ IFREFELSE {
 			NOT
 		}
 		PUSHCONT {
-			.loc Elector.Update.tsol, 1061
+			.loc Elector.Update.tsol, 1118
 			PUSH2 S14, S1
 			EQUAL
 			PUSHCONT {
-				.loc Elector.Update.tsol, 1062
+				.loc Elector.Update.tsol, 1119
 				PUSH3 S0, S4, S4
 				FIRST
 				ROT
 				SUB
 				SETINDEX 0
 				POP S5
-				.loc Elector.Update.tsol, 1063
+				.loc Elector.Update.tsol, 1120
 				PUSH2 S4, S4
 				SECOND
 				PUSH S16
@@ -7515,9 +7124,9 @@ IFREFELSE {
 				DROP
 				SETINDEX 1
 				POP S5
-				.loc Elector.Update.tsol, 1064
+				.loc Elector.Update.tsol, 1121
 				PUSH3 S5, S8, S4
-				.loc Elector.Update.tsol, 1065
+				.loc Elector.Update.tsol, 1122
 				CALLREF {
 					UNPAIR
 					SWAP
@@ -7528,7 +7137,7 @@ IFREFELSE {
 				ROTREV
 				PUSHINT 8
 				DICTUSETB
-				.loc Elector.Update.tsol, 1066
+				.loc Elector.Update.tsol, 1123
 				PUSH2 S10, S13
 				ROT
 				NEWC
@@ -7537,7 +7146,7 @@ IFREFELSE {
 				PUSHPOW2 8
 				DICTUSETB
 				POP S13
-				.loc Elector.Update.tsol, 1067
+				.loc Elector.Update.tsol, 1124
 				RETALT
 				.loc Elector.Update.tsol, 0
 			}
@@ -7598,7 +7207,7 @@ IFREFELSE {
 }
 WHILE
 BLKDROP 4
-.loc Elector.Update.tsol, 1072
+.loc Elector.Update.tsol, 1129
 BLKDROP2 2, 1
 .loc Elector.Update.tsol, 0
 
@@ -7611,7 +7220,7 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Elector.Update.tsol, 1195
+.loc Elector.Update.tsol, 1243
 ENDS
 .loc Elector.Update.tsol, 0
 CALLREF {
@@ -7631,7 +7240,7 @@ PUSHCONT {
 	PUSHINT 98
 	STZEROES
 	REVERSE 2, 1
-	STSLICECONST xda9fe0a0
+	STSLICECONST xe143f180
 	STDICT
 	STU 128
 	ENDC
@@ -7652,9 +7261,9 @@ THROW 0
 CALL $get_6d4ce63c_internal_macro$
 
 .macro get_6d4ce63c_internal_macro
-.loc Elector.Update.tsol, 1201
+.loc Elector.Update.tsol, 1249
 GETGLOB 10
-.loc Elector.Update.tsol, 1202
+.loc Elector.Update.tsol, 1250
 GETGLOB 12
 .loc Elector.Update.tsol, 0
 
@@ -7667,7 +7276,7 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Elector.Update.tsol, 1205
+.loc Elector.Update.tsol, 1253
 ENDS
 .loc Elector.Update.tsol, 0
 CALLREF {
@@ -7705,8 +7314,8 @@ THROW 0
 CALL $get_banned_46830d60_internal_macro$
 
 .macro get_banned_46830d60_internal_macro
-.loc Elector.Update.tsol, 1206
-GETGLOB 15
+.loc Elector.Update.tsol, 1254
+GETGLOB 13
 .loc Elector.Update.tsol, 0
 
 .macro get_buckets
@@ -7718,7 +7327,7 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Elector.Update.tsol, 1209
+.loc Elector.Update.tsol, 1257
 LDU 256
 ENDS
 .loc Elector.Update.tsol, 0
@@ -7757,69 +7366,8 @@ THROW 0
 CALL $get_buckets_2f917ad4_internal_macro$
 
 .macro get_buckets_2f917ad4_internal_macro
-.loc Elector.Update.tsol, 1210
-GETGLOB 16
-PUSHPOW2 8
-DICTUGET
-PUSHCONT {
-	PLDDICT
-}
-PUSHCONT {
-	NEWDICT
-}
-IFELSE
-.loc Elector.Update.tsol, 0
-
-.macro get_buckets_workchain
-DROP
-GETGLOB 6
-THROWIFNOT 76
-GETGLOB 2
-ISNULL
-IFREF {
-	CALL $c4_to_c7$
-}
-.loc Elector.Update.tsol, 1213
-LDU 256
-ENDS
-.loc Elector.Update.tsol, 0
-CALLREF {
-	CALL $get_buckets_workchain_88da170e_internal_macro$
-}
-OVER
-PUSHCONT {
-	PUSH S3
-	CTOS
-	LDU 2
-	LDMSGADDR
-	DROP
-	NIP
-	NEWC
-	STSLICECONST xc
-	STSLICE
-	PUSHINT 3736707536
-	STUR 130
-	STDICT
-	ENDC
-	PUSHINT 0
-	SENDRAWMSG
-}
-PUSHCONT {
-	DROP
-}
-IFELSE
-IFREF {
-	CALL $upd_only_time_in_c4$
-}
-THROW 0
-
-.globl	get_buckets_workchain_88da170e_internal
-.type	get_buckets_workchain_88da170e_internal, @function
-CALL $get_buckets_workchain_88da170e_internal_macro$
-
-.macro get_buckets_workchain_88da170e_internal_macro
-.loc Elector.Update.tsol, 1214
-GETGLOB 17
+.loc Elector.Update.tsol, 1258
+GETGLOB 14
 PUSHPOW2 8
 DICTUGET
 PUSHCONT {
@@ -7840,7 +7388,7 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Elector.Update.tsol, 1218
+.loc Elector.Update.tsol, 1266
 LDI 32
 ENDS
 .loc Elector.Update.tsol, 0
@@ -7879,7 +7427,7 @@ THROW 0
 CALL $active_election_id_d1003ae7_internal_macro$
 
 .macro active_election_id_d1003ae7_internal_macro
-.loc Elector.Update.tsol, 1219
+.loc Elector.Update.tsol, 1267
 DUP
 GETGLOB 10
 PUSHINT 32
@@ -7895,13 +7443,14 @@ IFREFELSEREF
 	LDI 1
 	LDI 1
 	LDI 1
-	LDU 256
-	LDU 32
-	ROLLREV 10
-	TUPLE 10
+	ROLLREV 8
+	TUPLE 8
 	SWAP
+	LDU 32
+	LDU 256
+	LDU 64
 	ENDS
-	PAIR
+	TUPLE 5
 }
 {
 	NEWDICT
@@ -7909,9 +7458,11 @@ IFREFELSEREF
 	BLKPUSH 3, 0
 	NEWDICT
 	PUSHINT 0
-	BLKPUSH 4, 0
-	TUPLE 10
-	PAIR
+	BLKPUSH 2, 0
+	TUPLE 8
+	PUSHINT 0
+	BLKPUSH 2, 0
+	TUPLE 5
 }
 SECOND
 INDEX 7
@@ -7932,13 +7483,14 @@ IFREFELSEREF
 		LDI 1
 		LDI 1
 		LDI 1
-		LDU 256
-		LDU 32
-		ROLLREV 10
-		TUPLE 10
+		ROLLREV 8
+		TUPLE 8
 		SWAP
+		LDU 32
+		LDU 256
+		LDU 64
 		ENDS
-		PAIR
+		TUPLE 5
 }
 {
 		NEWDICT
@@ -7946,9 +7498,11 @@ IFREFELSEREF
 		BLKPUSH 3, 0
 		NEWDICT
 		PUSHINT 0
-		BLKPUSH 4, 0
-		TUPLE 10
-		PAIR
+		BLKPUSH 2, 0
+		TUPLE 8
+		PUSHINT 0
+		BLKPUSH 2, 0
+		TUPLE 5
 }
 	INDEX2 1, 0
 }
@@ -7960,7 +7514,7 @@ NIP
 DROP
 GETGLOB 6
 THROWIFNOT 76
-.loc Elector.Update.tsol, 1223
+.loc Elector.Update.tsol, 1271
 ENDS
 .loc Elector.Update.tsol, 0
 CALLREF {
@@ -8001,7 +7555,7 @@ THROW 0
 CALL $get_version_90179465_internal_macro$
 
 .macro get_version_90179465_internal_macro
-.loc Elector.Update.tsol, 1224
+.loc Elector.Update.tsol, 1272
 PUSHINT 0
 PUSHINT 1
 .loc Elector.Update.tsol, 0
@@ -8015,7 +7569,7 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Elector.Update.tsol, 1228
+.loc Elector.Update.tsol, 1276
 LDU 256
 ENDS
 .loc Elector.Update.tsol, 0
@@ -8054,7 +7608,7 @@ THROW 0
 CALL $compute_returned_stake_a73d54da_internal_macro$
 
 .macro compute_returned_stake_a73d54da_internal_macro
-.loc Elector.Update.tsol, 1229
+.loc Elector.Update.tsol, 1277
 GETGLOB 11
 PUSHPOW2 8
 DICTUGET
@@ -8064,7 +7618,7 @@ PUSHCONT {
 	DROP
 }
 IF
-.loc Elector.Update.tsol, 1230
+.loc Elector.Update.tsol, 1278
 DUP
 ISNULL
 ZEROSWAPIF
@@ -8085,20 +7639,20 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Elector.Update.tsol, 1234
+.loc Elector.Update.tsol, 1282
 PLDU 32
-.loc Elector.Update.tsol, 1235
+.loc Elector.Update.tsol, 1283
 PUSHINT 4184830756
 EQUAL
 PUSHCONT {
-	.loc Elector.Update.tsol, 1236
+	.loc Elector.Update.tsol, 1284
 	GETGLOB 9
 	REWRITESTDADDR
-	.loc Elector.Update.tsol, 1237
+	.loc Elector.Update.tsol, 1285
 	SWAP
 	EQINT -1
 	THROWIFNOT 223
-	.loc Elector.Update.tsol, 1238
+	.loc Elector.Update.tsol, 1286
 	DEPTH
 	ADDCONST -2
 	PICK
@@ -8127,6 +7681,10 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
+.loc Elector.Update.tsol, 1293
+CALLREF {
+	CALL $process_simple_transfer_c2745595_internal_macro$
+}
 .loc Elector.Update.tsol, 0
 CALLREF {
 	CALL $c7_to_c4$
@@ -8135,18 +7693,18 @@ CALLREF {
 .macro fallback_macro
 GETGLOB 6
 THROWIFNOT 76
-.loc Elector.Update.tsol, 1249
+.loc Elector.Update.tsol, 1297
 DEPTH
 ADDCONST -4
 PICK
-.loc Elector.Update.tsol, 1250
+.loc Elector.Update.tsol, 1298
 DUP
 LDU 32
 POP S2
-.loc Elector.Update.tsol, 1251
+.loc Elector.Update.tsol, 1299
 SWAP
 PLDU 64
-.loc Elector.Update.tsol, 1252
+.loc Elector.Update.tsol, 1300
 GETGLOB 9
 PUSHPOW2DEC 32
 SWAP2
@@ -8164,7 +7722,7 @@ IFREF {
 
 .internal-alias onCodeUpgrade_e5436b53_internal, 2
 .internal onCodeUpgrade_e5436b53_internal
-.loc Elector.Update.tsol, 1256
+.loc Elector.Update.tsol, 1304
 PUSH S2
 PUSHINT 3460525924
 PUSH S2
@@ -8174,7 +7732,7 @@ PUSHINT 64
 CALLREF {
 	CALL $send_message_back_30631536_internal_macro$
 }
-.loc Elector.Update.tsol, 1257
+.loc Elector.Update.tsol, 1305
 GETGLOB 2
 ISNULL
 IFNOTREF {
@@ -8188,10 +7746,10 @@ THROW 0
 CALL $_upgrade_code_5dac022d_internal_macro$
 
 .macro _upgrade_code_5dac022d_internal_macro
-.loc Elector.Update.tsol, 1260
+.loc Elector.Update.tsol, 1308
 PUSHINT 0
 DUP
-.loc Elector.Update.tsol, 1261
+.loc Elector.Update.tsol, 1309
 CONFIGPARAM
 DUP
 PUSHCONT {
@@ -8200,42 +7758,42 @@ PUSHCONT {
 	SWAP
 }
 IFNOT
-.loc Elector.Update.tsol, 1262
+.loc Elector.Update.tsol, 1310
 PUSHCONT {
-	.loc Elector.Update.tsol, 1264
+	.loc Elector.Update.tsol, 1312
 	BLKDROP 5
 	FALSE
 	.loc Elector.Update.tsol, 0
 }
 IFNOTJMP
-.loc Elector.Update.tsol, 1266
+.loc Elector.Update.tsol, 1314
 GETGLOB 9
-.loc Elector.Update.tsol, 1267
+.loc Elector.Update.tsol, 1315
 SWAP
 CTOS
 PLDU 256
-.loc Elector.Update.tsol, 1268
+.loc Elector.Update.tsol, 1316
 GETGLOB 9
 REWRITESTDADDR
-.loc Elector.Update.tsol, 1269
+.loc Elector.Update.tsol, 1317
 SWAP
 NEQINT -1
 XCHG S2
 NEQ
 OR
 PUSHCONT {
-	.loc Elector.Update.tsol, 1271
+	.loc Elector.Update.tsol, 1319
 	BLKDROP 5
 	FALSE
 	.loc Elector.Update.tsol, 0
 }
 IFJMP
-.loc Elector.Update.tsol, 1273
+.loc Elector.Update.tsol, 1321
 ACCEPT
-.loc Elector.Update.tsol, 1274
+.loc Elector.Update.tsol, 1322
 PUSH S3
 SETCODE
-.loc Elector.Update.tsol, 1275
+.loc Elector.Update.tsol, 1323
 ROLL 3
 CTOS
 DUP
@@ -8250,7 +7808,7 @@ PLDREF
 CTOS
 BLESS
 POP C3
-.loc Elector.Update.tsol, 1276
+.loc Elector.Update.tsol, 1324
 ROT
 CTOS
 ROLL 3
@@ -8268,7 +7826,7 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-.loc Elector.Update.tsol, 1279
+.loc Elector.Update.tsol, 1327
 LDU 64
 LDREF
 LDREF
@@ -8287,18 +7845,18 @@ THROW 0
 CALL $upgrade_code_c518c75b_internal_macro$
 
 .macro upgrade_code_c518c75b_internal_macro
-.loc Elector.Update.tsol, 1279
+.loc Elector.Update.tsol, 1327
 DEPTH
 ADDCONST -5
 PICK
 THROWIF 72
-.loc Elector.Update.tsol, 1281
+.loc Elector.Update.tsol, 1329
 PUSH S2
 ROTREV
 CALLREF {
 	CALL $_upgrade_code_5dac022d_internal_macro$
 }
-.loc Elector.Update.tsol, 1282
+.loc Elector.Update.tsol, 1330
 GETGLOB 9
 SWAP
 PUSHINT 3460525924
@@ -8323,18 +7881,9 @@ NIP
 LDDICT
 LDDICT
 LDVARUINT16
-LDU 64
-LDU 64
-LDDICT
-LDREF
-ENDS
-CTOS
 LDDICT
 LDDICT
 ENDS
-SETGLOB 17
-SETGLOB 16
-SETGLOB 15
 SETGLOB 14
 SETGLOB 13
 SETGLOB 12
@@ -8356,12 +7905,8 @@ PUSHCONT {
 	NEWDICT
 	DUP
 	PUSHINT 0
-	BLKPUSH 2, 0
 	NEWDICT
-	BLKPUSH 2, 0
-	SETGLOB 17
-	SETGLOB 16
-	SETGLOB 15
+	DUP
 	SETGLOB 14
 	SETGLOB 13
 	SETGLOB 12
@@ -8380,9 +7925,6 @@ IFREFELSE {
 }
 
 .macro c7_to_c4
-GETGLOB 17
-GETGLOB 16
-GETGLOB 15
 GETGLOB 14
 GETGLOB 13
 GETGLOB 12
@@ -8398,14 +7940,8 @@ STDICT
 STDICT
 SWAP
 STVARUINT16
-STU 64
-STU 64
-STDICT
-ROTREV
-NEWC
 STDICT
 STDICT
-STBREFR
 ENDC
 POPROOT
 
@@ -8446,24 +7982,30 @@ IFJMPREF {
 }
 OVER
 SEMPTY ; isEmpty
-IFJMPREF {
-	GETGLOB 6
-	THROWIFNOT 76
-}
-OVER
-LDUQ 32  ; [funcId] body' ok
+DUP
 PUSHCONT {
 	DROP
-	CALLREF {
-		CALL $fallback_macro$
+	OVER
+	LDUQ 32  ; [funcId] body' ok
+	PUSHCONT {
+		DROP
+		CALLREF {
+			CALL $fallback_macro$
+		}
+		THROW 0
 	}
-	THROW 0
+	IFNOT
+	OVER
+	EQINT 0 ; funcId body' isZero
+	DUP
+	PUSHCONT {
+		BLKDROP2 2, 1
+	}
+	IF
 }
 IFNOT
-OVER
-IFNOTJMPREF {
-	GETGLOB 6
-	THROWIFNOT 76
+IFJMPREF {
+	CALL $receive_macro$
 }
 SWAP
 CALLREF {
@@ -8520,13 +8062,359 @@ CALLREF {
 	CALL $fallback_macro$
 }
 
+.globl	Common_no_obj_getValidatorSets_5e5a3cb6
+.type	Common_no_obj_getValidatorSets_5e5a3cb6, @function
+CALL $Common_no_obj_getValidatorSets_5e5a3cb6_macro$
+
+.macro Common_no_obj_getValidatorSets_5e5a3cb6_macro
+.loc Common.tsol, 51
+PUSHINT 100
+CONFIGPARAM
+DUP
+PUSHCONT {
+	PUSHREF {
+	}
+	SWAP
+}
+IFNOT
+.loc Common.tsol, 52
+DROP
+CTOS
+PUSHCONT {
+	LDDICTQ
+	PUSHCONT {
+		NULL
+		SWAP
+	}
+	IFNOTJMP
+	SWAP
+	SINGLE
+	SWAP
+}
+CALLX
+DROP
+.loc Common.tsol, 0
+
+.globl	Common_with_obj_validatorSetsToCell_693c71e3
+.type	Common_with_obj_validatorSetsToCell_693c71e3, @function
+CALL $Common_with_obj_validatorSetsToCell_693c71e3_macro$
+
+.macro Common_with_obj_validatorSetsToCell_693c71e3_macro
+.loc Common.tsol, 58
+DUP
+NEWC
+STDICT
+.loc Common.tsol, 59
+ENDC
+.loc Common.tsol, 0
+
+.globl	Common_no_obj_validatorSetsToCell_693c71e3
+.type	Common_no_obj_validatorSetsToCell_693c71e3, @function
+CALL $Common_no_obj_validatorSetsToCell_693c71e3_macro$
+
+.macro Common_no_obj_validatorSetsToCell_693c71e3_macro
+.loc Common.tsol, 58
+NEWC
+STDICT
+.loc Common.tsol, 59
+ENDC
+.loc Common.tsol, 0
+
+.globl	Common_with_obj_validatorSetFromCell_c8aed10a
+.type	Common_with_obj_validatorSetFromCell_c8aed10a, @function
+CALL $Common_with_obj_validatorSetFromCell_c8aed10a_macro$
+
+.macro Common_with_obj_validatorSetFromCell_c8aed10a_macro
+.loc Common.tsol, 63
+DUP
+CTOS
+LDU 8
+LDU 32
+LDU 32
+LDU 16
+LDU 64
+PLDDICT
+TUPLE 6
+.loc Common.tsol, 0
+
+.globl	Common_no_obj_validatorSetFromCell_c8aed10a
+.type	Common_no_obj_validatorSetFromCell_c8aed10a, @function
+CALL $Common_no_obj_validatorSetFromCell_c8aed10a_macro$
+
+.macro Common_no_obj_validatorSetFromCell_c8aed10a_macro
+.loc Common.tsol, 63
+CTOS
+LDU 8
+LDU 32
+LDU 32
+LDU 16
+LDU 64
+PLDDICT
+TUPLE 6
+.loc Common.tsol, 0
+
+.globl	Common_with_obj_validatorSetToCell_51ab8d5a
+.type	Common_with_obj_validatorSetToCell_51ab8d5a, @function
+CALL $Common_with_obj_validatorSetToCell_51ab8d5a_macro$
+
+.macro Common_with_obj_validatorSetToCell_51ab8d5a_macro
+.loc Common.tsol, 68
+NEWC
+OVER
+UNTUPLE 6
+REVERSE 7, 0
+STU 8
+STU 32
+STU 32
+STU 16
+STU 64
+STDICT
+.loc Common.tsol, 69
+ENDC
+.loc Common.tsol, 0
+
+.globl	Common_no_obj_validatorSetToCell_51ab8d5a
+.type	Common_no_obj_validatorSetToCell_51ab8d5a, @function
+CALL $Common_no_obj_validatorSetToCell_51ab8d5a_macro$
+
+.macro Common_no_obj_validatorSetToCell_51ab8d5a_macro
+.loc Common.tsol, 68
+NEWC
+SWAP
+UNTUPLE 6
+REVERSE 7, 0
+STU 8
+STU 32
+STU 32
+STU 16
+STU 64
+STDICT
+.loc Common.tsol, 69
+ENDC
+.loc Common.tsol, 0
+
+.globl	Common_with_obj_getValidatorSetsByChain_d29f0692
+.type	Common_with_obj_getValidatorSetsByChain_d29f0692, @function
+CALL $Common_with_obj_getValidatorSetsByChain_d29f0692_macro$
+
+.macro Common_with_obj_getValidatorSetsByChain_d29f0692_macro
+.loc Common.tsol, 73
+CALLREF {
+	CALL $Common_no_obj_getValidatorSets_5e5a3cb6_macro$
+}
+.loc Common.tsol, 74
+DUP
+ISNULL
+NOT
+DUP
+PUSHCONT {
+	DROP
+	DUP2
+	UNSINGLE
+	PUSHINT 32
+	DICTIGET
+	NULLSWAPIFNOT
+	NIP
+}
+IF
+PUSHCONT {
+	.loc Common.tsol, 75
+	PUXC S1, S-1
+	UNSINGLE
+	PUSHINT 32
+	DICTIGET
+IFREFELSEREF
+{
+		LDI 1
+		SWAP
+		NULLSWAPIFNOT
+		PUSHCONT {
+			LDU 8
+			LDU 32
+			LDU 32
+			LDU 16
+			LDU 64
+			LDDICT
+			ROLLREV 6
+			TUPLE 6
+		}
+		IF
+		SWAP
+		LDI 1
+		SWAP
+		NULLSWAPIFNOT
+		PUSHCONT {
+			LDU 8
+			LDU 32
+			LDU 32
+			LDU 16
+			LDU 64
+			LDDICT
+			ROLLREV 6
+			TUPLE 6
+		}
+		IF
+		SWAP
+		LDI 1
+		SWAP
+		NULLSWAPIFNOT
+		PUSHCONT {
+			LDU 8
+			LDU 32
+			LDU 32
+			LDU 16
+			LDU 64
+			LDDICT
+			ROLLREV 6
+			TUPLE 6
+		}
+		IF
+		SWAP
+		LDI 1
+		SWAP
+		NULLSWAPIFNOT
+		PUSHCONT {
+			LDU 8
+			LDU 32
+			LDU 32
+			LDU 16
+			LDU 64
+			LDDICT
+			ROLLREV 6
+			TUPLE 6
+		}
+		IF
+		SWAP
+		ENDS
+		TUPLE 4
+}
+{
+		NULL
+		BLKPUSH 3, 0
+		TUPLE 4
+}
+	.loc Common.tsol, 0
+}
+IFJMP
+.loc Common.tsol, 77
+DROP
+NULL
+.loc Common.tsol, 0
+
+.globl	Common_no_obj_getValidatorSetsByChain_d29f0692
+.type	Common_no_obj_getValidatorSetsByChain_d29f0692, @function
+CALL $Common_no_obj_getValidatorSetsByChain_d29f0692_macro$
+
+.macro Common_no_obj_getValidatorSetsByChain_d29f0692_macro
+.loc Common.tsol, 73
+CALLREF {
+	CALL $Common_no_obj_getValidatorSets_5e5a3cb6_macro$
+}
+.loc Common.tsol, 74
+DUP
+ISNULL
+NOT
+DUP
+PUSHCONT {
+	DROP
+	DUP2
+	UNSINGLE
+	PUSHINT 32
+	DICTIGET
+	NULLSWAPIFNOT
+	NIP
+}
+IF
+PUSHCONT {
+	.loc Common.tsol, 75
+	UNSINGLE
+	PUSHINT 32
+	DICTIGET
+IFREFELSEREF
+{
+		LDI 1
+		SWAP
+		NULLSWAPIFNOT
+		PUSHCONT {
+			LDU 8
+			LDU 32
+			LDU 32
+			LDU 16
+			LDU 64
+			LDDICT
+			ROLLREV 6
+			TUPLE 6
+		}
+		IF
+		SWAP
+		LDI 1
+		SWAP
+		NULLSWAPIFNOT
+		PUSHCONT {
+			LDU 8
+			LDU 32
+			LDU 32
+			LDU 16
+			LDU 64
+			LDDICT
+			ROLLREV 6
+			TUPLE 6
+		}
+		IF
+		SWAP
+		LDI 1
+		SWAP
+		NULLSWAPIFNOT
+		PUSHCONT {
+			LDU 8
+			LDU 32
+			LDU 32
+			LDU 16
+			LDU 64
+			LDDICT
+			ROLLREV 6
+			TUPLE 6
+		}
+		IF
+		SWAP
+		LDI 1
+		SWAP
+		NULLSWAPIFNOT
+		PUSHCONT {
+			LDU 8
+			LDU 32
+			LDU 32
+			LDU 16
+			LDU 64
+			LDDICT
+			ROLLREV 6
+			TUPLE 6
+		}
+		IF
+		SWAP
+		ENDS
+		TUPLE 4
+}
+{
+		NULL
+		BLKPUSH 3, 0
+		TUPLE 4
+}
+	.loc Common.tsol, 0
+}
+IFJMP
+.loc Common.tsol, 77
+DROP2
+NULL
+.loc Common.tsol, 0
+
 .macro public_function_selector
 DUP
 PUSHINT 2046001087
 LEQ
 IFJMPREF {
 	DUP
-	PUSHINT 734344437
+	PUSHINT 369714999
 	LEQ
 	IFJMPREF {
 		DUP
@@ -8534,6 +8422,12 @@ IFJMPREF {
 		EQUAL
 		IFJMPREF {
 			CALL $get_banned$
+		}
+		DUP
+		PUSHINT 295954618
+		EQUAL
+		IFJMPREF {
+			CALL $receiveBonuses$
 		}
 		DUP
 		PUSHINT 297360507
@@ -8547,17 +8441,17 @@ IFJMPREF {
 		IFJMPREF {
 			CALL $take_change$
 		}
+	}
+	DUP
+	PUSHINT 1197831205
+	LEQ
+	IFJMPREF {
 		DUP
 		PUSHINT 734344437
 		EQUAL
 		IFJMPREF {
 			CALL $get_version$
 		}
-	}
-	DUP
-	PUSHINT 1197831206
-	LEQ
-	IFJMPREF {
 		DUP
 		PUSHINT 1074638899
 		EQUAL
@@ -8576,17 +8470,17 @@ IFJMPREF {
 		IFJMPREF {
 			CALL $recover_stake_gracefully$
 		}
+	}
+	DUP
+	PUSHINT 1316189259
+	LEQ
+	IFJMPREF {
 		DUP
 		PUSHINT 1197831206
 		EQUAL
 		IFJMPREF {
 			CALL $get_elect_at$
 		}
-	}
-	DUP
-	PUSHINT 1520427168
-	LEQ
-	IFJMPREF {
 		DUP
 		PUSHINT 1198678382
 		EQUAL
@@ -8605,28 +8499,22 @@ IFJMPREF {
 		IFJMPREF {
 			CALL $process_new_stake$
 		}
-		DUP
-		PUSHINT 1520427168
-		EQUAL
-		IFJMPREF {
-			CALL $get$
-		}
 	}
 	DUP
 	PUSHINT 2046001087
 	LEQ
 	IFJMPREF {
 		DUP
-		PUSHINT 1589223888
-		EQUAL
-		IFJMPREF {
-			CALL $get_buckets_workchain$
-		}
-		DUP
 		PUSHINT 1609709133
 		EQUAL
 		IFJMPREF {
 			CALL $compute_returned_stake$
+		}
+		DUP
+		PUSHINT 1631842688
+		EQUAL
+		IFJMPREF {
+			CALL $get$
 		}
 		DUP
 		PUSHINT 1756716863

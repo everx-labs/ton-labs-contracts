@@ -41,4 +41,6 @@ interface IElector {
 
     function grant() external functionID(0x4772616e) internalMsg;
     function take_change() external internalMsg;
+
+    function receiveBonuses(int32 chainId) external internalMsg;
 }
