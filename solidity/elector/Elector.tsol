@@ -104,15 +104,7 @@ contract Elector is IElector {
     }
 
     function get_current_vset(int32 chainId) internal pure returns (Common.ValidatorSet) {
-//        TvmCell info;
-//        bool f;
-//        (info, f) = tvm.rawConfigParam(35);
-//        if (!f) {
-//            (info, /* bool */) = tvm.rawConfigParam(34);
-//        }
-//        Common.ValidatorSet vset = info.toSlice().decode(Common.ValidatorSet);
-//        require(vset.tag == 0x12, 40);
-//        return (info, vset.total_weight, vset.vdict);
+
         optional(Common.ValidatorSets) may_be_vsets = Common.getValidatorSetsByChain(chainId);
 
         Common.ValidatorSet info;
@@ -126,16 +118,6 @@ contract Elector is IElector {
             }
         }
         return info;
-
-//        bool f;
-//
-//        (info, f) = tvm.rawConfigParam(35);
-//        if (!f) {
-//            (info, /* bool */) = tvm.rawConfigParam(34);
-//        }
-//        Common.ValidatorSet vset = info.toSlice().decode(Common.ValidatorSet);
-//        require(vset.tag == 0x12, 40);
-//        return (info, vset.total_weight, vset.vdict);
     }
 
     function send_message_back(address addr, uint32 ans_tag, uint64 query_id,
