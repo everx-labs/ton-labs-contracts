@@ -10,10 +10,10 @@
 pragma ton-solidity ^ 0.66.0;
 pragma ignoreIntOverflow;
 pragma AbiHeader time;
-import "IConfig.tsol";
-import "IElector.tsol";
-import "IValidator.tsol";
-import "Common.tsol";
+import "IConfig.sol";
+import "IElector.sol";
+import "IValidator.sol";
+import "Common.sol";
 
 // Config parameters used in the contract:
 //  0  Configuration smart-contract address

@@ -8,7 +8,7 @@
 */
 
 pragma ton-solidity ^ 0.66.0;
-import "Common.tsol";
+import "Common.sol";
 
 interface IConfig {
   

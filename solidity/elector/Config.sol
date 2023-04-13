@@ -8,12 +8,11 @@
 */
 
 pragma ton-solidity ^ 0.66.0;
-pragma upgrade func;
 pragma AbiHeader expire;
 pragma AbiHeader time;
-import "IConfig.tsol";
-import "IElector.tsol";
-import "Common.tsol";
+import "IConfig.sol";
+import "IElector.sol";
+import "Common.sol";
 
 contract Config is IConfig {
 
@@ -214,12 +213,10 @@ contract Config is IConfig {
             tvm.accept();
             // message from elector smart contract
             // set next validator set
-//            (uint32 t_since, uint32 t_until) = check_validator_set(vset);
             ok = (vset.utime_since > now) && (vset.utime_until > vset.utime_since);
         }
         if (ok) {
-//            TODO resolve it to config 100
-//            m_cfg_dict[100] = vset;
+
             mapping(int32 => Common.ValidatorSets) vsets = m_cfg_dict[100].toSlice().decode(mapping(int32 => Common.ValidatorSets));
             vsets[chainId].next = vset;
             TvmBuilder v;
@@ -233,7 +230,6 @@ contract Config is IConfig {
     }
 
 
-    //TODO handle
     function set_slashed_validator_set(
         uint64 query_id,
         TvmCell _vset,
@@ -254,7 +250,6 @@ contract Config is IConfig {
             tvm.accept();
             // message from elector smart contract
             // set slashed validator set
-//            (uint32 t_since, uint32 t_until) = check_validator_set(vset);
             ok = (vset.utime_since > now) && (vset.utime_until > vset.utime_since);
         }
         if (ok) {
@@ -374,7 +369,6 @@ contract Config is IConfig {
             if (c.hasValue()) {
                 // check whether we have to set next_vset as the current validator set
                 Common.ValidatorSet next_vset = c.get();
-//                TvmSlice ds = next_vset.toSlice();
 //                    TODO check this `if`
 
 //                if (ds.bits() >= 40) {
@@ -471,12 +465,10 @@ contract Config is IConfig {
         if (vset_type == Common.ValidatorSetType.NEXT) {
             vset = vsets.next;
         }
-//        optional(TvmCell) c = m_cfg_dict.fetch(id);
         if (vset.hasValue()) {
             TvmBuilder updatedVset;
 
             updatedVset.store(vset.get());
-//            __ValidatorSet vset = updatedVset.toSlice().decode(__ValidatorSet);
             return updatedVset.toSlice().decode(__ValidatorSet);
         } else {
             __ValidatorSet _vset;

@@ -8,8 +8,8 @@
 */
 
 pragma ton-solidity ^ 0.66.0;
-import "IValidator.tsol";
-import "IElector.tsol";
+import "IValidator.sol";
+import "IElector.sol";
 
 contract Validator is IValidator {
 
