@@ -34,4 +34,7 @@ mv rebuild/* binaries/
 rm -rf rebuild
 echo "Run tests..."
 python test_elector.py > ./1.txt
+echo "Run tests..."
+python multi_chains_tests.py > ./1.txt
+
 

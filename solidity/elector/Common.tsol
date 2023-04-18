@@ -69,10 +69,10 @@ library Common {
         return b.toCell();
     }
 
-    function getValidatorSetsByChain(int32 chainId) internal returns (optional(Common.ValidatorSets)) {
+    function getValidatorSetsByChain(int32 wc_id) internal returns (optional(Common.ValidatorSets)) {
         optional(mapping(int32 => Common.ValidatorSets)) may_be_vsets = getValidatorSets();
-        if (may_be_vsets.hasValue() && may_be_vsets.get().exists(chainId)) {
-            return may_be_vsets.get()[chainId];
+        if (may_be_vsets.hasValue() && may_be_vsets.get().exists(wc_id)) {
+            return may_be_vsets.get()[wc_id];
         }
         optional(Common.ValidatorSets) dummy;
         return dummy;

@@ -27,7 +27,7 @@ contract Validator is IValidator {
         uint256 adnl_addr,
         uint128 value,
         bytes signature,
-        int32 chainId
+        int32 wc_id
     ) public pure
     {
         (TvmCell cfg1, bool f) = tvm.rawConfigParam(1);
@@ -42,7 +42,7 @@ contract Validator is IValidator {
             max_factor,
             adnl_addr,
             signature,
-            chainId
+            wc_id
         );
     }
 

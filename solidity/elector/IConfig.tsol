@@ -12,13 +12,13 @@ import "Common.tsol";
 
 interface IConfig {
   
-    function set_next_validator_set(uint64 query_id, TvmCell vset, int32 chainId)
+    function set_next_validator_set(uint64 query_id, TvmCell vset, int32 wc_id)
         functionID(0x4e565354) external;
 
     function set_slashed_validator_set(
         uint64 query_id,
         TvmCell vset,
-        int32 chainId
+        int32 wc_id
     ) functionID(0x4e565355) external;
 
     function set_code(TvmCell code) external externalMsg;

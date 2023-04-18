@@ -144,30 +144,7 @@ contract Config is IConfig {
             m_cfg_dict[34] = b.toCell();
         }
         {
-
-            Common.ValidatorSet currentVset;
-            currentVset.tag          = 0x12;
-            currentVset.utime_since  = 0;
-            currentVset.utime_until  = 6000;
-            currentVset.total        = 0;
-            currentVset.total_weight = 0;
-            currentVset.vdict        = emptyMap;
-
             mapping (int32 => Common.ValidatorSets) vsets;
-            optional(Common.ValidatorSet) emptySet;
-            vsets[-1] = Common.ValidatorSets({
-                previous: emptySet,
-                current: currentVset,
-                slashed: emptySet,
-                next: emptySet
-            });
-
-            vsets[0] = Common.ValidatorSets({
-                previous: emptySet,
-                current: currentVset,
-                slashed: emptySet,
-                next: emptySet
-            });
 
             TvmBuilder b;
             b.store(vsets);
@@ -175,17 +152,45 @@ contract Config is IConfig {
         }
     }
 
+    function add_new_wc(int32 wc_id) external requireOwner {
+        mapping(int32 => Common.ValidatorSets) vsets = get_vsets();
+        require(!vsets.exists(wc_id),1001);
+
+        (TvmCell cfg1, bool f) = tvm.rawConfigParam(1);
+        if (!f) {
+            return;
+        }
+
+        tvm.accept();
+
+        Common.ValidatorSets new_vsests;
+        Common.ValidatorSet current_set;
+        current_set.utime_until = 6000;
+        current_set.tag = 0x12;
+        new_vsests.current = current_set;
+        vsets[wc_id] = new_vsests;
+
+        TvmBuilder b;
+        b.store(vsets);
+        m_cfg_dict[100] = b.toCell();
+
+        uint256 elector_addr = cfg1.toSlice().loadUnsigned(256);
+        address elector = address.makeAddrStd(-1, elector_addr);
+
+        IElector(elector).handle_new_wc{value: 1 << 30, flag: 0}(wc_id);
+
+    }
     function check_validator_set(TvmCell vset) internal pure returns (uint32, uint32) {
         Common.ValidatorSet v = vset.toSlice().decode(Common.ValidatorSet);
         return (v.utime_since, v.utime_until);
     }
 
-    function send_confirmation(uint64 query_id, int32 chainId) internal pure {
-        IElector(msg.sender).config_set_confirmed_ok{flag: 64, value: 0}(query_id, chainId);
+    function send_confirmation(uint64 query_id, int32 wc_id) internal pure {
+        IElector(msg.sender).config_set_confirmed_ok{flag: 64, value: 0}(query_id, wc_id);
     }
 
-    function send_error(uint64 query_id, int32 chainId) internal pure {
-        IElector(msg.sender).config_set_confirmed_err{flag: 64, value: 0}(query_id, chainId);
+    function send_error(uint64 query_id, int32 wc_id) internal pure {
+        IElector(msg.sender).config_set_confirmed_err{flag: 64, value: 0}(query_id, wc_id);
     }
 
     function send_slash_confirmation(uint64 query_id) internal pure {
@@ -199,7 +204,7 @@ contract Config is IConfig {
     function set_next_validator_set(
         uint64 query_id,
         TvmCell _vset,
-        int32 chainId
+        int32 wc_id
     ) override functionID(0x4e565354) public {
         Common.ValidatorSet vset = Common.validatorSetFromCell(_vset);
 
@@ -218,14 +223,14 @@ contract Config is IConfig {
         if (ok) {
 
             mapping(int32 => Common.ValidatorSets) vsets = m_cfg_dict[100].toSlice().decode(mapping(int32 => Common.ValidatorSets));
-            vsets[chainId].next = vset;
+            vsets[wc_id].next = vset;
             TvmBuilder v;
             v.store(vsets);
             m_cfg_dict[100] = v.toCell();
             // send confirmation
-            send_confirmation(query_id, chainId);
+            send_confirmation(query_id, wc_id);
         } else {
-            send_error(query_id, chainId);
+            send_error(query_id, wc_id);
         }
     }
 
@@ -233,7 +238,7 @@ contract Config is IConfig {
     function set_slashed_validator_set(
         uint64 query_id,
         TvmCell _vset,
-        int32 chainId
+        int32 wc_id
     ) override functionID(0x4e565355) public {
         Common.ValidatorSet vset = Common.validatorSetFromCell(_vset);
         (int8 my_wc, /* uint256 */) = address(this).unpack();
@@ -257,7 +262,7 @@ contract Config is IConfig {
 
             if (may_be_vsets.hasValue()) {
                 mapping(int32 => Common.ValidatorSets) vsets = may_be_vsets.get();
-                vsets[chainId].slashed = vset;
+                vsets[wc_id].slashed = vset;
                 m_cfg_dict[100] = Common.validatorSetsToCell(vsets);
 
                 // send confirmation
@@ -363,7 +368,7 @@ contract Config is IConfig {
 
     onTickTock(bool /* is_tock */) external {
         mapping(int32 => Common.ValidatorSets) vsets = m_cfg_dict[100].toSlice().decode(mapping(int32 => Common.ValidatorSets));
-        for((int32 chainId, Common.ValidatorSets vset) : vsets) {
+        for((int32 wc_id, Common.ValidatorSets vset) : vsets) {
             optional(Common.ValidatorSet) c = vset.next;
             bool updated = false;
             if (c.hasValue()) {
@@ -383,7 +388,7 @@ contract Config is IConfig {
                         delete vset.next;
 //                        delete m_cfg_dict[36];
 
-                        vsets[chainId] = vset;
+                        vsets[wc_id] = vset;
                         updated = true;
                     }
 //                }
@@ -400,7 +405,7 @@ contract Config is IConfig {
                             vset.current = slashed_vset;
 //                            m_cfg_dict.getSet(34, slashed_vset);
                             delete vset.slashed;
-                            vsets[chainId] = vset;
+                            vsets[wc_id] = vset;
                             updated = true;
                         }
 //                    }
@@ -444,10 +449,10 @@ contract Config is IConfig {
         return m_cfg_dict[100].toSlice().decode(mapping(int32 => Common.ValidatorSets));
     }
 
-    function get_vset(Common.ValidatorSetType vset_type, int32 chainId) private view returns (__ValidatorSet) {
+    function get_vset(Common.ValidatorSetType vset_type, int32 wc_id) private view returns (__ValidatorSet) {
 //        TODO save
 
-        Common.ValidatorSets vsets = get_vsets()[chainId];
+        Common.ValidatorSets vsets = get_vsets()[wc_id];
         optional(Common.ValidatorSet) vset;
 
         if (vset_type == Common.ValidatorSetType.PREVIOUS) {
@@ -477,23 +482,23 @@ contract Config is IConfig {
     }
 
     // Get previous validator set in a structured form
-    function get_previous_vset(int32 chainId) public view returns (__ValidatorSet) {
-        return get_vset(Common.ValidatorSetType.PREVIOUS, chainId);
+    function get_previous_vset(int32 wc_id) public view returns (__ValidatorSet) {
+        return get_vset(Common.ValidatorSetType.PREVIOUS, wc_id);
     }
 
     // Get current validator set in a structured form
-    function get_current_vset(int32 chainId) public view returns (__ValidatorSet) {
-        return get_vset(Common.ValidatorSetType.CURRENT, chainId);
+    function get_current_vset(int32 wc_id) public view returns (__ValidatorSet) {
+        return get_vset(Common.ValidatorSetType.CURRENT, wc_id);
     }
 
     // Get current slashed validator set in a structured form
-    function get_slashed_vset(int32 chainId) public view returns (__ValidatorSet) {
-        return get_vset(Common.ValidatorSetType.SLASHED, chainId);
+    function get_slashed_vset(int32 wc_id) public view returns (__ValidatorSet) {
+        return get_vset(Common.ValidatorSetType.SLASHED, wc_id);
     }
 
     // Get next validator set in a structured form
-    function get_next_vset(int32 chainId) public view returns (__ValidatorSet) {
-         return get_vset(Common.ValidatorSetType.NEXT, chainId);
+    function get_next_vset(int32 wc_id) public view returns (__ValidatorSet) {
+         return get_vset(Common.ValidatorSetType.NEXT, wc_id);
     }
 
     function public_key() public view returns (uint256) {
