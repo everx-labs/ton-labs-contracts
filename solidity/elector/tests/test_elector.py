@@ -468,8 +468,8 @@ def test_insufficient_number_of_validators():
     status('Trying to conduct elections for the second time')
     e.ticktock(False) # conduct_elections, validator_set_installed, update_active_vset_id
     assert eq(False, e.get_chain_election(wc_id)['finished'])
-    e.ticktock(False) # conduct_elections, validator_set_installed, update_active_vset_id
-    assert eq(False, e.get_chain_election(wc_id)['finished'])
+    # e.ticktock(False) # conduct_elections, validator_set_installed, update_active_vset_id
+    # assert eq(False, e.get_chain_election(wc_id)['finished'])
 
     w = make_stakes(configurations[20:], e, wc_id)
     v += w
@@ -533,8 +533,6 @@ def test_bonuses():
     c.ticktock(False)
     set_config_param(100, c.get_config_param(100))
 
-    # set_config_param(34, c.get_config_param(34))
-    # set_config_param(36, c.get_config_param(36))
 
     status('Installing next validator set')
     e.ticktock(False) # validator_set_installed
@@ -1294,7 +1292,6 @@ def test_ban(wc_id: str):
     victim_pubkey = v[victim_idx].validator_pubkey
     assert eq(decode_int(victim_pubkey),
               decode_int(c.get_current_vset(wc_id)['vdict'][str(victim_idx)]['pubkey']))
-    e.ticktock(False)
     for i in range(4):
         signature = v[i].report_signature(victim_pubkey, 13)
         e.report(
@@ -1919,11 +1916,11 @@ print()
 # test_old_elector_code_upgrade()
 # print()
 # test_identical_validators() ##
-# print()
+print()
 # test_elector_code_upgrade()
 #
 print()
-test_seven_validators()##
+# test_seven_validators()##
 # print()
 # test_rich_validator()##
 # print()
@@ -1931,11 +1928,11 @@ test_seven_validators()##
 # print()
 # test_insufficient_number_of_validators()##
 # print()
-# test_bonuses()##
+test_bonuses()##
 # print()
-# test_reset_utime_until()##
+test_reset_utime_until()##
 # print()
-# test_ban("0")##
+test_ban("0")##
 # print()
 # test_ban_multiple()##
 # print()

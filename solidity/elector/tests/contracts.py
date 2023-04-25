@@ -174,7 +174,8 @@ class Config(BaseContract):
         ))['value0']
         assert isinstance(vset, dict)
         return vset
-
+    def get_vset(self, wc_id: str, type: int):
+       return self.call_getter_raw("get_vset",dict(vset_type = type, wc_id = wc_id))
     def set_elector_code(self, code, data):
         return self.call_method_signed('set_elector_code', dict(
             code = code,

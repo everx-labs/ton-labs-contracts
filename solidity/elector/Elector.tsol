@@ -96,7 +96,7 @@ contract Elector is IElector {
     }
 
     function handle_new_wc(int32 wc_id) override external internalMsg {
-        (int8 src_wc, uint256 src_addr) = msg.sender.unpack();
+        (int32 src_wc, uint256 src_addr) = msg.sender.unpack();
         (TvmCell cfg0, /* bool */) = tvm.rawConfigParam(0);
         uint256 config_addr = cfg0.toSlice().loadUnsigned(256);
 
@@ -129,16 +129,17 @@ contract Elector is IElector {
 
         optional(Common.ValidatorSets) may_be_vsets = Common.getValidatorSetsByChain(wc_id);
 
-        Common.ValidatorSet info;
+
         if (may_be_vsets.hasValue()) {
             Common.ValidatorSets vsets = may_be_vsets.get();
             if (vsets.slashed.hasValue()) {
-                info = vsets.slashed.get();
+                return vsets.slashed.get();
             }
             if (vsets.current.hasValue()) {
-                info = vsets.current.get();
+                return vsets.current.get();
             }
         }
+        Common.ValidatorSet info;
         return info;
     }
 
@@ -187,7 +188,7 @@ contract Elector is IElector {
         bytes signature,
         int32 wc_id
     ) override public functionID(0x4e73744b) internalMsg {
-        (int8 src_wc, uint256 src_addr) = msg.sender.unpack();
+        (int32 src_wc, uint256 src_addr) = msg.sender.unpack();
         if (!m_chains[wc_id].election.open || src_wc != -1) {
             // no elections active, or source is not in masterchain
             // bounce message
@@ -333,7 +334,7 @@ contract Elector is IElector {
     }
 
     function config_set_confirmed(uint64 query_id, bool ok, int32 wc_id) internal {
-        (int8 src_wc, uint256 src_addr) = msg.sender.unpack();
+        (int32 src_wc, uint256 src_addr) = msg.sender.unpack();
         (TvmCell cfg0, /* bool */) = tvm.rawConfigParam(0);
         uint256 config_addr = cfg0.toSlice().loadUnsigned(256);
 
@@ -424,7 +425,7 @@ contract Elector is IElector {
         functionID(0x47657424)
         internalMsg
     {
-        (int8 src_wc, uint256 src_addr) = msg.sender.unpack();
+        (int32 src_wc, uint256 src_addr) = msg.sender.unpack();
         if (src_wc != -1) {
             // not from masterchain, return error
             send_message_back(msg.sender, 0xfffffffe, query_id, 0x47657424, 0, 64);
@@ -453,7 +454,7 @@ contract Elector is IElector {
     functionID(0x47657425)
     internalMsg
     {
-        (int8 src_wc, uint256 src_addr) = msg.sender.unpack();
+        (int32 src_wc, uint256 src_addr) = msg.sender.unpack();
         if (src_wc != -1) {
             // not from masterchain, return error
             send_message_back(msg.sender, 0xfffffffe, query_id, 0x47657425, 0, 64);
@@ -482,7 +483,7 @@ contract Elector is IElector {
 
     function get_elect_at(uint64 query_id, int32 wc_id) override public
             functionID(0x47657426) internalMsg {
-        (int8 src_wc, /*uint256 src_addr*/) = msg.sender.unpack();
+        (int32 src_wc, /*uint256 src_addr*/) = msg.sender.unpack();
         if (src_wc != -1) {
             // not from masterchain, return error
             send_message_back(msg.sender, 0xfffffffc, query_id, 0x47657426, 0, 64);
@@ -1304,7 +1305,7 @@ contract Elector is IElector {
     onBounce(TvmSlice slice) external {
         uint32 id = slice.decode(uint32);
         if (id == tvm.functionId(IValidator.receive_stake_back)) {
-            (int8 src_wc, uint256 src_addr) = msg.sender.unpack();
+            (int32 src_wc, uint256 src_addr) = msg.sender.unpack();
             require(src_wc == -1, 223);
             m_credits[src_addr] = varUint16(msg.value);
         }
@@ -1336,7 +1337,7 @@ contract Elector is IElector {
         }
         address s_addr = msg.sender;
         uint256 config_addr = c_addr.toSlice().loadUnsigned(256);
-        (int8 src_wc, uint256 src_addr) = msg.sender.unpack();
+        (int32 src_wc, uint256 src_addr) = msg.sender.unpack();
         if (src_wc != -1 || src_addr != config_addr) {
             // not from configuration smart contract, return error
             return false;
