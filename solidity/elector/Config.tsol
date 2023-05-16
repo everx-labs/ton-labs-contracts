@@ -18,6 +18,7 @@ contract Config is IConfig {
 
     uint32 constant VERSION_MAJOR = 0;
     uint32 constant VERSION_MINOR = 1;
+    int32 constant DEFAULT_WC_ID = 0;
 
     struct __ValidatorSet {
         uint8 tag; // = 0x12
@@ -150,6 +151,11 @@ contract Config is IConfig {
             b.store(vsets);
             m_cfg_dict[100] = b.toCell();
         }
+        {
+            TvmBuilder b;
+            b.store(DEFAULT_WC_ID);
+            m_cfg_dict[101] = b.toCell();
+        }
     }
 
     function add_new_wc(int32 wc_id) external requireOwner {
@@ -180,6 +186,13 @@ contract Config is IConfig {
         IElector(elector).handle_new_wc{value: 1 << 30, flag: 0}(wc_id);
 
     }
+
+    function set_default_wc_id(int32 new_wc_id) public internalMsg requireOwnerContract {
+        TvmBuilder b;
+        b.store(new_wc_id);
+        m_cfg_dict[101] = b.toCell();
+    }
+
     function check_validator_set(TvmCell vset) internal pure returns (uint32, uint32) {
         Common.ValidatorSet v = vset.toSlice().decode(Common.ValidatorSet);
         return (v.utime_since, v.utime_until);

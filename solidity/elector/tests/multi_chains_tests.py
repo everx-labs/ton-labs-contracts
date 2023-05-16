@@ -42,9 +42,7 @@ def deploy_network(max_validators, main_validators, min_validators, wc_ids: list
 
     configurations = [[3, 40]] * 6
 
-    # for wc_id in wc_ids:
-    #     v = make_elections(configurations, e, wc_id)
-    #     conduct_elections(c, e, len(configurations), wc_id)
+
     for chain in work_chains[0:1]:
         wc_id = chain["wc_id"]
         assert eq(False, e.get_chain_election(wc_id)["open"])
@@ -328,9 +326,6 @@ def test_seven_validators():
     e = deploy_elector()
     for wc in chains_array:
         c.add_new_wc(wc["wc_id"])
-
-
-
 
     status('Announcing new elections')
     master_chain_state = e.get_chain_election(master_chain['wc_id'])
@@ -1462,16 +1457,426 @@ def test_ban():
                 exp_balance = globals.G_DEFAULT_BALANCE
             v[i].ensure_balance(exp_balance)
 
+
+    status('All done')
+def ban(
+        c: Config,
+        e: Elector,
+        v: list[Validator],
+        victim_pubkey: str,
+        wc_id: str,
+        banned = [],
+        expected_ec = 0,
+        verbose = True,
+
+):
+    assert isinstance(victim_pubkey, str)
+
+    state = dict()
+    if verbose:
+        state = c.get_slashed_vset(wc_id)
+    else:
+        state = c.get_current_vset(wc_id)
+
+    current_vset = state['vdict']
+    assert isinstance(current_vset, dict)
+    assert ne(dict(), current_vset)
+
+    index = 0
+    total_weight = 0
+    for i in current_vset:
+        total_weight += decode_int(current_vset[i]['weight'])
+        index += 1
+
+    weight = 0
+    for i in current_vset:
+        reporter_pubkey = current_vset[i]['pubkey']
+        if reporter_pubkey == victim_pubkey:
+            continue
+        if reporter_pubkey in banned:
+            continue
+        weight += decode_int(current_vset[i]['weight'])
+        i = int(i)
+        if verbose:
+            status('Reporting %d' % i)
+        for w in v:
+            if w.validator_pubkey == reporter_pubkey:
+                signature = w.report_signature(victim_pubkey, 13)
+                break
+        else:
+            assert False, "validator's public key is not found is current validator set"
+        banning = weight >= total_weight * 2 / 3
+        e.report(
+            '0x' + signature[:64], '0x' + signature[64:],
+            reporter_pubkey, victim_pubkey,
+            13,
+            wc_id,
+            expected_ec if banning else 0
+        )
+        if banning:
+            if verbose:
+                status('Threshold weight reached %d' % i)
+            break
+        else:
+            ensure_queue_empty()
+    else:
+        assert False, "something gone wrong not enough weight to ban validator"
+
+    if expected_ec == 0:
+
+        dispatch_one_message(src = e, dst = c) # elector: config.set_slashed_validator_set()
+        set_config_param(100, c.get_config_param(100))
+        dispatch_one_message(src = c, dst = e) # config: elector.config_set_confirmed_ok()
+        ensure_queue_empty()
+
+        globals.time_shift(60) # to apply slashed validator set
+
+        # assert eq(len(banned) + 1, len(e.get_banned())) TODO RALL BACK
+def test_ban_multiple():
+
+    (e, c, chains_array) = deploy_network(6, 6, 4, ["-1", "0"])
+    for chain in chains_array:
+        wc_id = chain["wc_id"]
+        v = chain["validators"]
+        chain["elect_id"] = e.get_chain(chain["wc_id"])['active_id']
+        victim1_idx = 2
+        chain['victim1_idx'] = victim1_idx
+        status('Banning one validator %s' % v[victim1_idx].validator_pubkey)
+
+        ban(c, e, v, v[victim1_idx].validator_pubkey, wc_id, [], 0, False)
+        banned = [v[victim1_idx].validator_pubkey]
+        victim2_idx = 1
+        chain['victim2_idx'] = victim2_idx
+
+        status('Banning second validator %s' % v[victim2_idx].validator_pubkey)
+        ban(c, e, v, v[victim2_idx].validator_pubkey, wc_id, banned,0, True)
+        banned.append(v[victim2_idx].validator_pubkey)
+    # TODO check it!
+    # victim3_idx = 0
+    # status('Impossible banning third validator %s' % v[victim3_idx].validator_pubkey)
+    # ban(c, e, v, v[victim3_idx].validator_pubkey, banned, 141)
+
+    for chain in chains_array:
+        wc_id = chain["wc_id"]
+        victim1_idx = chain['victim1_idx']
+        victim2_idx = chain['victim2_idx']
+        v = chain["validators"]
+        vdict = c.get_current_vset(wc_id)['vdict']
+        assert eq(6, len(vdict))
+
+        slashed = c.get_slashed_vset(wc_id)['vdict']
+        assert eq(4, len(slashed))
+
+        status('Early recovering the stakes')
+        for i in [victim1_idx, victim2_idx]:
+            balance = globals.G_DEFAULT_BALANCE - 40 * EVER # they lost stakes
+            query_id = generate_query_id()
+            v[i].recover(query_id)
+            dispatch_one_message() # validator: elector.recover_stake()
+            dispatch_one_message() # elector: validator.receive_stake_back()
+            v[i].ensure_balance(balance)
+
+    globals.time_shift(600)
+    c.ticktock(False)
+    set_config_param(100, c.get_config_param(100))
+
+    for chain in chains_array:
+        wc_id = chain["wc_id"]
+        victim1_idx = chain['victim1_idx']
+        victim2_idx = chain['victim2_idx']
+        elect_id = chain["elect_id"]
+        v = chain["validators"]
+
+        status('Checking current validator set after ban')
+        vdict = c.get_current_vset(wc_id)['vdict']
+        assert eq(4, len(vdict))
+        for i in vdict:
+            pubkey = vdict[i]['pubkey']
+            assert decode_int(v[victim1_idx].validator_pubkey) != decode_int(pubkey)
+            assert decode_int(v[victim2_idx].validator_pubkey) != decode_int(pubkey)
+
+        time_set(decode_int(e.get_chain_past_elections(wc_id)[elect_id]['unfreeze_at']))
+
+    configurations = [[3, 30]] * 6
+    for chain in chains_array:
+        wc_id = chain["wc_id"]
+
+        make_elections(configurations, e, wc_id)
+
+        time_set(decode_int(e.get_chain_election(wc_id)['elect_close']))
+        status('Conducting elections')
+        e.ticktock(False) # conduct_elections
+
+
+    dispatch_one_message() # elector: config.set_next_validator_set()
+    set_config_param(100, c.get_config_param(100))
+    dispatch_one_message() # config: elector.config_set_confirmed_ok()
+    for chain in chains_array:
+        wc_id = chain["wc_id"]
+        assert eq(True, e.get_chain_election(wc_id)['open'])
+
+    globals.time_shift(c.elect_end_before)
+    c.ticktock(False)
+    set_config_param(100, c.get_config_param(100))
+
+
+    status('Installing next validator set')
+    for chain in chains_array:
+        wc_id = chain["wc_id"]
+        e.ticktock(False) # validator_set_installed
+        state = e.get_chain_election(wc_id)
+        assert eq(False, state['open'])
+        assert eq(False, state['failed'])
+        assert eq(False, state['finished'])
+
+    e.ensure_balance(globals.G_DEFAULT_BALANCE + 420 * 2 * GRAM) # 480 grams of stake + 100 grams of own funds
+
+    for chain in chains_array:
+        wc_id = chain["wc_id"]
+        elect_id = chain["elect_id"]
+        time_set(decode_int(e.get_chain_past_elections(wc_id)[elect_id]['unfreeze_at']))
+        status('Unfreezing the stakes')
+        e.ticktock(False)
+        e.ticktock(False)
+
+    status('Recovering the stakes')
+    for chain in chains_array:
+        v = chain["validators"]
+        victim1_idx = chain['victim1_idx']
+        victim2_idx = chain['victim2_idx']
+        for i in range(len(v)):
+            if (i == victim1_idx) or (i == victim2_idx):
+                balance = globals.G_DEFAULT_BALANCE - 40 * EVER # they lost stakes
+            else:
+                balance = globals.G_DEFAULT_BALANCE + 20 * EVER # they got stakes as bonus
+            query_id = generate_query_id()
+            v[i].recover(query_id)
+            dispatch_one_message() # validator: elector.recover_stake()
+            dispatch_one_message() # elector: validator.receive_stake_back()
+            v[i].ensure_balance(balance)
+
     status('All done')
 
+def test_on_bounce():
+    master_chain = dict(wc_id="-1", validators=[], elect_id=None)
+    work_chain = dict(wc_id="0", validators=[], elect_id=None)
+    chains_array = [master_chain, work_chain]
+
+    globals.reset()
+    showtime = 86400
+    time_set(showtime)
+
+    c = deploy_config(
+        min_validators=13,
+        max_validators=1000,
+        min_stake=9 * EVER,
+        max_stake=50 * EVER,
+        min_total_stake=100 * EVER)
+    e = deploy_elector()
+    for wc in chains_array:
+        c.add_new_wc(wc["wc_id"])
+
+    status('Announcing new elections')
+    master_chain_state = e.get_chain_election(master_chain['wc_id'])
+    assert eq(False, master_chain_state['open'])
+    e.ticktock(False)  # announce_new_elections
+    # Make master chain stakes
+    master_chain['validators'] = make_stakes(configurations, e, master_chain['wc_id'])
+
+    e.ticktock(False)  # chain -1 update active vset_id
+
+    work_chain_state = e.get_chain_election(work_chain['wc_id'])
+    assert eq(False, work_chain_state['open'])
+
+    e.ticktock(False)  # chain 0 announce new election
+    work_chain_state = e.get_chain_election(work_chain['wc_id'])
+    assert eq(True, work_chain_state['open'])
+    # Make master work_chain stakes
+    work_chain['validators'] = make_stakes(configurations, e, work_chain['wc_id'])
+
+    for chain in chains_array:
+        wc_id = chain["wc_id"]
+        chain["elect_id"] = e.get_chain_election(wc_id)['elect_at']
+
+    status('Conducting elections')
+    for chain in chains_array:
+        wc_id = chain["wc_id"]
+        time_set(decode_int(e.get_chain_election(wc_id)['elect_close']))
+        e.ticktock(False) # conduct_elections
+
+    for _ in chains_array:
+        dispatch_one_message() # elector: config.set_next_validator_set()
+    set_config_param(100, c.get_config_param(100))
+
+    for _ in chains_array:
+        dispatch_one_message()  # config: elector.config_set_confirmed_ok()
+
+    for chain in chains_array:
+        wc_id = chain["wc_id"]
+        assert eq(True, e.get_chain_election(wc_id)['open'])
+
+    status('Installing next validator set')
+    for _ in chains_array:
+        e.ticktock(False) # validator_set_installed
+
+    for chain in chains_array:
+        wc_id = chain["wc_id"]
+
+        state = e.get_chain_election(wc_id)
+        assert eq(False, state['open'])
+        assert eq(False, state['failed'])
+        assert eq(False, state['finished'])
 
 
-# test_identical_validators()
-# test_seven_validators()
-# test_rich_validator()
-# test_thirty_validators()
-# test_insufficient_number_of_validators()
-# test_insufficient_number_of_validators_in_one_chain()
-# test_bonuses()
-# test_reset_utime_until()
+    status('Checking next validator set')
+    for chain in chains_array:
+        v = chain['validators']
+        wc_id = chain["wc_id"]
+
+        vset = c.get_next_vset(wc_id)
+        elected = [20,  4,  5, 10, 16, 21, 27, 11, 29,  6,  8, 13, 14, 18, 26,
+                   28,  0,  1,  2,  3,  7,  9, 12, 15, 17, 19, 22, 23, 24, 25]
+        for i in range(len(elected)):
+            assert eq(decode_int(v[elected[i]].validator_pubkey),
+                      decode_int(vset['vdict']['%d' % i]['pubkey']))
+
+    status('Collecting refunds due to max_factor clipping')
+
+    for chain in chains_array:
+        v = chain['validators']
+        min_stake = 10
+        for i in range(total_count):
+            validator  = v[i]
+            orig_stake = configurations[i][1]
+            max_factor = configurations[i][0]
+
+            balance = globals.G_DEFAULT_BALANCE - orig_stake * GRAM
+            validator.ensure_balance(balance)
+
+            refund = orig_stake - max_factor * min_stake
+            if refund > 0:
+                query_id = generate_query_id()
+                validator.recover(query_id)
+                dispatch_one_message() # validator: elector.recover_stake()
+                dispatch_one_message() # elector: validator.receive_stake_back()
+                validator.ensure_balance(balance + refund * GRAM)
+
+    for chain in chains_array:
+        wc_id = chain["wc_id"]
+        elect_id = chain["elect_id"]
+        time_set(decode_int(e.get_chain_past_elections(wc_id)[elect_id]['unfreeze_at']))
+        status('Unfreezing the stakes')
+        e.ticktock(False) # check_unfreeze
+
+    for chain in chains_array:
+        defunct = 3
+        v = chain['validators']
+
+        v[defunct].toggle_defunct()
+
+        status('Recovering the stakes')
+        for i in range(total_count):
+            query_id = generate_query_id()
+            v[i].recover(query_id)
+            dispatch_one_message() # validator: elector.recover_stake()
+            if i == defunct:
+                dispatch_one_message(expect_ec = 177)
+                v[i].ensure_balance(globals.G_DEFAULT_BALANCE - (configurations[defunct][1] + 1) * GRAM)
+                dispatch_one_message() # bounced
+            else:
+                dispatch_one_message() # elector: validator.receive_stake_back()
+                v[i].ensure_balance(globals.G_DEFAULT_BALANCE)
+
+        v[defunct].toggle_defunct()
+        query_id = generate_query_id()
+        v[defunct].recover(query_id)
+        dispatch_one_message() # validator: elector.recover_stake()
+        dispatch_one_message() # elector: validator.receive_stake_back()
+        v[defunct].ensure_balance(globals.G_DEFAULT_BALANCE)
+
+    e.ensure_balance(globals.G_DEFAULT_BALANCE)
+    c.ensure_balance(globals.G_DEFAULT_BALANCE, True)
+
+    status('All done')
+
+configurations2 = [
+    [2.0, 10], [2.0, 10], [3.0, 10], [3.0, 10], [3.0, 40],
+    [3.0, 40], [2.0, 20], [3.0, 10], [2.0, 20], [2.0, 10],
+    [2.0, 40], [3.0, 30], [3.0, 10], [3.0, 20], [2.0, 20],
+    [2.0, 10], [2.0, 40], [3.0, 10], [2.0, 20], [2.0, 10],
+    [3.0, 50], [3.0, 40], [3.0, 10], [3.0, 10], [3.0, 10],
+    [2.0, 10], [3.0, 20], [3.0, 40], [3.0, 20], [3.0, 30],
+    [2.0, 10], [2.0, 10], [3.0, 10], [3.0, 10], [3.0, 40],
+    [3.0, 40], [2.0, 20], [3.0, 10], [2.0, 20], [2.0, 10],
+    [2.0, 40], [3.0, 30], [3.0, 10], [3.0, 20], [2.0, 20],
+    [2.0, 10], [2.0, 40], [3.0, 10], [2.0, 20], [2.0, 10]]
+def test_1000():
+    master_chain = dict(wc_id="-1", validators=[], elect_id=None)
+    work_chain = dict(wc_id="0", validators=[], elect_id=None)
+    chains_array = [master_chain, work_chain]
+
+    count = 1000
+    globals.reset()
+    showtime = 86400
+    time_set(showtime)
+
+    e = deploy_elector()
+
+    c = deploy_config(
+        max_validators=count,
+        min_validators=100,
+        main_validators=count,
+        min_stake=10*EVER,
+        max_stake=50*EVER,
+        min_total_stake=100*EVER)
+
+    for wc in chains_array:
+        c.add_new_wc(wc["wc_id"])
+        dispatch_one_message()
+
+
+
+    ensure_queue_empty()
+    status('Announcing new elections')
+
+    for chain in chains_array:
+        e.ticktock(False) # announce_new_elections
+        wc_id = chain["wc_id"]
+
+        state = e.get_chain_election(wc_id)
+        assert eq(True, state['open'])
+
+        # now = time_get()
+        max = decode_int(state['elect_close'])
+        # assert False, max - now
+
+        elect_id = decode_int(state['elect_at'])
+
+        status('Making %d stakes'.format(count))
+        for i in range(count):
+            max_factor, value = configurations2[i % len(configurations2)]
+            v = stake(elect_id, int(max_factor * 0x10000), value * GRAM, wc_id, None, False)
+            v.ensure_balance(globals.G_DEFAULT_BALANCE - value * GRAM)
+
+            assert time_get() < max
+
+        start = time.time()
+        conduct_elections(c, e, count, wc_id)
+        end = time.time()
+        status('{} elapsed'.format(end - start))
+        e.ticktock(False)  # validator_set_installed
+
+    status('All done')
+
+test_identical_validators()
+test_seven_validators()
+test_rich_validator()
+test_thirty_validators()
+test_insufficient_number_of_validators()
+test_insufficient_number_of_validators_in_one_chain()
+test_bonuses()
+test_reset_utime_until()
 test_ban()
+test_ban_multiple()
+test_on_bounce()
+test_1000()

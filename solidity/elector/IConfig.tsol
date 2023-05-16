@@ -33,4 +33,5 @@ interface IConfig {
     function change_elector_code(TvmCell code, TvmCell data) external internalMsg pure;
 
     function change_code(TvmCell code) external internalMsg pure;
+
 }

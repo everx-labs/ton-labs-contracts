@@ -19,12 +19,23 @@ interface IElector {
         uint256 adnl_addr,
         bytes signature,
         int32 wc_id
-    ) external functionID(0x4E73744B) internalMsg;
+    ) external functionID(0x167DEF11) internalMsg;
+
+    function process_new_stake_deprecated(
+        uint64 query_id,
+        uint256 validator_key,
+        uint32 stake_at,
+        uint32 max_factor,
+        uint256 adnl_addr,
+        bytes signature
+    ) external functionID(0x4E73744b) internalMsg;
 
     /// @dev Allows getting back validator's stake
 
     function recover_stake(uint64 query_id) external functionID(0x47657424) internalMsg;
-    function recover_stake_gracefully(uint64 query_id, uint32 elect_id, int32 wc_id) external functionID(0x47657425) internalMsg;
+
+    function recover_stake_gracefully_deprecated(uint64 query_id, uint32 elect_id) external functionID(0x47657425) internalMsg;
+    function recover_stake_gracefully(uint64 query_id, uint32 elect_id, int32 wc_id) external functionID(0x1B33E80E) internalMsg;
 
     /// @dev Allow getting elector info
     function get_elect_at(uint64 query_id, int32 wc_id) external functionID(0x47657426) internalMsg;

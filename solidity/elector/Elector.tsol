@@ -179,6 +179,29 @@ contract Elector is IElector {
         //emit CreditToEvent(addr, amount);
     }
 
+    // method for supporting deprecated behavior
+    function process_new_stake_deprecated(
+        uint64 query_id,
+        uint256 validator_pubkey,
+        uint32 stake_at,
+        uint32 max_factor,
+        uint256 adnl_addr,
+        bytes signature
+    ) override public functionID(0x4e73744b) internalMsg {
+        (TvmCell cfg101,bool is_ok) = tvm.rawConfigParam(101);
+        require(is_ok, 101);
+        (int32 default_wc_id) = cfg101.toSlice().decode(int32);
+        process_new_stake(
+            query_id,
+            validator_pubkey,
+            stake_at,
+            max_factor,
+            adnl_addr,
+            signature,
+            default_wc_id
+        );
+    }
+
     function process_new_stake(
         uint64 query_id,
         uint256 validator_pubkey,
@@ -187,7 +210,8 @@ contract Elector is IElector {
         uint256 adnl_addr,
         bytes signature,
         int32 wc_id
-    ) override public functionID(0x4e73744b) internalMsg {
+    ) override public functionID(0x167DEF11) internalMsg {
+
         (int32 src_wc, uint256 src_addr) = msg.sender.unpack();
         if (!m_chains[wc_id].election.open || src_wc != -1) {
             // no elections active, or source is not in masterchain
@@ -257,9 +281,10 @@ contract Elector is IElector {
         }
     }
 
-    function unfreeze_without_bonuses(mapping(uint256 => Frozen) freeze_dict,
-                                      uint128 tot_stakes) internal
-            returns (uint128) {
+    function unfreeze_without_bonuses(
+        mapping(uint256 => Frozen) freeze_dict,
+        uint128 tot_stakes
+    ) internal returns (uint128) {
         uint128 total = 0;
         uint128 recovered = 0;
         optional(uint256, Frozen) f = freeze_dict.min();
@@ -419,12 +444,7 @@ contract Elector is IElector {
 //        }
 //    }
 
-    function recover_stake(uint64 query_id)
-        override
-        public
-        functionID(0x47657424)
-        internalMsg
-    {
+    function recover_stake(uint64 query_id) override public functionID(0x47657424) internalMsg {
         (int32 src_wc, uint256 src_addr) = msg.sender.unpack();
         if (src_wc != -1) {
             // not from masterchain, return error
@@ -444,16 +464,21 @@ contract Elector is IElector {
         IValidator(msg.sender).receive_stake_back{value: amount.get(), flag: 64}(query_id);
     }
 
+    function recover_stake_gracefully_deprecated(
+        uint64 query_id,
+        uint32 elect_id
+    ) override public functionID(0x47657425) internalMsg {
+        (TvmCell cfg101,bool is_ok) = tvm.rawConfigParam(101);
+        require(is_ok, 101);
+        (int32 default_wc_id) = cfg101.toSlice().decode(int32);
+
+        recover_stake_gracefully(query_id, elect_id, default_wc_id);
+    }
     function recover_stake_gracefully(
         uint64 query_id,
         uint32 elect_id,
         int32 wc_id
-    )
-    override
-    public
-    functionID(0x47657425)
-    internalMsg
-    {
+    ) override public functionID(0x1B33E80E) internalMsg {
         (int32 src_wc, uint256 src_addr) = msg.sender.unpack();
         if (src_wc != -1) {
             // not from masterchain, return error
@@ -989,7 +1014,6 @@ contract Elector is IElector {
             if (chain.election.open) {
                 // have an active election
                 if (conduct_elections(wc_id)) {
-                    // todo handle if consensus success
                     // elections conducted, exit
                     return;
                 }

@@ -1934,11 +1934,11 @@ test_reset_utime_until()##
 # print()
 test_ban("0")##
 # print()
-# test_ban_multiple()##
+test_ban_multiple()##
 # print()
-# test_on_bounce()##
+test_on_bounce()##
 # print()
-# test_1000()##
+test_1000()##
 
 ## test_complaints() # it is not working now due to non using algorithms
 ## test_depool() # TODO: it stopped work
