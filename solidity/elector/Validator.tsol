@@ -8,8 +8,8 @@
 */
 
 pragma ton-solidity ^ 0.66.0;
-import "IValidator.sol";
-import "IElector.sol";
+import "IValidator.tsol";
+import "IElector.tsol";
 
 contract Validator is IValidator {
 
@@ -19,9 +19,16 @@ contract Validator is IValidator {
         m_defunct = false;
     }
 
-    function stake(uint64 query_id, uint256 validator_pubkey, uint32 stake_at,
-                   uint32 max_factor, uint256 adnl_addr, uint128 value,
-                   bytes signature) public pure
+    function stake(
+        uint64 query_id,
+        uint256 validator_pubkey,
+        uint32 stake_at,
+        uint32 max_factor,
+        uint256 adnl_addr,
+        uint128 value,
+        bytes signature,
+        int32 wc_id
+    ) public pure
     {
         (TvmCell cfg1, bool f) = tvm.rawConfigParam(1);
         require(f, 123);
@@ -29,8 +36,14 @@ contract Validator is IValidator {
         address elector = address.makeAddrStd(-1, cfg1.toSlice().loadUnsigned(256));
 
         IElector(elector).process_new_stake{value: value}(
-            query_id, validator_pubkey, stake_at, max_factor, adnl_addr,
-            signature);
+            query_id,
+            validator_pubkey,
+            stake_at,
+            max_factor,
+            adnl_addr,
+            signature,
+            wc_id
+        );
     }
 
     function stake_sign_helper(uint32 stake_at, uint32 max_factor, uint256 adnl_addr)

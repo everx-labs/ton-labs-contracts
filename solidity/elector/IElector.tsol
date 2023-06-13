@@ -17,19 +17,32 @@ interface IElector {
         uint32 stake_at,
         uint32 max_factor,
         uint256 adnl_addr,
+        bytes signature,
+        int32 wc_id
+    ) external functionID(0x167DEF11) internalMsg;
+
+    function process_new_stake_deprecated(
+        uint64 query_id,
+        uint256 validator_key,
+        uint32 stake_at,
+        uint32 max_factor,
+        uint256 adnl_addr,
         bytes signature
-    ) external functionID(0x4E73744B) internalMsg;
+    ) external functionID(0x4E73744b) internalMsg;
 
     /// @dev Allows getting back validator's stake
+
     function recover_stake(uint64 query_id) external functionID(0x47657424) internalMsg;
-    function recover_stake_gracefully(uint64 query_id, uint32 elect_id) external functionID(0x47657425) internalMsg;
+
+    function recover_stake_gracefully_deprecated(uint64 query_id, uint32 elect_id) external functionID(0x47657425) internalMsg;
+    function recover_stake_gracefully(uint64 query_id, uint32 elect_id, int32 wc_id) external functionID(0x1B33E80E) internalMsg;
 
     /// @dev Allow getting elector info
-    function get_elect_at(uint64 query_id) external functionID(0x47657426) internalMsg;
+    function get_elect_at(uint64 query_id, int32 wc_id) external functionID(0x47657426) internalMsg;
 
     /// @dev Confirmation from configuration smart contract
-    function config_set_confirmed_ok(uint64 query_id) external functionID(0xee764f4b) internalMsg;
-    function config_set_confirmed_err(uint64 query_id) external functionID(0xee764f6f) internalMsg;
+    function config_set_confirmed_ok(uint64 query_id, int32 wc_id) external functionID(0xee764f4b) internalMsg;
+    function config_set_confirmed_err(uint64 query_id, int32 wc_id) external functionID(0xee764f6f) internalMsg;
 
     function config_slash_confirmed_ok(uint64 query_id) external functionID(0xee764f4c) internalMsg;
     function config_slash_confirmed_err(uint64 query_id) external functionID(0xee764f70) internalMsg;
@@ -39,4 +52,8 @@ interface IElector {
 
     function grant() external functionID(0x4772616e) internalMsg;
     function take_change() external internalMsg;
+
+    function receiveBonuses(int32 wc_id) external internalMsg;
+
+    function handle_new_wc(int32 wc_id) external internalMsg;
 }

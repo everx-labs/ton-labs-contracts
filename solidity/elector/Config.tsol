@@ -10,21 +10,21 @@
 pragma ton-solidity ^ 0.66.0;
 pragma AbiHeader expire;
 pragma AbiHeader time;
-import "IConfig.sol";
-import "IElector.sol";
-import "Common.sol";
+import "IConfig.tsol";
+import "IElector.tsol";
+import "Common.tsol";
 
 contract Config is IConfig {
 
     uint32 constant VERSION_MAJOR = 0;
     uint32 constant VERSION_MINOR = 1;
+    int32 constant DEFAULT_WC_ID = 0;
 
     struct __ValidatorSet {
         uint8 tag; // = 0x12
         uint32 utime_since;
         uint32 utime_until;
         uint16 total;
-        uint16 main;
         uint64 total_weight;
         mapping(uint16 => Common.ValidatorAddr) vdict;
     }
@@ -137,7 +137,6 @@ contract Config is IConfig {
             vset.utime_since  = 0;
             vset.utime_until  = 6000;
             vset.total        = 0;
-            vset.main         = 0;
             vset.total_weight = 0;
             vset.vdict        = emptyMap;
 
@@ -145,6 +144,53 @@ contract Config is IConfig {
             b.store(vset);
             m_cfg_dict[34] = b.toCell();
         }
+        {
+            mapping (int32 => Common.ValidatorSets) vsets;
+
+            TvmBuilder b;
+            b.store(vsets);
+            m_cfg_dict[100] = b.toCell();
+        }
+        {
+            TvmBuilder b;
+            b.store(DEFAULT_WC_ID);
+            m_cfg_dict[101] = b.toCell();
+        }
+    }
+
+    function add_new_wc(int32 wc_id) external requireOwner {
+        mapping(int32 => Common.ValidatorSets) vsets = get_vsets();
+        require(!vsets.exists(wc_id),1001);
+
+        (TvmCell cfg1, bool f) = tvm.rawConfigParam(1);
+        if (!f) {
+            return;
+        }
+
+        tvm.accept();
+
+        Common.ValidatorSets new_vsests;
+        Common.ValidatorSet current_set;
+        current_set.utime_until = 6000;
+        current_set.tag = 0x12;
+        new_vsests.current = current_set;
+        vsets[wc_id] = new_vsests;
+
+        TvmBuilder b;
+        b.store(vsets);
+        m_cfg_dict[100] = b.toCell();
+
+        uint256 elector_addr = cfg1.toSlice().loadUnsigned(256);
+        address elector = address.makeAddrStd(-1, elector_addr);
+
+        IElector(elector).handle_new_wc{value: 1 << 30, flag: 0}(wc_id);
+
+    }
+
+    function set_default_wc_id(int32 new_wc_id) public internalMsg requireOwnerContract {
+        TvmBuilder b;
+        b.store(new_wc_id);
+        m_cfg_dict[101] = b.toCell();
     }
 
     function check_validator_set(TvmCell vset) internal pure returns (uint32, uint32) {
@@ -152,12 +198,12 @@ contract Config is IConfig {
         return (v.utime_since, v.utime_until);
     }
 
-    function send_confirmation(uint64 query_id) internal pure {
-        IElector(msg.sender).config_set_confirmed_ok{flag: 64, value: 0}(query_id);
+    function send_confirmation(uint64 query_id, int32 wc_id) internal pure {
+        IElector(msg.sender).config_set_confirmed_ok{flag: 64, value: 0}(query_id, wc_id);
     }
 
-    function send_error(uint64 query_id) internal pure {
-        IElector(msg.sender).config_set_confirmed_err{flag: 64, value: 0}(query_id);
+    function send_error(uint64 query_id, int32 wc_id) internal pure {
+        IElector(msg.sender).config_set_confirmed_err{flag: 64, value: 0}(query_id, wc_id);
     }
 
     function send_slash_confirmation(uint64 query_id) internal pure {
@@ -168,8 +214,13 @@ contract Config is IConfig {
         IElector(msg.sender).config_slash_confirmed_err{flag: 64, value: 0}(query_id);
     }
 
-    function set_next_validator_set(uint64 query_id, TvmCell vset) override
-        functionID(0x4e565354) public {
+    function set_next_validator_set(
+        uint64 query_id,
+        TvmCell _vset,
+        int32 wc_id
+    ) override functionID(0x4e565354) public {
+        Common.ValidatorSet vset = Common.validatorSetFromCell(_vset);
+
         (TvmCell cfg1, bool f) = tvm.rawConfigParam(1);
         if (!f) {
             return;
@@ -180,20 +231,29 @@ contract Config is IConfig {
             tvm.accept();
             // message from elector smart contract
             // set next validator set
-            (uint32 t_since, uint32 t_until) = check_validator_set(vset);
-            ok = (t_since > now) && (t_until > t_since);
+            ok = (vset.utime_since > now) && (vset.utime_until > vset.utime_since);
         }
         if (ok) {
-            m_cfg_dict[36] = vset;
+
+            mapping(int32 => Common.ValidatorSets) vsets = m_cfg_dict[100].toSlice().decode(mapping(int32 => Common.ValidatorSets));
+            vsets[wc_id].next = vset;
+            TvmBuilder v;
+            v.store(vsets);
+            m_cfg_dict[100] = v.toCell();
             // send confirmation
-            send_confirmation(query_id);
+            send_confirmation(query_id, wc_id);
         } else {
-            send_error(query_id);
+            send_error(query_id, wc_id);
         }
     }
 
-    function set_slashed_validator_set(uint64 query_id, TvmCell vset) override
-        functionID(0x4e565355) public {
+
+    function set_slashed_validator_set(
+        uint64 query_id,
+        TvmCell _vset,
+        int32 wc_id
+    ) override functionID(0x4e565355) public {
+        Common.ValidatorSet vset = Common.validatorSetFromCell(_vset);
         (int8 my_wc, /* uint256 */) = address(this).unpack();
         if (my_wc != -1) {
             return;
@@ -208,16 +268,25 @@ contract Config is IConfig {
             tvm.accept();
             // message from elector smart contract
             // set slashed validator set
-            (uint32 t_since, uint32 t_until) = check_validator_set(vset);
-            ok = (t_since > now) && (t_until > t_since);
+            ok = (vset.utime_since > now) && (vset.utime_until > vset.utime_since);
         }
         if (ok) {
-            m_cfg_dict[35] = vset;
-            // send confirmation
-            send_slash_confirmation(query_id);
-        } else {
-            send_slash_error(query_id);
+            optional(mapping(int32 => Common.ValidatorSets)) may_be_vsets = Common.getValidatorSets();
+
+            if (may_be_vsets.hasValue()) {
+                mapping(int32 => Common.ValidatorSets) vsets = may_be_vsets.get();
+                vsets[wc_id].slashed = vset;
+                m_cfg_dict[100] = Common.validatorSetsToCell(vsets);
+
+                // send confirmation
+                send_slash_confirmation(query_id);
+                return;
+            }
+
+
         }
+
+        send_slash_error(query_id);
     }
 
     // we accept external corrtly signed messages only
@@ -311,42 +380,59 @@ contract Config is IConfig {
     }
 
     onTickTock(bool /* is_tock */) external {
-        optional(TvmCell) c = m_cfg_dict.fetch(36);
-        bool updated = false;
-        if (c.hasValue()) {
-            // check whether we have to set next_vset as the current validator set
-            TvmCell next_vset = c.get();
-            TvmSlice ds = next_vset.toSlice();
-            if (ds.bits() >= 40) {
-                (uint8 tag, uint32 since) = ds.decode(uint8, uint32);
-                if ((since <= now) && (tag == 0x12)) {
-                    // next validator set becomes active!
-                    optional(TvmCell) cur_vset = m_cfg_dict.getSet(34, next_vset);
-                    m_cfg_dict.getSet(32, cur_vset.get());
-                    delete m_cfg_dict[36];
-                    updated = true;
-                }
-            }
-        }
-        if (!updated) {
-            c = m_cfg_dict.fetch(35);
+        mapping(int32 => Common.ValidatorSets) vsets = m_cfg_dict[100].toSlice().decode(mapping(int32 => Common.ValidatorSets));
+        for((int32 wc_id, Common.ValidatorSets vset) : vsets) {
+            optional(Common.ValidatorSet) c = vset.next;
+            bool updated = false;
             if (c.hasValue()) {
-                TvmCell slashed_vset = c.get();
-                TvmSlice ds = slashed_vset.toSlice();
-                if (ds.bits() >= 40) {
-                    (uint8 tag, uint32 since) = ds.decode(uint8, uint32);
-                    if ((since <= now) && (tag == 0x12)) {
-                        m_cfg_dict.getSet(34, slashed_vset);
-                        delete m_cfg_dict[35];
+                // check whether we have to set next_vset as the current validator set
+                Common.ValidatorSet next_vset = c.get();
+//                    TODO check this `if`
+
+//                if (ds.bits() >= 40) {
+                    if ((next_vset.utime_since <= now) && (next_vset.tag == 0x12)) {
+                        // next validator set becomes active!
+//                        optional(TvmCell) cur_vset = m_cfg_dict.getSet(34, next_vset);
+                        optional(Common.ValidatorSet) cur_vset = vset.current;
+                        vset.current = next_vset;
+                        //TODO save
+                        vset.previous = cur_vset.get();
+//                        m_cfg_dict.getSet(32, cur_vset.get());
+                        delete vset.next;
+//                        delete m_cfg_dict[36];
+
+                        vsets[wc_id] = vset;
                         updated = true;
                     }
+//                }
+            }
+            if (!updated) {
+                c = vset.slashed;
+                if (c.hasValue()) {
+
+                    Common.ValidatorSet slashed_vset = c.get();
+//                    TODO check this `if`
+//                    if (slashed_vset.bits() >= 40) {
+//                        (uint8 tag, uint32 since) = ds.decode(uint8, uint32);
+                        if ((slashed_vset.utime_since <= now) && (slashed_vset.tag == 0x12)) {
+                            vset.current = slashed_vset;
+//                            m_cfg_dict.getSet(34, slashed_vset);
+                            delete vset.slashed;
+                            vsets[wc_id] = vset;
+                            updated = true;
+                        }
+//                    }
                 }
             }
+            if (!updated) {
+                // if nothing has been done so far, scan a random voting proposal instead
+                //scan_random_proposal(); TODO
+            }
         }
-        if (!updated) {
-            // if nothing has been done so far, scan a random voting proposal instead
-            //scan_random_proposal(); TODO
-        }
+        TvmBuilder updatedVsets;
+        updatedVsets.store(vsets);
+        m_cfg_dict[100] = updatedVsets.toCell();
+
     }
 
     onBounce(TvmSlice slice) external {
@@ -355,6 +441,7 @@ contract Config is IConfig {
     receive() external {
     }
 
+//    TODO check this function
     function reset_utime_until() public {
         tvm.accept();
         TvmCell c = m_cfg_dict[34];
@@ -371,35 +458,60 @@ contract Config is IConfig {
         return m_cfg_dict[index];
     }
 
-    function get_vset(uint32 id) private view returns (__ValidatorSet) {
-        optional(TvmCell) c = m_cfg_dict.fetch(id);
-        if (c.hasValue()) {
-            __ValidatorSet vset = c.get().toSlice().decode(__ValidatorSet);
-            return vset;
+    function get_vsets() internal view returns (mapping(int32 => Common.ValidatorSets)) {
+        return m_cfg_dict[100].toSlice().decode(mapping(int32 => Common.ValidatorSets));
+    }
+
+    function get_vset(Common.ValidatorSetType vset_type, int32 wc_id) private view returns (__ValidatorSet) {
+//        TODO save
+
+        Common.ValidatorSets vsets = get_vsets()[wc_id];
+        optional(Common.ValidatorSet) vset;
+
+        if (vset_type == Common.ValidatorSetType.PREVIOUS) {
+            vset = vsets.previous;
+        }
+
+        if (vset_type == Common.ValidatorSetType.CURRENT) {
+            vset = vsets.current;
+        }
+
+        if (vset_type == Common.ValidatorSetType.SLASHED) {
+            vset = vsets.slashed;
+        }
+
+        if (vset_type == Common.ValidatorSetType.NEXT) {
+            vset = vsets.next;
+        }
+        if (vset.hasValue()) {
+            TvmBuilder updatedVset;
+
+            updatedVset.store(vset.get());
+            return updatedVset.toSlice().decode(__ValidatorSet);
         } else {
-            __ValidatorSet vset;
-            return vset;
+            __ValidatorSet _vset;
+            return _vset;
         }
     }
 
     // Get previous validator set in a structured form
-    function get_previous_vset() public view returns (__ValidatorSet) {
-        return get_vset(32);
+    function get_previous_vset(int32 wc_id) public view returns (__ValidatorSet) {
+        return get_vset(Common.ValidatorSetType.PREVIOUS, wc_id);
     }
 
     // Get current validator set in a structured form
-    function get_current_vset() public view returns (__ValidatorSet) {
-        return get_vset(34);
+    function get_current_vset(int32 wc_id) public view returns (__ValidatorSet) {
+        return get_vset(Common.ValidatorSetType.CURRENT, wc_id);
     }
 
     // Get current slashed validator set in a structured form
-    function get_slashed_vset() public view returns (__ValidatorSet) {
-        return get_vset(35);
+    function get_slashed_vset(int32 wc_id) public view returns (__ValidatorSet) {
+        return get_vset(Common.ValidatorSetType.SLASHED, wc_id);
     }
 
     // Get next validator set in a structured form
-    function get_next_vset() public view returns (__ValidatorSet) {
-        return get_vset(36);
+    function get_next_vset(int32 wc_id) public view returns (__ValidatorSet) {
+         return get_vset(Common.ValidatorSetType.NEXT, wc_id);
     }
 
     function public_key() public view returns (uint256) {

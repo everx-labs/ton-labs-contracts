@@ -8,7 +8,7 @@
 */
 
 pragma ton-solidity ^ 0.66.0;
-import "IElector.sol";
+import "IElector.tsol";
 
 contract Zero {
 
@@ -18,6 +18,15 @@ contract Zero {
         address elector = address.makeAddrStd(-1, cfg1.toSlice().loadUnsigned(256));
         tvm.accept();
         elector.transfer(value);
+    }
+
+    function grant_by_wc_id(uint128 value, int32 wc_id) public pure {
+
+        (TvmCell cfg1, bool f) = tvm.rawConfigParam(1);
+        require(f, 123);
+        address elector = address.makeAddrStd(-1, cfg1.toSlice().loadUnsigned(256));
+        tvm.accept();
+        IElector(elector).receiveBonuses{value: value}(wc_id);
     }
 
 }
