@@ -104,32 +104,6 @@
 			]
 		},
 		{
-			"name": "upgrade_code",
-			"id": "0x4E436F64",
-			"inputs": [
-				{"name":"query_id","type":"uint64"},
-				{"name":"code","type":"cell"},
-				{"name":"data","type":"cell"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "proceed_register_vote",
-			"id": "0x56744370",
-			"inputs": [
-				{"name":"query_id","type":"uint64"},
-				{"name":"signature_hi","type":"uint256"},
-				{"name":"signature_lo","type":"uint256"},
-				{"name":"sign_tag","type":"uint32"},
-				{"name":"idx","type":"uint16"},
-				{"name":"elect_id","type":"uint32"},
-				{"name":"chash","type":"uint256"}
-			],
-			"outputs": [
-			]
-		},
-		{
 			"name": "report",
 			"inputs": [
 				{"name":"signature_hi","type":"uint256"},
@@ -190,12 +164,32 @@
 			]
 		},
 		{
+			"name": "get_version",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"value0","type":"uint32"},
+				{"name":"value1","type":"uint32"}
+			]
+		},
+		{
 			"name": "compute_returned_stake",
 			"inputs": [
 				{"name":"wallet_addr","type":"uint256"}
 			],
 			"outputs": [
 				{"name":"value0","type":"uint256"}
+			]
+		},
+		{
+			"name": "upgrade_code",
+			"id": "0x4E436F64",
+			"inputs": [
+				{"name":"query_id","type":"uint64"},
+				{"name":"code","type":"cell"},
+				{"name":"data","type":"cell"}
+			],
+			"outputs": [
 			]
 		}
 	],
@@ -205,6 +199,7 @@
 	],
 	"fields": [
 		{"name":"_pubkey","type":"uint256"},
+		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
 		{"name":"m_election_open","type":"bool"},
 		{"components":[{"name":"elect_at","type":"uint32"},{"name":"elect_close","type":"uint32"},{"name":"min_stake","type":"varuint16"},{"name":"total_stake","type":"varuint16"},{"components":[{"name":"stake","type":"varuint16"},{"name":"time","type":"uint32"},{"name":"max_factor","type":"uint32"},{"name":"addr","type":"uint256"},{"name":"adnl_addr","type":"uint256"}],"name":"members","type":"map(uint256,tuple)"},{"name":"failed","type":"bool"},{"name":"finished","type":"bool"}],"name":"m_cur_elect","type":"tuple"},
