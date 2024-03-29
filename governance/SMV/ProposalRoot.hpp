@@ -89,7 +89,7 @@ struct DProposalRoot {
   address depool_;
   DepositType votePrice_;
   cell ballot_code_;
-  std::optional<cell> final_msg_; // msg sent in case of successfull approval
+  std::optional<cell> final_msg_; // msg sent in case of successful approval
   Grams final_msg_value_;
   // Value will be requested from super root to contest in case of approval
   Grams final_msg_request_value_;

@@ -229,7 +229,7 @@ contract MultisigDebot is Debot, DError {
           [ ActionInstantRun("", "enterCustodianCount", STATE_DEPLOY_STEP4) ] ));
 
         contexts.push(Context(STATE_DEPLOY_STEP4,
-            "Deploy wallet: step #4 of 6:\nNot all custodians must confirm all transctions. Enter a minimal number of custodians who should confirm a transaction before it will be executed. This value must be less then the total number of custodians.",
+            "Deploy wallet: step #4 of 6:\nNot all custodians must confirm all transactions. Enter a minimal number of custodians who should confirm a transaction before it will be executed. This value must be less then the total number of custodians.",
           [ ActionInstantRun("", "enterRequiredConfirmations", STATE_DEPLOY_STEP5) ] ));
 
         contexts.push(Context(STATE_DEPLOY_STEP5,

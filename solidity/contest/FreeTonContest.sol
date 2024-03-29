@@ -280,7 +280,7 @@ contract FreeTonContest is IContestData {
         return (fd.rejects * 2 <= fd.votes);
     }
 
-    /* Distribute the rewards accoring to the table */
+    /* Distribute the rewards according to the table */
     function distributeRewards() external mine {
         uint l = math.min(_ranking.length, _prize.length);
         for (uint i = 0; i < l; i++) {
