@@ -175,7 +175,7 @@ tonos-cli genaddr DePool.tvc DePool.abi.json --setkey depool.json --wc 0
 
 Save the DePool address.
 
-Put it into the following files in in your validator node setup:
+Put it into the following files in your validator node setup:
 
 - `~/ton-keys/depool.addr` file - for C++ Node 
 - `/ton-node/configs/depool.addr` - for Rust Node
@@ -726,7 +726,7 @@ tonos-cli depool --addr 0:37fbcb6e3279cbf5f783d61c213ed20fee16e0b1b94a48372d20a2
 
 ### Reinvest Stakes
 
-[Ordinary](#1-ordinary-stake) stake reinvestment is controlled by the DePool [reinvest flag](https://docs.ton.dev/86757ecb2/p/45d6eb-depool-specifications/t/82306f). By default this flag is set to `yes`, and the the participant's available ordinary stake will be reinvested every round, no additional action required.
+[Ordinary](#1-ordinary-stake) stake reinvestment is controlled by the DePool [reinvest flag](https://docs.ton.dev/86757ecb2/p/45d6eb-depool-specifications/t/82306f). By default this flag is set to `yes`, and the participant's available ordinary stake will be reinvested every round, no additional action required.
 It gets set to `no` when [withdrawing the entire stake](#1-withdraw-entire-stake). After stake withdrawal it remains set to `no`.
 To re-enable ordinary stake reinvesting after withdrawing a stake, run the withdraw command with option `off`:
 
@@ -772,7 +772,7 @@ Where
 
 ## 10. Set Up Validator Script
 
-Once the the validator has accumulated a stake sufficient to participate in elections, (at least `validatorAssurance`), this stake needs to be signed by the node. This should be done through a validator script.
+Once the validator has accumulated a stake sufficient to participate in elections, (at least `validatorAssurance`), this stake needs to be signed by the node. This should be done through a validator script.
 
 The main function that the validator script should regularly perform is to send signed election requests to the DePool, which will forward the accumulated stake to the Elector contract on the validator's behalf. The Election request should be generated with the proxy address for the current round as the requesting validator wallet.
 
